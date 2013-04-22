@@ -6,8 +6,10 @@ module VagrantPlugins
     class Action
       include Vagrant::Action::Builtin
 	  
-	  def self.action_up
-        
+	    def self.action_up
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConnectVSphere
+        end
       end
     end
   end

@@ -1,19 +1,19 @@
-$:.unshift File.expand_path("../lib", __FILE__)
-require "vSphere/version"
+$:.unshift File.expand_path('../lib', __FILE__)
+require 'vSphere/version'
 
 Gem::Specification.new do |s|
   s.name = 'vSphere Provider'
   s.version = VagrantPlugins::VSphere::VERSION
-  s.authors = "NSIDC"
-  s.summary = "Enables Vagrant to manage machines with vSphere."
+  s.authors = 'NSIDC'
+  s.summary = 'Enables Vagrant to manage machines with vSphere.'
   
   s.add_dependency 'rbvmomi'
 
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'mocha'
   s.add_development_dependency 'rspec-core'
   s.add_development_dependency 'rspec-expectations'
   s.add_development_dependency 'rspec-mocks'
+  s.add_development_dependency 'rspec-spies'
   
   s.files = `git ls-files`.split($/)
   s.executables = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
