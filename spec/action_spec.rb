@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'vSphere/action'
-require 'vSphere/action/connect_vsphere'
 require 'vagrant'
 
 describe VagrantPlugins::VSphere::Action do
@@ -10,19 +8,40 @@ describe VagrantPlugins::VSphere::Action do
     end
 
     it 'should connect to vSphere' do
-      VagrantPlugins::VSphere::ConnectVSphere.any_instance.should_receive(:call)
+      VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+
       run_up
     end
 
     it 'should check if the VM exits' do
+      VagrantPlugins::VSphere::Action::IsCreated.any_instance.should_receive(:call)
 
+      run_up
     end
 
     it 'should create the VM when the VM does already not exist' do
+      @env[:machine].state.stub(:id).and_return(:not_created)
 
+      VagrantPlugins::VSphere::Action::Clone.any_instance.should_receive(:call)
+
+      run_up
     end
 
     it 'should not create the VM when the VM already exists' do
+      @env[:machine].state.stub(:id).and_return(:running)
+
+      VagrantPlugins::VSphere::Action::Clone.any_instance.should_not_receive(:call)
+
+      run_up
+    end
+  end
+
+  describe 'get state' do
+    it 'should connect to vSphere' do
+
+    end
+
+    it 'should get the power state' do
 
     end
   end

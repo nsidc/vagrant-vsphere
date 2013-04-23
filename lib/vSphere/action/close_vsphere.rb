@@ -3,17 +3,14 @@ require 'rbvmomi'
 module VagrantPlugins
   module VSphere
     module Action
-      class ConnectVSphere
+      class CloseVSphere
         def initialize(app, env)
           @app = app
         end
 
         def call(env)
-          config = env[:machine].provider_config
-
           begin
-            env[:vSphere_connection] = RbVmomi::VIM.connect host: config.host, user: config.user, password: config.password
-            @app.call env
+            env[:vSphere_connection].close
           rescue Exception => e
             #raise a properly namespaced error for Vagrant
             raise Errors::VSphereError, :message => e.message

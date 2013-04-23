@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'vSphere/action/connect_vsphere'
 
-describe VagrantPlugins::VSphere::ConnectVSphere do
+describe VagrantPlugins::VSphere::Action::ConnectVSphere do
   before :each do
     described_class.new(@app, @env).call(@env)
   end
