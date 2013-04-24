@@ -6,6 +6,7 @@ require 'vSphere/action/connect_vsphere'
 require 'vSphere/action/close_vsphere'
 require 'vSphere/action/is_created'
 require 'vSphere/action/get_state'
+require 'vSphere/action/get_ssh_info'
 require 'vSphere/action/clone'
 
 VIM = RbVmomi::VIM
@@ -15,6 +16,7 @@ MISSING_UUID = 'missing_uuid'
 NEW_UUID = 'new_uuid'
 TEMPLATE = 'template'
 NAME = 'vm'
+IP_ADDRESS = '127.0.0.1'
 
 RSpec.configure do |config|
   config.before(:each) do
@@ -40,7 +42,9 @@ RSpec.configure do |config|
                            :id= => nil)
     }
 
-    @vm = double('vm', :runtime => double('runtime', :powerState => nil ))
+    @vm = double('vm',
+                 :runtime => double('runtime', :powerState => nil),
+                 :guest => double('guest', :ipAddress => IP_ADDRESS))
 
     vm_folder = double('vm_folder')
     vm_folder.stub(:findByUuid).with(EXISTING_UUID).and_return(@vm)

@@ -2,9 +2,13 @@ require 'spec_helper'
 require 'vagrant'
 
 describe VagrantPlugins::VSphere::Action do
+  def run(action)
+    Vagrant::Action::Runner.new.run described_class.send("action_#{action}"), @env
+  end
+
   describe 'up' do
     def run_up
-      Vagrant::Action::Runner.new.run described_class.action_up, @env
+      run :up
     end
 
     it 'should connect to vSphere' do
@@ -37,12 +41,38 @@ describe VagrantPlugins::VSphere::Action do
   end
 
   describe 'get state' do
-    it 'should connect to vSphere' do
+    def run_get_state
+      run :get_state
+    end
 
+    it 'should connect to vSphere' do
+      VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+
+      run_get_state
     end
 
     it 'should get the power state' do
+      VagrantPlugins::VSphere::Action::GetState.any_instance.should_receive(:call)
 
+      run_get_state
+    end
+  end
+
+  describe 'get ssh info' do
+    def run_get_ssh_info
+      run :get_ssh_info
+    end
+
+    it 'should connect to vSphere' do
+      VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+
+      run_get_ssh_info
+    end
+
+    it 'should get the power state' do
+      VagrantPlugins::VSphere::Action::GetSshInfo.any_instance.should_receive(:call)
+
+      run_get_ssh_info
     end
   end
 end
