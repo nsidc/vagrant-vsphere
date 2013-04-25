@@ -1,0 +1,26 @@
+en:
+  vsphere:
+    creating_cloned_vm: |-
+      Calling vSphere CloneVM with the following settings:
+    destroy_vm: |-
+      Calling vShpere Destroy
+    vm_already_created: |-
+      The VM is already created
+    vm_not_created: |-
+          The VM has not been created
+  errors:
+    missing_template: |-
+      Configured template VM could not be found
+    missing_datacenter: |-
+      Configured data center not found
+  config:
+    host: |-
+      Configuration must specify a vSphere host
+    user: |-
+      Configuration must specify a vSphere user
+    password: |-
+      Configuration must specify a vSphere password
+    name: |-
+      Configuration must specify a VM name
+    template: |-
+      Configuration must specify a template name

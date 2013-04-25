@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.summary = 'Enables Vagrant to manage machines with vSphere.'
   
   s.add_dependency 'rbvmomi'
+  s.add_dependency 'i18n', '~> 0.6.4'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec-core'

@@ -8,6 +8,9 @@ require 'vSphere/action/is_created'
 require 'vSphere/action/get_state'
 require 'vSphere/action/get_ssh_info'
 require 'vSphere/action/clone'
+require 'vSphere/action/message_already_created'
+require 'vSphere/action/message_not_created'
+require 'vSphere/action/destroy'
 
 VIM = RbVmomi::VIM
 
@@ -39,12 +42,14 @@ RSpec.configure do |config|
                            :config => config,
                            :state => double('state', :id => nil),
                            :id => nil,
-                           :id= => nil)
+                           :id= => nil),
+        :ui => double('ui', :info => nil)
     }
 
     @vm = double('vm',
                  :runtime => double('runtime', :powerState => nil),
-                 :guest => double('guest', :ipAddress => IP_ADDRESS))
+                 :guest => double('guest', :ipAddress => IP_ADDRESS),
+                 :Destroy_Task => double('result', :wait_for_completion => nil))
 
     vm_folder = double('vm_folder')
     vm_folder.stub(:findByUuid).with(EXISTING_UUID).and_return(@vm)

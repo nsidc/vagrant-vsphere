@@ -40,6 +40,18 @@ describe VagrantPlugins::VSphere::Action do
     end
   end
 
+  describe 'destroy' do
+    def run_destroy
+      run :destroy
+    end
+
+    it 'should connect to vSphere' do
+      VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+
+      run_destroy
+    end
+  end
+
   describe 'get state' do
     def run_get_state
       run :get_state

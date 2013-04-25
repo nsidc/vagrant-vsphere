@@ -15,6 +15,7 @@ PATH
   remote: .
   specs:
     vSphere Provider (0.0.1dev)
+      i18n (~> 0.6.4)
       rbvmomi
 
 GEM
@@ -34,7 +35,6 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (2.6.7)
     nokogiri (1.5.9)
-    nokogiri (1.5.9-x86-mingw32)
     rake (10.0.4)
     rbvmomi (1.6.0)
       builder

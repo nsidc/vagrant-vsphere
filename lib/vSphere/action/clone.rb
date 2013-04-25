@@ -1,4 +1,5 @@
 require 'rbvmomi'
+require 'i18n'
 require 'vSphere/action/vim_helpers'
 
 module VagrantPlugins
@@ -17,10 +18,14 @@ module VagrantPlugins
           dc = get_datacenter env[:vSphere_connection], config
           template = dc.find_vm config.template_name
 
-          raise Error::VSphereError, :message => 'Configuration template could not be found' if template.nil?
+          raise Error::VSphereError, :message => I18n.t('errors.missing_template') if template.nil?
 
           begin
             spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => RbVmomi::VIM.VirtualMachineRelocateSpec, :powerOn => true, :template => false
+
+            env[:ui].info I18n.t('vsphere.creating_cloned_vm')
+            env[:ui].info " -- Template VM: #{config.template_name}"
+            env[:ui].info " -- Name: #{config.name}"
 
             new_vm = template.CloneVM_Task(:folder => template.parent, :name => config.name, :spec => spec).wait_for_completion
           rescue Exception => e

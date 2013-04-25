@@ -14,11 +14,11 @@ module VagrantPlugins
         errors = _detected_errors
 
         #TODO: add internationalization with il8n
-        errors << 'Configuration must specify a vSphere host' if host.nil?
-        errors << 'Configuration must specify a vSphere user' if user.nil?
-        errors << 'Configuration must specify a vSphere password' if password.nil?
-        errors << 'Configuration must specify a VM name' if name.nil?
-        errors<< 'Configuration must specify a template name' if template_name.nil?
+        errors << I18n.t('config.host') if host.nil?
+        errors <<  I18n.t('config.user') if user.nil?
+        errors <<  I18n.t('config.password') if password.nil?
+        errors <<  I18n.t('config.name') if name.nil?
+        errors<<  I18n.t('config.template') if template_name.nil?
 
         { 'vSphere Provider' => errors }
       end
