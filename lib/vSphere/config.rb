@@ -3,14 +3,15 @@ require 'vagrant'
 module VagrantPlugins
   module VSphere
     class Config < Vagrant.plugin('2', :config)
-      attr_accessor host
-      attr_accessor user
-      attr_accessor password
-      attr_accessor data_center_name
-      attr_accessor template_name
-      attr_accessor name
+      attr_accessor :host
+      attr_accessor :insecure
+      attr_accessor :user
+      attr_accessor :password
+      attr_accessor :data_center_name
+      attr_accessor :template_name
+      attr_accessor :name
 
-      def validate
+      def validate(machine)
         errors = _detected_errors
 
         #TODO: add internationalization with il8n

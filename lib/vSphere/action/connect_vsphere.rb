@@ -12,11 +12,10 @@ module VagrantPlugins
           config = env[:machine].provider_config
 
           begin
-            env[:vSphere_connection] = RbVmomi::VIM.connect host: config.host, user: config.user, password: config.password
+            env[:vSphere_connection] = RbVmomi::VIM.connect host: config.host, user: config.user, password: config.password, insecure: config.insecure
             @app.call env
           rescue Exception => e
-            #raise a properly namespaced error for Vagrant
-            raise Errors::VSphereError, :message => e.message
+            raise VagrantPlugins::VSphere::Errors::VSphereError, :message => e.message
           end
         end
       end

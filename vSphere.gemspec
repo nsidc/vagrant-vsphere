@@ -2,10 +2,11 @@ $:.unshift File.expand_path('../lib', __FILE__)
 require 'vSphere/version'
 
 Gem::Specification.new do |s|
-  s.name = 'vSphere Provider'
+  s.name = 'vagrant-vsphere'
   s.version = VagrantPlugins::VSphere::VERSION
   s.authors = 'NSIDC'
-  s.summary = 'Enables Vagrant to manage machines with vSphere.'
+  s.summary = 'VMWare vSphere provider'
+  s.description = 'Enables Vagrant to manage machines with VMWare vSphere.'
   
   s.add_dependency 'rbvmomi'
   s.add_dependency 'i18n', '~> 0.6.4'

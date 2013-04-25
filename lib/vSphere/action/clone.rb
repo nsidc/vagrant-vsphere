@@ -29,7 +29,6 @@ module VagrantPlugins
 
             new_vm = template.CloneVM_Task(:folder => template.parent, :name => config.name, :spec => spec).wait_for_completion
           rescue Exception => e
-            #raise a properly namespaced error for Vagrant
             raise Errors::VSphereError, :message => e.message
           end
 
