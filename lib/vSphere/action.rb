@@ -67,6 +67,7 @@ module VagrantPlugins
             end
 
             b2.use Clone
+            #TODO: provision
           end
           b.use CloseVSphere
         end
