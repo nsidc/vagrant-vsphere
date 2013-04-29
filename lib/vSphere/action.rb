@@ -11,6 +11,8 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectVSphere
+          b.use PowerOff
+          b.use Destroy
         end
       end
 

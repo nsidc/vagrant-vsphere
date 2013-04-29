@@ -42,11 +42,24 @@ describe VagrantPlugins::VSphere::Action do
 
   describe 'destroy' do
     def run_destroy
+      @env[:machine].stub(:id).and_return(EXISTING_UUID)
       run :destroy
     end
 
     it 'should connect to vSphere' do
       VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+
+      run_destroy
+    end
+
+    it 'should power off the VM' do
+      VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
+
+      run_destroy
+    end
+
+    it 'should destroy the VM' do
+      VagrantPlugins::VSphere::Action::Destroy.any_instance.should_receive(:call)
 
       run_destroy
     end

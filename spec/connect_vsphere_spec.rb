@@ -9,7 +9,8 @@ describe VagrantPlugins::VSphere::Action::ConnectVSphere do
     VIM.should have_received(:connect).with({
       :host => @env[:machine].provider_config.host,
       :user => @env[:machine].provider_config.user,
-      :password => @env[:machine].provider_config.password
+      :password => @env[:machine].provider_config.password,
+      :insecure => @env[:machine].provider_config.insecure,
     })
   end
 

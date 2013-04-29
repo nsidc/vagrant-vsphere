@@ -11,6 +11,7 @@ require 'vSphere/action/clone'
 require 'vSphere/action/message_already_created'
 require 'vSphere/action/message_not_created'
 require 'vSphere/action/destroy'
+require 'vSphere/action/power_off'
 
 VIM = RbVmomi::VIM
 
@@ -32,8 +33,11 @@ RSpec.configure do |config|
         :user => 'testuser',
         :password => 'testpassword',
         :data_center_name => nil,
+        :compute_resource_name => 'testcomputeresource',
+        :resource_pool_name => 'testresourcepool',
         :template_name => TEMPLATE,
         :name => NAME,
+        :insecure => true,
         :validate => [])
     @app = double 'app', :call => true
     @env = {
@@ -49,13 +53,16 @@ RSpec.configure do |config|
     @vm = double('vm',
                  :runtime => double('runtime', :powerState => nil),
                  :guest => double('guest', :ipAddress => IP_ADDRESS),
-                 :Destroy_Task => double('result', :wait_for_completion => nil))
+                 :Destroy_Task => double('result', :wait_for_completion => nil),
+                 :PowerOffVM_Task => double('result', :wait_for_completion => nil))
 
     vm_folder = double('vm_folder')
     vm_folder.stub(:findByUuid).with(EXISTING_UUID).and_return(@vm)
     vm_folder.stub(:findByUuid).with(MISSING_UUID).and_return(nil)
 
-    @data_center = double('data_center', :vmFolder => vm_folder)
+    @data_center = double('data_center',
+                          :vmFolder => vm_folder,
+                          :find_compute_resource => double('compute resource', :resourcePool => double('pools', :find => {})))
 
     @template = double('template_vm',
                        :parent => @data_center,

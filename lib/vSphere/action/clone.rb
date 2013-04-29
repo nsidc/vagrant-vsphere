@@ -15,13 +15,14 @@ module VagrantPlugins
         def call(env)
           config = env[:machine].provider_config
 
-          dc = get_datacenter env[:vSphere_connection], config
+          dc = get_datacenter env[:vSphere_connection], env[:machine]
           template = dc.find_vm config.template_name
 
           raise Error::VSphereError, :message => I18n.t('errors.missing_template') if template.nil?
 
           begin
-            spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => RbVmomi::VIM.VirtualMachineRelocateSpec, :powerOn => true, :template => false
+            location = RbVmomi::VIM.VirtualMachineRelocateSpec :pool => get_resource_pool(env[:vSphere_connection], env[:machine])
+            spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => location, :powerOn => true, :template => false
 
             env[:ui].info I18n.t('vsphere.creating_cloned_vm')
             env[:ui].info " -- Template VM: #{config.template_name}"

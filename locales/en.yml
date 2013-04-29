@@ -7,12 +7,16 @@ en:
     vm_already_created: |-
       The VM is already created
     vm_not_created: |-
-          The VM has not been created
+      The VM has not been created
   errors:
     missing_template: |-
       Configured template VM could not be found
     missing_datacenter: |-
       Configured data center not found
+    missing_compute_resource: |-
+      Configured compute resource not found
+    missing_resource_pool: |-
+      Configured resource pool not found
   config:
     host: |-
       Configuration must specify a vSphere host
@@ -24,3 +28,7 @@ en:
       Configuration must specify a VM name
     template: |-
       Configuration must specify a template name
+    compute_resource: |-
+      Configuration must specify a compute resource name
+    resource_pool: |-
+      Configuration must specify a resource pool name

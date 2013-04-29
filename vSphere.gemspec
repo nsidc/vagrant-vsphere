@@ -4,7 +4,10 @@ require 'vSphere/version'
 Gem::Specification.new do |s|
   s.name = 'vagrant-vsphere'
   s.version = VagrantPlugins::VSphere::VERSION
-  s.authors = 'NSIDC'
+  s.authors = ['Andrew Grauch']
+  s.email = ['andrew.grauch@nsidc.org']
+  s.homepage = ''
+  s.license = 'MIT'
   s.summary = 'VMWare vSphere provider'
   s.description = 'Enables Vagrant to manage machines with VMWare vSphere.'
   

@@ -24,7 +24,7 @@ module VagrantPlugins
           return if vm.nil?
 
           begin
-            env[:ui].info I18n.t('vsphere.destroying_vm')
+            env[:ui].info I18n.t('vsphere.destroy_vm')
             vm.Destroy_Task.wait_for_completion
           rescue Exception => e
             raise Errors::VSphereError, :message => e.message
