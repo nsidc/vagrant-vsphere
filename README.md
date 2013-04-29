@@ -28,9 +28,9 @@ $ tar cvzf dummy.box ./metadata.json
 ...
 ```
 
-This can be installed using the standard Vagrant methods.
+This can be installed using the standard Vagrant methods or specified in the Vagrantfile.
 
-After installing the dummy box, make a Vagrantfile that looks like the following:
+After creating the dummy box, make a Vagrantfile that looks like the following:
 
 ```
 Vagrant.configure("2") do |config|
@@ -53,7 +53,7 @@ And then run `vagrant up --provider=vsphere`.
 ### Custom Box
 
 The bulk of this configuration can be included as part of a custom box. See the [Vagrant documentation](http://docs.vagrantup.com/v2/boxes.html)
-and the Vagrant [AWS provider](https://github.com/mitchellh/vagrant-aws/tree/master/example_box) for more information.
+and the Vagrant [AWS provider](https://github.com/mitchellh/vagrant-aws/tree/master/example_box) for more information and an example.
 
 ## Configuration
 
