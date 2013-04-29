@@ -81,8 +81,8 @@ This plugin follows the principles of [Semantic Versioning 2.0.0](http://semver.
 
 GI-Cat Driver is licensed under the MIT license. See [LICENSE.txt][license].
 
-[license]: https://raw.github.com/nsidc/vsphere_provider/master/LICENSE.txt
+[license]: https://raw.github.com/nsidc/vagrant-vsphere/master/LICENSE.txt
 
 ## Credit
 
-This software was developed by the National Snow and Ice Data Center.
+This software was developed by the National Snow and Ice Data Center with funding from multiple sources.
