@@ -1,6 +1,6 @@
 # Vagrant vSphere Provider
 
-This is a [Vagrant](http://www.vagrantup.com) 1.2+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html
+This is a [Vagrant](http://www.vagrantup.com) 1.2+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
 provider to Vagrant, allowing Vagrant to control and provision machines using VMware. New machines are created from VMware templates which must be configured prior to using using
 this provider.
 
