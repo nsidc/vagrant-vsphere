@@ -4,6 +4,8 @@ en:
       Calling vSphere CloneVM with the following settings:
     destroy_vm: |-
       Calling vShpere Destroy
+    power_off_vm: |-
+      Calling vSphere PowerOff
     vm_already_created: |-
       The VM is already created
     vm_not_created: |-
