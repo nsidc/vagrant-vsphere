@@ -105,6 +105,7 @@ module VagrantPlugins
       autoload :IsCreated, action_root.join('is_created')
       autoload :MessageAlreadyCreated, action_root.join('message_already_created')
       autoload :MessageNotCreated, action_root.join('message_not_created')
+      autoload :PowerOff, action_root.join('power_off')
     end
   end
 end
