@@ -13,8 +13,8 @@ module VagrantPlugins
         end
 
         def get_resource_pool(connection, machine)
-          cr = get_datacenter(connection, machine).find_compute_resource(machine.provider_config.compute_resource_name) or fail Errors::VSphereError, :message => I18n.t('erorrs.missing_compute_resource')
-          cr.resourcePool.find(machine.provider_config.resource_pool_name) or fail Errors::VSphereError, :message => I18n.t('erorrs.missing_resource_pool')
+          cr = get_datacenter(connection, machine).find_compute_resource(machine.provider_config.compute_resource_name) or fail Errors::VSphereError, :message => I18n.t('errors.missing_compute_resource')
+          cr.resourcePool.find(machine.provider_config.resource_pool_name) or fail Errors::VSphereError, :message => I18n.t('errors.missing_resource_pool')
         end
       end
     end
