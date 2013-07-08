@@ -7,9 +7,9 @@ this provider.
 This provider is built on top of the [RbVmomi](https://github.com/rlane/rbvmomi) Ruby interface to the vSphere API.
 
 ## Requirements
-Vagrant 1.2+
-VMware + vSphere API
-Ruby 1.9+
+* Vagrant 1.2+
+* VMware + vSphere API
+* Ruby 1.9+
 
 ## Building the gem
 
