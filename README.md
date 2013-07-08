@@ -9,6 +9,15 @@ This provider is built on top of the [RbVmomi](https://github.com/rlane/rbvmomi)
 ## Requirements
 Vagrant 1.2+
 VMware + vSphere API
+Ruby 1.9+
+
+## Building the gem
+
+The gem needs to be built before the provider can be added to Vagrant:
+
+```
+gem build vShpere.gemspec
+```
 
 ## Installation
 
@@ -25,7 +34,6 @@ that can be used to create a dummy box with the command:
 
 ```
 $ tar cvzf dummy.box ./metadata.json
-...
 ```
 
 This can be installed using the standard Vagrant methods or specified in the Vagrantfile.
@@ -34,7 +42,8 @@ After creating the dummy box, make a Vagrantfile that looks like the following:
 
 ```
 Vagrant.configure("2") do |config|
-  config.vm.box = 'dummmy'
+  config.vm.box = 'dummy'
+  config.vm.box_url = './example_box/dummy.box'
 
   config.vm.provider :vsphere do |vsphere|
       vsphere.host = 'HOST NAME OF YOUR VSPHERE INSTANCE'
