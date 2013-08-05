@@ -2,3 +2,4 @@
 Vagrantfile
 pkg/*
 *.box
+Gemfile.lock
