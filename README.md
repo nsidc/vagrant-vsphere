@@ -64,6 +64,13 @@ And then run `vagrant up --provider=vsphere`.
 The bulk of this configuration can be included as part of a custom box. See the [Vagrant documentation](http://docs.vagrantup.com/v2/boxes.html)
 and the Vagrant [AWS provider](https://github.com/mitchellh/vagrant-aws/tree/master/example_box) for more information and an example.
 
+### Supported Commands
+
+Currently the only implemented actions are `up`, `destroy`, and `ssh`.
+
+`up` does not yet support provisioning of the new VM.
+
+
 ## Configuration
 
 This provider has the following settings, all are required unless noted:
