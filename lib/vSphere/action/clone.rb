@@ -41,15 +41,9 @@ module VagrantPlugins
           
           # wait for SSH to be available 
           env[:ui].info(I18n.t("vsphere.waiting_for_ssh"))
-          tries = 0
-          while true
-            # if we can't connect to SSH after 2 minutes, raise an error
-            raise Errors::VSphereError, :message => 'Unable to communicate with the new machine via SSH' if tries > 24
-            
-            # wait for 5 seconds
-            sleep 5
+          while true                        
             break if env[:machine].communicate.ready?
-            tries += 1
+            sleep 5
           end
           env[:ui].info I18n.t('vsphere.vm_clone_success')          
             

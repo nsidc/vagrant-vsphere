@@ -24,9 +24,9 @@ module VagrantPlugins
               b2.use MessageNotCreated
               next
             end
-
+            
             b2.use Provision
-            b2.use SyncFolders
+            b2.use SyncFolders            
           end
         end
       end
@@ -59,7 +59,8 @@ module VagrantPlugins
           end
             
           b.use CloseVSphere 
-          b.use SyncFolders
+          b.use Provision          
+          b.use SyncFolders          
         end
       end
 
