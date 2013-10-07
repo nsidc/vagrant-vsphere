@@ -43,20 +43,20 @@ This can be installed using the standard Vagrant methods or specified in the Vag
 
 After creating the dummy box, make a Vagrantfile that looks like the following:
 
-```
+```ruby
 Vagrant.configure("2") do |config|
   config.vm.box = 'dummy'
   config.vm.box_url = './example_box/dummy.box'
 
   config.vm.provider :vsphere do |vsphere|
-      vsphere.host = 'HOST NAME OF YOUR VSPHERE INSTANCE'
-      vsphere.compute_resource_name = 'YOUR COMPUTE RESOURCE'
-      vsphere.resource_pool_name = 'YOUR RESOURCE POOL'
-      vsphere.template_name = 'YOUR VM TEMPLATE'
-      vsphere.name = 'NEW VM NAME'
-      vsphere.user = 'YOUR VMWARE USER'
-      vsphere.password = 'YOUR VMWARE PASSWORD'
-    end
+    vsphere.host = 'HOST NAME OF YOUR VSPHERE INSTANCE'
+    vsphere.compute_resource_name = 'YOUR COMPUTE RESOURCE'
+    vsphere.resource_pool_name = 'YOUR RESOURCE POOL'
+    vsphere.template_name = 'YOUR VM TEMPLATE'
+    vsphere.name = 'NEW VM NAME'
+    vsphere.user = 'YOUR VMWARE USER'
+    vsphere.password = 'YOUR VMWARE PASSWORD'
+  end
 end
 ```
 
