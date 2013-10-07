@@ -41,7 +41,7 @@ This can be installed using the standard Vagrant methods or specified in the Vag
 
 After creating the dummy box, make a Vagrantfile that looks like the following:
 
-```
+```ruby
 Vagrant.configure("2") do |config|
   config.vm.box = 'dummy'
   config.vm.box_url = './example_box/dummy.box'
