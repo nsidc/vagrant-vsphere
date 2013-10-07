@@ -26,6 +26,7 @@ module VagrantPlugins
             end
 
             b2.use Provision
+            b2.use SyncFolders
           end
         end
       end
@@ -44,20 +45,6 @@ module VagrantPlugins
         end
       end
 
-      def self.action_ssh_run
-        Vagrant::Action::Builder.new.tap do |b|
-          b.use ConfigValidate
-          b.use Call, IsCreated do |env, b2|
-            if !env[:result]
-              b2.use MessageNotCreated
-              next
-            end
-
-            b2.use SSHRun
-          end
-        end
-      end
-
 	    def self.action_up
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
@@ -68,10 +55,11 @@ module VagrantPlugins
               next
             end
 
-            b2.use Clone
-            #TODO: provision
+            b2.use Clone 
           end
-          b.use CloseVSphere
+            
+          b.use CloseVSphere 
+          b.use SyncFolders
         end
       end
 
@@ -106,6 +94,7 @@ module VagrantPlugins
       autoload :MessageAlreadyCreated, action_root.join('message_already_created')
       autoload :MessageNotCreated, action_root.join('message_not_created')
       autoload :PowerOff, action_root.join('power_off')
+      autoload :SyncFolders, action_root.join('sync_folders')
     end
   end
 end

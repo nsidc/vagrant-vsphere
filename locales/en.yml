@@ -2,6 +2,8 @@ en:
   vsphere:
     creating_cloned_vm: |-
       Calling vSphere CloneVM with the following settings:
+    vm_clone_success: |-
+      New virtual machine successfully cloned and started
     destroy_vm: |-
       Calling vShpere Destroy
     power_off_vm: |-
@@ -10,6 +12,10 @@ en:
       The VM is already created
     vm_not_created: |-
       The VM has not been created
+    waiting_for_ssh: |-
+      Waiting for SSH to become available...
+    rsync_folder: |-
+      Rsyncing folder: %{hostpath} => %{guestpath}
   errors:
     missing_template: |-
       Configured template VM could not be found
@@ -19,6 +25,13 @@ en:
       Configured compute resource not found
     missing_resource_pool: |-
       Configured resource pool not found
+    rsync_error: |-
+      There was an error when attemping to rsync a share folder.
+      Please inspect the error message below for more info.
+
+      Host path: %{hostpath}
+      Guest path: %{guestpath}
+      Error: %{stderr}
   config:
     host: |-
       Configuration must specify a vSphere host

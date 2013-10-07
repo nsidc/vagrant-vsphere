@@ -20,6 +20,8 @@ gem build vShpere.gemspec
 gem install vagrant-vsphere-VERSION.gem
 ```
 
+Replace VERSION with the current version of the gem.
+
 ## Installation
 
 Install using standard Vagrant plugin method:
