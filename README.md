@@ -71,7 +71,7 @@ and the Vagrant [AWS provider](https://github.com/mitchellh/vagrant-aws/tree/mas
 
 Currently the only implemented actions are `up`, `destroy`, and `ssh`.
 
-`up` does not yet support provisioning of the new VM.
+`up` supports provisioning of the new VM with the standard Vagrant provisioners.
 
 
 ## Configuration
@@ -91,6 +91,9 @@ This provider has the following settings, all are required unless noted:
 ## Version History
 * 0.0.1
   * Initial release
+* 0.1.0
+  * Add folder syncing with guest OS
+  * Add provisoning
 
 ## Versioning
 
