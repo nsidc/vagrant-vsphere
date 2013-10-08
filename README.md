@@ -16,7 +16,7 @@ This provider is built on top of the [RbVmomi](https://github.com/rlane/rbvmomi)
 The gem needs to be built and installed before the provider can be added to Vagrant:
 
 ```
-gem build vShpere.gemspec
+gem build vSphere.gemspec
 gem install vagrant-vsphere-VERSION.gem
 ```
 
