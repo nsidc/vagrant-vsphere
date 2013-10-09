@@ -13,14 +13,11 @@ This provider is built on top of the [RbVmomi](https://github.com/rlane/rbvmomi)
 
 ## Building the gem
 
-The gem needs to be built and installed before the provider can be added to Vagrant:
+The gem needs to be built before the provider can be added to Vagrant:
 
 ```
 gem build vShpere.gemspec
-gem install vagrant-vsphere-VERSION.gem
 ```
-
-Replace VERSION with the current version of the gem.
 
 ## Installation
 
@@ -29,6 +26,8 @@ Install using standard Vagrant plugin method:
 ```
 $ vagrant plugin install vagrant-vsphere
 ```
+
+This command needs to be run in vagrant-vsphere build directory so that vagrant can find the gem.
 
 ## Usage
 
