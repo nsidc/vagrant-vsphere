@@ -45,7 +45,7 @@ module VagrantPlugins
         end
       end
 
-	    def self.action_up
+      def self.action_up
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectVSphere
@@ -61,6 +61,14 @@ module VagrantPlugins
           b.use CloseVSphere 
           b.use Provision          
           b.use SyncFolders          
+        end
+      end
+
+      def self.action_halt
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use ConnectVSphere
+          b.use PowerOff
         end
       end
 

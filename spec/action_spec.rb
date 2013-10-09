@@ -65,6 +65,19 @@ describe VagrantPlugins::VSphere::Action do
     end
   end
 
+  describe 'halt' do
+    def run_halt
+        @env[:machine].stub(:id).and_return(EXISTING_UUID)
+        run :halt
+    end
+
+    it 'should power off the VM' do
+     VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
+
+     run_halt
+    end
+  end
+
   describe 'get state' do
     def run_get_state
       run :get_state
