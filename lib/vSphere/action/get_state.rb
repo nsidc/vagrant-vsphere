@@ -1,11 +1,11 @@
 require 'rbvmomi'
-require 'vSphere/action/vim_helpers'
+require 'vSphere/util/vim_helpers'
 
 module VagrantPlugins
   module VSphere
     module Action
       class GetState
-        include VimHelpers
+        include Util::VimHelpers
 
         # the three possible values of a vSphere VM's power state
         POWERED_ON = 'poweredOn'

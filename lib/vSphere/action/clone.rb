@@ -1,12 +1,14 @@
 require 'rbvmomi'
 require 'i18n'
-require 'vSphere/action/vim_helpers'
+require 'vSphere/util/vim_helpers'
+require 'vSphere/util/machine_helpers'
 
 module VagrantPlugins
   module VSphere
     module Action
       class Clone
-        include VimHelpers
+        include Util::VimHelpers
+        include Util::MachineHelpers
 
         def initialize(app, env)
           @app = app
@@ -40,11 +42,8 @@ module VagrantPlugins
           machine.id = new_vm.config.uuid
           
           # wait for SSH to be available 
-          env[:ui].info(I18n.t("vsphere.waiting_for_ssh"))
-          while true                        
-            break if env[:machine].communicate.ready?
-            sleep 5
-          end
+          wait_for_ssh env
+          
           env[:ui].info I18n.t('vsphere.vm_clone_success')          
             
           @app.call env

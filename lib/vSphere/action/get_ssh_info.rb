@@ -1,11 +1,11 @@
 require 'rbvmomi'
-require 'vSphere/action/vim_helpers'
+require 'vSphere/util/vim_helpers'
 
 module VagrantPlugins
   module VSphere
     module Action
       class GetSshInfo
-        include VimHelpers
+        include Util::VimHelpers
 
 
         def initialize(app, env)

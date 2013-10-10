@@ -1,4 +1,3 @@
-require 'rspec-spies'
 require 'rbvmomi'
 require 'vSphere/errors'
 require 'vSphere/action'
@@ -28,7 +27,7 @@ RSpec.configure do |config|
       described_class.new(@app, @env).call(@env)
     end
 
-    config = double(
+    provider_config = double(
         :host => 'testhost.com',
         :user => 'testuser',
         :password => 'testpassword',
@@ -39,14 +38,21 @@ RSpec.configure do |config|
         :name => NAME,
         :insecure => true,
         :validate => [])
+    vm_config = double(
+      :vm => double('config_vm', :synced_folders => [], :provisioners => []),
+      :validate => []
+    )
     @app = double 'app', :call => true
+    @machine = double 'machine',
+                      :provider_config => provider_config,
+                      :config => vm_config,
+                      :state => double('state', :id => nil),
+                      :communicate => double('communicator', :ready? => true),
+                      :ssh_info => {},
+                      :id => nil,
+                      :id= => nil
     @env = {
-        :machine => double('machine',
-                           :provider_config => config,
-                           :config => config,
-                           :state => double('state', :id => nil),
-                           :id => nil,
-                           :id= => nil),
+        :machine => @machine,
         :ui => double('ui', :info => nil)
     }
 
@@ -54,11 +60,13 @@ RSpec.configure do |config|
                  :runtime => double('runtime', :powerState => nil),
                  :guest => double('guest', :ipAddress => IP_ADDRESS),
                  :Destroy_Task => double('result', :wait_for_completion => nil),
-                 :PowerOffVM_Task => double('result', :wait_for_completion => nil))
+                 :PowerOffVM_Task => double('result', :wait_for_completion => nil),
+                 :PowerOnVM_Task => double('result', :wait_for_completion => nil))
 
     vm_folder = double('vm_folder')
     vm_folder.stub(:findByUuid).with(EXISTING_UUID).and_return(@vm)
     vm_folder.stub(:findByUuid).with(MISSING_UUID).and_return(nil)
+    vm_folder.stub(:findByUuid).with(nil).and_return(nil)
 
     @data_center = double('data_center',
                           :vmFolder => vm_folder,

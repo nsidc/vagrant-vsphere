@@ -24,20 +24,21 @@ module VagrantPlugins
       def self.action_provision
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
-          b.use Call, IsRunning do |env, b2|
-            if !env[:result]
-              b2.use MessageNotRunning
-              next
-            end
-          end
           b.use Call, IsCreated do |env, b2|
             if !env[:result]
               b2.use MessageNotCreated
               next
             end
             
-            b2.use Provision
-            b2.use SyncFolders            
+            b2.use Call, IsRunning do |env, b3|
+              if !env[:result]
+                b3.use MessageNotRunning
+                next       
+              end
+              
+              b3.use Provision
+              b3.use SyncFolders 
+            end        
           end
         end
       end
@@ -45,19 +46,20 @@ module VagrantPlugins
       def self.action_ssh
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
-          b.use Call, IsRunning do |env, b2|
-            if !env[:result]
-              b2.use MessageNotRunning
-              next
-            end
-          end
           b.use Call, IsCreated do |env, b2|
             if !env[:result]
               b2.use MessageNotCreated
               next
             end
-
-            b2.use SSHExec
+            
+            b2.use Call, IsRunning do |env, b3|
+              if !env[:result]
+                b3.use MessageNotRunning
+                next
+              end
+              
+              b3.use SSHExec
+            end
           end
         end
       end
@@ -90,13 +92,22 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectVSphere
-          b.use Call, IsRunning do |env, b2|
+          b.use Call, IsCreated do |env, b2|
             if !env[:result]
-              b2.use MessageNotRunning
+              b2.use MessageNotCreated
               next
             end
+            
+            b2.use Call, IsRunning do |env, b3|
+              if !env[:result]
+                b3.use MessageNotRunning
+                next
+              end
+              
+              b3.use PowerOff
+            end
           end
-          b.use PowerOff
+          b.use CloseVSphere
         end
       end
 

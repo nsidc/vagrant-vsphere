@@ -7,7 +7,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
 
   it 'should create a CloneVM task' do
     call
-
+    
     @template.should have_received(:CloneVM_Task).with({
       :folder => @data_center,
       :name => NAME,

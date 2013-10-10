@@ -5,6 +5,10 @@ describe VagrantPlugins::VSphere::Action do
   def run(action)
     Vagrant::Action::Runner.new.run described_class.send("action_#{action}"), @env
   end
+  
+  before :each do
+    @machine.stub(:id).and_return(EXISTING_UUID)
+  end
 
   describe 'up' do
     def run_up
@@ -24,7 +28,7 @@ describe VagrantPlugins::VSphere::Action do
     end
 
     it 'should create the VM when the VM does already not exist' do
-      @env[:machine].state.stub(:id).and_return(:not_created)
+      @machine.state.stub(:id).and_return(:not_created)
 
       VagrantPlugins::VSphere::Action::Clone.any_instance.should_receive(:call)
 
@@ -32,7 +36,7 @@ describe VagrantPlugins::VSphere::Action do
     end
 
     it 'should not create the VM when the VM already exists' do
-      @env[:machine].state.stub(:id).and_return(:running)
+      @machine.state.stub(:id).and_return(:running)
 
       VagrantPlugins::VSphere::Action::Clone.any_instance.should_not_receive(:call)
 
@@ -42,7 +46,6 @@ describe VagrantPlugins::VSphere::Action do
 
   describe 'destroy' do
     def run_destroy
-      @env[:machine].stub(:id).and_return(EXISTING_UUID)
       run :destroy
     end
 
@@ -66,15 +69,12 @@ describe VagrantPlugins::VSphere::Action do
   end
 
   describe 'halt' do
-    def run_halt
-        @env[:machine].stub(:id).and_return(EXISTING_UUID)
-        run :halt
-    end
-
     it 'should power off the VM' do
-     VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
+      @machine.state.stub(:id).and_return(:running)
+      
+      VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
 
-     run_halt
+      run :halt
     end
   end
 

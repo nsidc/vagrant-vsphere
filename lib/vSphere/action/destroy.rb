@@ -1,12 +1,12 @@
 require 'rbvmomi'
 require 'i18n'
-require 'vSphere/action/vim_helpers'
+require 'vSphere/util/vim_helpers'
 
 module VagrantPlugins
   module VSphere
     module Action
       class Destroy
-        include VimHelpers
+        include Util::VimHelpers
 
         def initialize(app, env)
           @app = app
@@ -19,6 +19,8 @@ module VagrantPlugins
           @app.call env
         end
 
+        private 
+        
         def destroy_vm(env)
           vm = get_vm_by_uuid env[:vSphere_connection], env[:machine]
           return if vm.nil?

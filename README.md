@@ -93,6 +93,8 @@ This provider has the following settings, all are required unless noted:
 * 0.1.0
   * Add folder syncing with guest OS
   * Add provisoning
+* 0.2.0
+  * Merge halt action from [Anton Lšfgren](https://github.com/catharsis)
 
 ## Versioning
 
