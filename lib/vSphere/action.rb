@@ -78,7 +78,6 @@ module VagrantPlugins
           end
           b.use Call, IsRunning do |env, b2|
             if !env[:result]
-              b2.use MessageNotRunning
               b2.use PowerOn
             end
           end
