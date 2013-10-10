@@ -8,10 +8,14 @@ en:
       Calling vShpere Destroy
     power_off_vm: |-
       Calling vSphere PowerOff
+    power_on_vm: |-
+      Calling vSphere PowerOn
     vm_already_created: |-
       The VM is already created
     vm_not_created: |-
       The VM has not been created
+    vm_not_running: |-
+      The VM is not running
     waiting_for_ssh: |-
       Waiting for SSH to become available...
     rsync_folder: |-
