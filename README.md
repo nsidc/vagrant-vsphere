@@ -68,7 +68,7 @@ and the Vagrant [AWS provider](https://github.com/mitchellh/vagrant-aws/tree/mas
 
 ### Supported Commands
 
-Currently the only implemented actions are `up`, `destroy`, and `ssh`.
+Currently the only implemented actions are `up`, `halt`, `destroy`, and `ssh`.
 
 `up` supports provisioning of the new VM with the standard Vagrant provisioners.
 
