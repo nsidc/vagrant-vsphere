@@ -13,6 +13,7 @@ module VagrantPlugins
       attr_accessor :template_name
       attr_accessor :name
       attr_accessor :customization_spec_name
+      attr_accessor :data_store_name
 
       def validate(machine)
         errors = _detected_errors

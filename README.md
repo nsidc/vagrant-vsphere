@@ -95,6 +95,7 @@ This provider has the following settings, all are required unless noted:
 * `template_name` - the VM template to clone
 * `name` - name of the new VM
 * `customization_spec_name` - _Optional_ customization spec for the new VM
+* `data_store_name` - _Optional_ the datastore where the VM will be located
 
 ## Version History
 * 0.0.1
@@ -107,6 +108,8 @@ This provider has the following settings, all are required unless noted:
 * 0.3.0
   * Lock Nokogiri version at 1.5.10 to prevent library conflicts
   * Add support for customization specs
+* 0.4.0
+  * Add support for specifying datastore location for new VMs
 
 ## Versioning
 

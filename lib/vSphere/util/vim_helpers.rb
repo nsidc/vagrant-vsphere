@@ -17,16 +17,19 @@ module VagrantPlugins
           cr.resourcePool.find(machine.provider_config.resource_pool_name) or fail Errors::VSphereError, :message => I18n.t('errors.missing_resource_pool')
         end
         
-        def get_customization_spec_info_by_name(connection, name)
+        def get_customization_spec_info_by_name(connection, machine)
+          name = machine.provider_config.customization_spec_name
           return if name.nil? || name.empty?
           
-          manager = connection.serviceContent.customizationSpecManager
-          raise Errors::VSphereError, :message => I18n.t('errors.null_configuration_spec_manager') if manager.nil?    
+          manager = connection.serviceContent.customizationSpecManager or fail Errors::VSphereError, :message => I18n.t('errors.null_configuration_spec_manager') if manager.nil?            
+          spec = manager.GetCustomizationSpec(:name => name) or fail Errors::VSphereError, :message => I18n.t('errors.missing_configuration_spec') if spec.nil?
+        end
+        
+        def get_datastore(connection, machine)
+          name = machine.provider_config.data_store_name
+          return if name.nil? || name.empty?
           
-          spec = manager.GetCustomizationSpec :name => name 
-          raise Errors::VSphereError, :message => I18n.t('errors.missing_configuration_spec') if spec.nil?
-          
-          spec
+          get_datacenter(connection, machine).find_datastore name or fail Errors::VSphereError, :message => I18n.t('errors.missing_datastore')
         end
       end
     end

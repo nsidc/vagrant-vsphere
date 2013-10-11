@@ -38,7 +38,8 @@ RSpec.configure do |config|
         :name => NAME,
         :insecure => true,
         :validate => [],
-        :customization_spec_name => nil)
+        :customization_spec_name => nil,
+        :data_store_name => nil)
     vm_config = double(
       :vm => double('config_vm', :synced_folders => [], :provisioners => []),
       :validate => []
