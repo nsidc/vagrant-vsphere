@@ -29,6 +29,10 @@ en:
       Configured compute resource not found
     missing_resource_pool: |-
       Configured resource pool not found
+    null_configuration_spec_manager: |-
+      Configuration spec manager not configured in the ServiceInstance
+    missing_configuration_spec: |-
+      Configured configuration spec not found
     rsync_error: |-
       There was an error when attemping to rsync a share folder.
       Please inspect the error message below for more info.

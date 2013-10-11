@@ -11,6 +11,8 @@ Gem::Specification.new do |s|
   s.summary = 'VMWare vSphere provider'
   s.description = 'Enables Vagrant to manage machines with VMWare vSphere.'
   
+  # force the use of Nokogiri 1.5.10 to prevent conflicts with older versions of zlib
+  s.add_dependency 'nokogiri', '1.5.10'
   s.add_dependency 'rbvmomi'
   s.add_dependency 'i18n', '~> 0.6.4'
 

@@ -12,6 +12,7 @@ module VagrantPlugins
       attr_accessor :resource_pool_name
       attr_accessor :template_name
       attr_accessor :name
+      attr_accessor :customization_spec_name
 
       def validate(machine)
         errors = _detected_errors

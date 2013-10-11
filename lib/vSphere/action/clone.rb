@@ -27,6 +27,9 @@ module VagrantPlugins
           begin
             location = RbVmomi::VIM.VirtualMachineRelocateSpec :pool => get_resource_pool(connection, machine)
             spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => location, :powerOn => true, :template => false
+            
+            spec_info = get_customization_spec_info_by_name connection, config.customization_spec_name
+            spec[:customization] = spec_info.spec unless spec_info.nil?
 
             env[:ui].info I18n.t('vsphere.creating_cloned_vm')
             env[:ui].info " -- Template VM: #{config.template_name}"
@@ -34,6 +37,7 @@ module VagrantPlugins
 
             new_vm = template.CloneVM_Task(:folder => template.parent, :name => config.name, :spec => spec).wait_for_completion
           rescue Exception => e
+            puts e.message
             raise Errors::VSphereError, :message => e.message
           end
 

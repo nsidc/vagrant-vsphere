@@ -10,6 +10,7 @@ This provider is built on top of the [RbVmomi](https://github.com/rlane/rbvmomi)
 * Vagrant 1.2+
 * VMware + vSphere API
 * Ruby 1.9+
+* libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Building the gem
 
@@ -28,6 +29,13 @@ $ vagrant plugin install vagrant-vsphere
 ```
 
 This command needs to be run in vagrant-vsphere build directory so that vagrant can find the gem.
+
+### Potential Intallation Problems
+
+The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for 
+detailed instructions. 
+
+The plugin forces use of Nokogiri 1.5.10 to prevent conflicts with older versions of system libraries, specifically zlib.
 
 ## Usage
 
@@ -86,6 +94,7 @@ This provider has the following settings, all are required unless noted:
 * `resource_pool_name` - the resource pool for the new VM
 * `template_name` - the VM template to clone
 * `name` - name of the new VM
+* `customization_spec_name` - _Optional_ customization spec for the new VM
 
 ## Version History
 * 0.0.1
@@ -95,6 +104,9 @@ This provider has the following settings, all are required unless noted:
   * Add provisoning
 * 0.2.0
   * Merge halt action from [catharsis](https://github.com/catharsis)
+* 0.3.0
+  * Lock Nokogiri version at 1.5.10 to prevent library conflicts
+  * Add support for customization specs
 
 ## Versioning
 
