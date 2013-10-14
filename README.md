@@ -4,7 +4,7 @@ This is a [Vagrant](http://www.vagrantup.com) 1.2+ plugin that adds a [vSphere](
 provider to Vagrant, allowing Vagrant to control and provision machines using VMware. New machines are created from VMware templates which must be configured prior to using using
 this provider.
 
-This provider is built on top of the [RbVmomi](https://github.com/rlane/rbvmomi) Ruby interface to the vSphere API.
+This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi) Ruby interface to the vSphere API.
 
 ## Requirements
 * Vagrant 1.2+
