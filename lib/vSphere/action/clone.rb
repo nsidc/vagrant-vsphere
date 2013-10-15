@@ -32,8 +32,16 @@ module VagrantPlugins
             spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => location, :powerOn => true, :template => false
             
             customization = get_customization_spec_info_by_name connection, machine
-            spec[:customization] = customization.spec unless customization.nil?
-
+            if customization != nil
+              spec[:customization] = customization.spec
+              machine.config.vm.networks.each do |type, options|
+                if type == :private_network
+                  env[:ui].info "IP address will be set to #{options[:ip]} for private network when customizing guest"
+                  spec[:customization].nicSettingMap[0].adapter.ip.ipAddress = options[:ip]
+                end
+              end
+            end
+            
             env[:ui].info I18n.t('vsphere.creating_cloned_vm')
             env[:ui].info " -- Template VM: #{config.template_name}"
             env[:ui].info " -- Name: #{config.name}"
