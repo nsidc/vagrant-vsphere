@@ -25,7 +25,11 @@ module VagrantPlugins
           raise Error::VSphereError, :message => I18n.t('errors.missing_template') if template.nil?
 
           begin
-            location = RbVmomi::VIM.VirtualMachineRelocateSpec :pool => get_resource_pool(connection, machine)
+            if not config.clone_from_vm
+              location = RbVmomi::VIM.VirtualMachineRelocateSpec :pool => get_resource_pool(connection, machine)
+            else
+              location = RbVmomi::VIM.VirtualMachineRelocateSpec
+            end
             datastore = get_datastore connection, machine
             location[:datastore] = datastore unless datastore.nil?
             
@@ -35,7 +39,7 @@ module VagrantPlugins
             spec[:customization] = customization.spec unless customization.nil?
 
             env[:ui].info I18n.t('vsphere.creating_cloned_vm')
-            env[:ui].info " -- Template VM: #{config.template_name}"
+            env[:ui].info " -- #{config.clone_from_vm ? "Source" : "Template"} VM: #{config.template_name}"
             env[:ui].info " -- Name: #{config.name}"
 
             new_vm = template.CloneVM_Task(:folder => template.parent, :name => config.name, :spec => spec).wait_for_completion
