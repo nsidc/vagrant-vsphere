@@ -11,13 +11,10 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * Ruby 1.9+
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
-## Building the gem
+## Current Version
+**0.5.0**
 
-The gem needs to be built before the provider can be added to Vagrant:
-
-```
-gem build vSphere.gemspec
-```
+vagrant-vsphere (0.5.0) is available from [RubyGems.org](https://rubygems.org/)
 
 ## Installation
 
@@ -27,7 +24,10 @@ Install using standard Vagrant plugin method:
 $ vagrant plugin install vagrant-vsphere
 ```
 
-This command needs to be run in vagrant-vsphere build directory so that vagrant can find the gem.
+This will install the plugin from RubGems.org.
+
+Alternatively, you can clone this repository and build the source with `gem build vSphere.gemspec`.
+After the gem is built, run the plugin install command from the build directory.
 
 ### Potential Intallation Problems
 
@@ -139,6 +139,15 @@ This plugin follows the principles of [Semantic Versioning 2.0.0](http://semver.
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+### Unit Tests
+
+Please run the unit tests to verify your changes. To do this simply run `rake`.
+
+
+If you don't have rake installed, first install [bundler](http://bundler.io/) and run `bundle install`.
+
+
 
 ## License
 
