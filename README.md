@@ -1,8 +1,7 @@
 # Vagrant vSphere Provider
 
 This is a [Vagrant](http://www.vagrantup.com) 1.2+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
-provider to Vagrant, allowing Vagrant to control and provision machines using VMware. New machines are created from VMware templates which must be configured prior to using using
-this provider.
+provider to Vagrant, allowing Vagrant to control and provision machines using VMware. New machines are created from virtual machines or templates which must be configured prior to using using this provider.
 
 This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi) Ruby interface to the vSphere API.
 
@@ -111,6 +110,9 @@ This provider has the following settings, all are required unless noted:
   * Add support for customization specs
 * 0.4.0
   * Add support for specifying datastore location for new VMs
+* 0.5.0
+  * Allow setting static ip addresses using Vagrant private networks
+  * Allow cloning from VM or template
 
 ## Versioning
 

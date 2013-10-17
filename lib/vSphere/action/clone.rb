@@ -25,11 +25,9 @@ module VagrantPlugins
           raise Error::VSphereError, :message => I18n.t('errors.missing_template') if template.nil?
 
           begin
-            if not config.clone_from_vm
-              location = RbVmomi::VIM.VirtualMachineRelocateSpec :pool => get_resource_pool(connection, machine)
-            else
-              location = RbVmomi::VIM.VirtualMachineRelocateSpec
-            end
+            location = RbVmomi::VIM.VirtualMachineRelocateSpec
+            location[:pool] = get_resource_pool(connection, machine) unless config.clone_from_vm
+            
             datastore = get_datastore connection, machine
             location[:datastore] = datastore unless datastore.nil?
             
