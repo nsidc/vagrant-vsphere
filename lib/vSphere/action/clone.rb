@@ -32,15 +32,7 @@ module VagrantPlugins
             spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => location, :powerOn => true, :template => false
             
             customization = get_customization_spec_info_by_name connection, machine
-            if customization != nil
-              spec[:customization] = customization.spec
-              machine.config.vm.networks.each do |type, options|
-                if type == :private_network
-                  env[:ui].info "IP address will be set to #{options[:ip]} for private network when customizing guest"
-                  spec[:customization].nicSettingMap[0].adapter.ip.ipAddress = options[:ip]
-                end
-              end
-            end
+            spec[:customization] = configure_networks(customization.spec, machine) unless customization.nil?
             
             env[:ui].info I18n.t('vsphere.creating_cloned_vm')
             env[:ui].info " -- Template VM: #{config.template_name}"
@@ -62,6 +54,26 @@ module VagrantPlugins
           env[:ui].info I18n.t('vsphere.vm_clone_success')          
             
           @app.call env
+        end
+        
+        private
+        
+        def configure_networks(spec, machine)
+          customization_spec = spec.clone
+          
+          # find all the configured private networks
+          private_networks = machine.config.vm.networks.find_all { |n| n[0].eql? :private_network }
+          return customization_spec if private_networks.nil?
+          
+          # make sure we have enough NIC settings to override with the private network settings
+          raise Error::VSphereError, :message => I18n.t('errors.too_many_private_networks') if private_networks.length > customization_spec.nicSettingMap.length
+          
+          # assign the private network IP to the NIC
+          private_networks.each_index do |idx|
+            customization_spec.nicSettingMap[idx].adapter.ip.ipAddress = private_networks[idx][1][:ip]  
+          end
+          
+          customization_spec
         end
       end
     end

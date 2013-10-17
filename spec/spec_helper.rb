@@ -41,7 +41,7 @@ RSpec.configure do |config|
         :customization_spec_name => nil,
         :data_store_name => nil)
     vm_config = double(
-      :vm => double('config_vm', :synced_folders => [], :provisioners => []),
+      :vm => double('config_vm', :synced_folders => [], :provisioners => [], :networks => [[:private_network, {:ip => '0.0.0.0'}]]),
       :validate => []
     )
     @app = double 'app', :call => true
@@ -82,8 +82,12 @@ RSpec.configure do |config|
     @data_center.stub(:find_vm).with(TEMPLATE).and_return(@template)
 
     service_instance = double 'service_instance', :find_datacenter => @data_center
-
-    @vim = double 'vim', :serviceInstance => service_instance, :close => true
+    @ip = double 'ip', :ipAddress= => nil 
+    customization_spec = double 'customization spec', :nicSettingMap => [double('nic setting', :adapter => double('adapter', :ip => @ip))]
+    customization_spec.stub(:clone).and_return(customization_spec)
+    customization_spec_manager = double 'customization spec manager', :GetCustomizationSpec => double('spec info', :spec => customization_spec)
+    service_content = double 'service content', :customizationSpecManager => customization_spec_manager
+    @vim = double 'vim', :serviceInstance => service_instance, :close => true, :serviceContent => service_content
 
     VIM.stub(:connect).and_return(@vim)
     VIM.stub(:VirtualMachineRelocateSpec).and_return({})

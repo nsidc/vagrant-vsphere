@@ -42,6 +42,8 @@ en:
       Host path: %{hostpath}
       Guest path: %{guestpath}
       Error: %{stderr}
+    too_many_private_networks: |-
+      There a more private networks configured than can be assigned to the customization spec
   config:
     host: |-
       Configuration must specify a vSphere host
