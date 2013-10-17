@@ -22,7 +22,7 @@ en:
       Rsyncing folder: %{hostpath} => %{guestpath}
   errors:
     missing_template: |-
-      Configured template VM could not be found
+      Configured template/source VM could not be found
     missing_datacenter: |-
       Configured data center not found
     missing_compute_resource: |-

@@ -10,6 +10,7 @@ module VagrantPlugins
       attr_accessor :data_center_name
       attr_accessor :compute_resource_name
       attr_accessor :resource_pool_name
+      attr_accessor :clone_from_vm
       attr_accessor :template_name
       attr_accessor :name
       attr_accessor :customization_spec_name
@@ -23,9 +24,11 @@ module VagrantPlugins
         errors <<  I18n.t('config.user') if user.nil?
         errors <<  I18n.t('config.password') if password.nil?
         errors <<  I18n.t('config.name') if name.nil?
-        errors<<  I18n.t('config.template') if template_name.nil?
-        errors << I18n.t('config.compute_resource') if compute_resource_name.nil?
-        errors << I18n.t('config.resource_pool') if resource_pool_name.nil?
+        errors <<  I18n.t('config.template') if template_name.nil?
+
+        #These are only required if we're cloning from an actual template
+        errors << I18n.t('config.compute_resource') if compute_resource_name.nil? and not clone_from_vm
+        errors << I18n.t('config.resource_pool') if resource_pool_name.nil? and not clone_from_vm
 
         { 'vSphere Provider' => errors }
       end
