@@ -97,6 +97,20 @@ This provider has the following settings, all are required unless noted:
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
 
+### Cloning from a VM rather than a template
+
+To clone from an existing VM rather than a template, set `clone_from_vm` to true. If this value is set, `compute_resource_name` and `resource_pool_name` not required.
+
+### Setting a static IP address
+
+To set a static IP, add a private network to your vagrant file:
+
+```ruby
+config.vm.network 'private_network', ip: '192.168.50.4'
+```
+
+The IP address will only be set if a customization spec name is given. The customization spec must have network adapter settings configured. For each private network specified, there needs to be a corresponding network adapter in the customization spec. An error  will be thrown if there are more networks than adapters.
+
 ## Version History
 * 0.0.1
   * Initial release
