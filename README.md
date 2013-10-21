@@ -99,7 +99,7 @@ This provider has the following settings, all are required unless noted:
 
 ### Cloning from a VM rather than a template
 
-To clone from an existing VM rather than a template, set `clone_from_vm` to true. If this value is set, `compute_resource_name` and `resource_pool_name` not required.
+To clone from an existing VM rather than a template, set `clone_from_vm` to true. If this value is set, `compute_resource_name` and `resource_pool_name` are not required.
 
 ### Setting a static IP address
 
