@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.5.0**
+**0.5.1**
 
-vagrant-vsphere (0.5.0) is available from [RubyGems.org](https://rubygems.org/)
+vagrant-vsphere (0.5.1) is available from [RubyGems.org](https://rubygems.org/)
 
 ## Installation
 
@@ -127,6 +127,8 @@ The IP address will only be set if a customization spec name is given. The custo
 * 0.5.0
   * Allow setting static ip addresses using Vagrant private networks
   * Allow cloning from VM or template
+* 0.5.1
+  * fix rsync on Windows, adapted from [mitchellh/vagrant-aws#77](https://github.com/mitchellh/vagrant-aws/pull/77)
 
 ## Versioning
 
