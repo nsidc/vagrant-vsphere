@@ -63,6 +63,27 @@ module VagrantPlugins
           end
         end
       end
+      
+      def self.action_ssh_run
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use Call, IsCreated do |env, b2|
+            if !env[:result]
+              b2.use MessageNotCreated
+              next
+            end
+
+            b2.use Call, IsRunning do |env, b3|
+              if !env[:result]
+                b3.use MessageNotRunning
+                next
+              end
+              
+              b3.use SSHRun
+            end
+          end
+        end
+      end
 
       def self.action_up
         Vagrant::Action::Builder.new.tap do |b|
