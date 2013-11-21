@@ -129,6 +129,8 @@ The IP address will only be set if a customization spec name is given. The custo
   * Allow cloning from VM or template
 * 0.5.1
   * fix rsync on Windows, adapted from [mitchellh/vagrant-aws#77](https://github.com/mitchellh/vagrant-aws/pull/77)
+* 0.6.0
+  * add support for the `vagrant ssh -c` command
 
 ## Versioning
 
