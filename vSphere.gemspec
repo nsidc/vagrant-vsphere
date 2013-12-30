@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   
   # force the use of Nokogiri 1.5.10 to prevent conflicts with older versions of zlib
   s.add_dependency 'nokogiri', '1.5.10'
-  s.add_dependency 'rbvmomi'
+  s.add_dependency 'rbvmomi', '1.6.0'
   s.add_dependency 'i18n', '~> 0.6.4'
 
   s.add_development_dependency 'rake'
