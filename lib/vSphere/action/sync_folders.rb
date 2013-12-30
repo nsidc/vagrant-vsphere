@@ -51,11 +51,17 @@ module VagrantPlugins
             env[:machine].communicate.sudo(
               "chown #{ssh_info[:username]} '#{guestpath}'")
 
+            # Check if private_key_path is an array and if it is return the first result when it exists.
+            keypath = if ssh_info[:private_key_path].kind_of?(Array) && !ssh_info[:private_key_path].empty?
+                        then ssh_info[:private_key_path][0]
+                        else ssh_info[:private_key_path]
+                      end
+
             # Rsync over to the guest path using the SSH info
             command = [
               "rsync", "--verbose", "--archive", "-z",
               "--exclude", ".vagrant/",
-              "-e", "ssh -p #{ssh_info[:port]} -o StrictHostKeyChecking=no -i '#{ssh_info[:private_key_path]}'",
+              "-e", "ssh -p #{ssh_info[:port]} -o StrictHostKeyChecking=no -i '#{keypath}'",
               hostpath,
               "#{ssh_info[:username]}@#{ssh_info[:host]}:#{guestpath}"]
             
