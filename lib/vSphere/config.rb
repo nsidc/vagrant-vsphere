@@ -24,7 +24,12 @@ module VagrantPlugins
         errors << I18n.t('config.host') if host.nil?
         errors <<  I18n.t('config.user') if user.nil?
         errors <<  I18n.t('config.password') if password.nil?
-        errors <<  I18n.t('config.name') if name.nil?
+        if name.nil?
+          prefix = "#{machine.name}"
+          prefix.gsub!(/[^-a-z0-9_]/i, "")
+          # milliseconds + random number suffix to allow for simultaneous `vagrant up` of the same box in different dirs
+          machine.provider_config.name = prefix + "_#{(Time.now.to_f * 1000.0).to_i}_#{rand(100000)}"
+        end
         errors <<  I18n.t('config.template') if template_name.nil?
 
         #These are only required if we're cloning from an actual template
