@@ -48,24 +48,13 @@ module VagrantPlugins
             
             # Create the guest path
             env[:machine].communicate.sudo("mkdir -p '#{guestpath}'")
-            env[:machine].communicate.sudo(
-              "chown #{ssh_info[:username]} '#{guestpath}'")
-
-            # Prepare private_key path
-            private_key_options = ""
-            if ssh_info[:private_key_path].is_a? String
-              private_key_options = build_key_option ssh_info[:private_key_path] 
-            elsif ssh_info[:private_key_path].is_a? Array
-              ssh_info[:private_key_path].each do |path|
-                private_key_options += build_key_option path
-              end
-            end
+            env[:machine].communicate.sudo("chown #{ssh_info[:username]} '#{guestpath}'")
 
             # Rsync over to the guest path using the SSH info
             command = [
               "rsync", "--verbose", "--archive", "-z",
               "--exclude", ".vagrant/",
-              "-e", "ssh -p #{ssh_info[:port]} -o StrictHostKeyChecking=no #{private_key_options}",
+              "-e", "ssh -p #{ssh_info[:port]} -o StrictHostKeyChecking=no #{get_private_key_options ssh_info}",
               hostpath,
               "#{ssh_info[:username]}@#{ssh_info[:host]}:#{guestpath}"]
             
@@ -88,8 +77,16 @@ module VagrantPlugins
         
         private
         
+        def get_private_key_options(ssh_info)
+          if ssh_info[:private_key_path].is_a? String
+            build_key_option ssh_info[:private_key_path] 
+          elsif ssh_info[:private_key_path].is_a? Array
+            ssh_info[:private_key_path].map { |path| build_key_option path }.join(' ')
+          end
+        end
+        
         def build_key_option(key)
-          " -i '#{key}'"
+          "-i '#{key}'"
         end
       end
     end
