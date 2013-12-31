@@ -40,7 +40,8 @@ RSpec.configure do |config|
         :validate => [],
         :customization_spec_name => nil,
         :data_store_name => nil,
-        :clone_from_vm => nil)
+        :clone_from_vm => nil,
+        :linked_clone => nil)
     vm_config = double(
       :vm => double('config_vm', :synced_folders => [], :provisioners => [], :networks => [[:private_network, {:ip => '0.0.0.0'}]]),
       :validate => []

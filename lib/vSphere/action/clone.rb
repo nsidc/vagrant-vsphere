@@ -15,9 +15,10 @@ module VagrantPlugins
         end
 
         def call(env)
-          config = env[:machine].provider_config          
-          connection = env[:vSphere_connection]
           machine = env[:machine]
+          config = machine.provider_config          
+          connection = env[:vSphere_connection]
+          name = get_name machine, config
           
           dc = get_datacenter connection, machine
           template = dc.find_vm config.template_name
@@ -25,12 +26,6 @@ module VagrantPlugins
           raise Error::VSphereError, :message => I18n.t('errors.missing_template') if template.nil?
 
           begin
-            location = RbVmomi::VIM.VirtualMachineRelocateSpec
-            location[:pool] = get_resource_pool(connection, machine) unless config.clone_from_vm
-            
-            datastore = get_datastore connection, machine
-            location[:datastore] = datastore unless datastore.nil?
-            
             if config.linked_clone
               # The API for linked clones is quite strange. We can't create a linked
               # straight from any VM. The disks of the VM for which we can create a
@@ -41,7 +36,7 @@ module VagrantPlugins
               # Thus, this code first create a delta disk on top of the base disk for
               # the to-be-cloned VM, if delta disks aren't used already.
               disks = template.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk)
-              disks.select { |x| x.backing.parent == nil }.each do |disk|
+              disks.select { |disk| disk.backing.parent == nil }.each do |disk|
                 spec = {
                     :deviceChange => [
                         {
@@ -51,10 +46,10 @@ module VagrantPlugins
                         {
                             :operation => :add,
                             :fileOperation => :create,
-                            :device => disk.dup.tap { |x|
-                              x.backing = x.backing.dup
-                              x.backing.fileName = "[#{disk.backing.datastore.name}]"
-                              x.backing.parent = disk.backing
+                            :device => disk.dup.tap { |new_disk|
+                              new_disk.backing = new_disk.backing.dup
+                              new_disk.backing.fileName = "[#{disk.backing.datastore.name}]"
+                              new_disk.backing.parent = disk.backing
                             },
                         }
                     ]
@@ -63,6 +58,12 @@ module VagrantPlugins
               end
 
               location = RbVmomi::VIM.VirtualMachineRelocateSpec(:diskMoveType => :moveChildMostDiskBacking)
+            else
+              location = RbVmomi::VIM.VirtualMachineRelocateSpec
+              location[:pool] = get_resource_pool(connection, machine) unless config.clone_from_vm
+              
+              datastore = get_datastore connection, machine
+              location[:datastore] = datastore unless datastore.nil?
             end
 
             spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => location, :powerOn => true, :template => false
@@ -72,9 +73,9 @@ module VagrantPlugins
             
             env[:ui].info I18n.t('vsphere.creating_cloned_vm')
             env[:ui].info " -- #{config.clone_from_vm ? "Source" : "Template"} VM: #{config.template_name}"
-            env[:ui].info " -- Name: #{config.name}"
+            env[:ui].info " -- Name: #{name}"
 
-            new_vm = template.CloneVM_Task(:folder => template.parent, :name => config.name, :spec => spec).wait_for_completion
+            new_vm = template.CloneVM_Task(:folder => template.parent, :name => name, :spec => spec).wait_for_completion
           rescue Exception => e
             puts e.message
             raise Errors::VSphereError, :message => e.message
@@ -110,6 +111,15 @@ module VagrantPlugins
           end
           
           customization_spec
+        end
+        
+        def get_name(machine, config)
+          return config.name unless config.name.nil?
+          
+          prefix = "#{machine.name}"
+          prefix.gsub!(/[^-a-z0-9_]/i, "")
+          # milliseconds + random number suffix to allow for simultaneous `vagrant up` of the same box in different dirs
+          prefix + "_#{(Time.now.to_f * 1000.0).to_i}_#{rand(100000)}"
         end
       end
     end

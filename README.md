@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.6.0**
+**0.7.0**
 
-vagrant-vsphere (0.6.0) is available from [RubyGems.org](https://rubygems.org/)
+vagrant-vsphere (0.7.0) is available from [RubyGems.org](https://rubygems.org/)
 
 ## Installation
 
@@ -93,9 +93,10 @@ This provider has the following settings, all are required unless noted:
 * `resource_pool_name` - _Required if cloning from template_ the resource pool for the new VM
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as the source for the cloning operation
 * `template_name` - the VM or VM template to clone
-* `name` - name of the new VM
+* `name` - _Optional_ name of the new VM, if missing the name will be auto generated
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
+* `linked_clone` - _Optional_ link the cloned VM to the parent to share virtual disks
 
 ### Cloning from a VM rather than a template
 
@@ -110,6 +111,12 @@ config.vm.network 'private_network', ip: '192.168.50.4'
 ```
 
 The IP address will only be set if a customization spec name is given. The customization spec must have network adapter settings configured. For each private network specified, there needs to be a corresponding network adapter in the customization spec. An error  will be thrown if there are more networks than adapters.
+
+### Auto name generation
+
+The name for the new VM will be automagically generated from the Vagrant machine name, the current timestamp and a random number to allow for simultaneous executions.
+
+This is useful if running Vagrant from multiple directories or if multiple machines are defined in the Vagrantfile.
 
 ## Version History
 * 0.0.1
@@ -131,6 +138,10 @@ The IP address will only be set if a customization spec name is given. The custo
   * fix rsync on Windows, adapted from [mitchellh/vagrant-aws#77](https://github.com/mitchellh/vagrant-aws/pull/77)
 * 0.6.0
   * add support for the `vagrant ssh -c` command
+* 0.7.0
+  * handle multiple private key paths
+  * add auto name generation based on machine name
+  * add support for linked clones
 
 ## Versioning
 

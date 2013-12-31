@@ -53,11 +53,11 @@ module VagrantPlugins
 
             # Prepare private_key path
             private_key_options = ""
-            if ssh_info[:private_key_path].class == String
-              private_key_options += " -i '" + ssh_info[:private_key_path] + "'"
-            elsif ssh_info[:private_key_path].class == Array
+            if ssh_info[:private_key_path].is_a? String
+              private_key_options = build_key_option ssh_info[:private_key_path] 
+            elsif ssh_info[:private_key_path].is_a? Array
               ssh_info[:private_key_path].each do |path|
-                private_key_options += " -i '" + path.to_s + "'"
+                private_key_options += build_key_option path
               end
             end
 
@@ -84,6 +84,12 @@ module VagrantPlugins
                 :stderr => r.stderr
             end            
           end
+        end
+        
+        private
+        
+        def build_key_option(key)
+          " -i '#{key}'"
         end
       end
     end
