@@ -86,7 +86,7 @@ This provider has the following settings, all are required unless noted:
 
 * `host` -  IP or name for the vSphere API
 * `insecure` - _Optional_ verify SSL certificate from the host
-* `user' - user name for connecting to vSphere
+* `user` - user name for connecting to vSphere
 * `password` - password  for connecting to vSphere
 * `data_center_name` - _Optional_ datacenter containing the computed resource, the template and where the new VM will be created, if not specified the first datacenter found will be used
 * `compute_resource_name` - _Required if cloning from template_ the name of the host containing the resource pool for the new VM
@@ -97,6 +97,8 @@ This provider has the following settings, all are required unless noted:
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
 * `linked_clone` - _Optional_ link the cloned VM to the parent to share virtual disks
+* `proxy_host` - _Optional_ proxy host name for connecting to vSphere via proxy
+* `proxy_port` - _Optional_ proxy port number for connecting to vSphere via proxy
 
 ### Cloning from a VM rather than a template
 
