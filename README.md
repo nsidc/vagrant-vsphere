@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.7.0**
+**0.7.1**
 
-vagrant-vsphere (0.7.0) is available from [RubyGems.org](https://rubygems.org/)
+vagrant-vsphere (0.7.1) is available from [RubyGems.org](https://rubygems.org/)
 
 ## Installation
 
@@ -24,7 +24,7 @@ Install using standard Vagrant plugin method:
 $ vagrant plugin install vagrant-vsphere
 ```
 
-This will install the plugin from RubGems.org.
+This will install the plugin from RubyGems.org.
 
 Alternatively, you can clone this repository and build the source with `gem build vSphere.gemspec`.
 After the gem is built, run the plugin install command from the build directory.
@@ -34,7 +34,7 @@ After the gem is built, run the plugin install command from the build directory.
 The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for
 detailed instructions.
 
-The plugin forces use of Nokogiri 1.5.10 to prevent conflicts with older versions of system libraries, specifically zlib.
+The plugin forces use of Nokogiri >= 1.5.10 to prevent conflicts with older versions of system libraries, specifically zlib.
 
 ## Usage
 
