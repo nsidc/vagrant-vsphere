@@ -166,7 +166,7 @@ If you don't have rake installed, first install [bundler](http://bundler.io/) an
 
 ## License
 
-GI-Cat Driver is licensed under the MIT license. See [LICENSE.txt][license].
+The Vagrant vSphere Provider is licensed under the MIT license. See [LICENSE.txt][license].
 
 [license]: https://raw.github.com/nsidc/vagrant-vsphere/master/LICENSE.txt
 
