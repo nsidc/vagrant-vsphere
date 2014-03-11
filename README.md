@@ -31,8 +31,8 @@ After the gem is built, run the plugin install command from the build directory.
 
 ### Potential Intallation Problems
 
-The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for 
-detailed instructions. 
+The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for
+detailed instructions.
 
 The plugin forces use of Nokogiri 1.5.10 to prevent conflicts with older versions of system libraries, specifically zlib.
 
@@ -166,7 +166,7 @@ If you don't have rake installed, first install [bundler](http://bundler.io/) an
 
 ## License
 
-GI-Cat Driver is licensed under the MIT license. See [LICENSE.txt][license].
+vagrant-vsphere is licensed under the MIT license. See [LICENSE.txt][license].
 
 [license]: https://raw.github.com/nsidc/vagrant-vsphere/master/LICENSE.txt
 
