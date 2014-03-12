@@ -142,6 +142,11 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * handle multiple private key paths
   * add auto name generation based on machine name
   * add support for linked clones
+* 0.7.1
+  * fixes rsync error reporting
+  * updates locales yaml
+  * restricts rbvmomi dependency
+
 
 ## Versioning
 
