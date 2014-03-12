@@ -7,7 +7,7 @@ module VagrantPlugins
   module VSphere
     module Action
       # This middleware uses `rsync` to sync the folders over to the vSphere instance
-      # Borrowed from the Vagrant AWS gem, see https://github.com/mitchellh/vagrant-aws/blob/master/lib/vagrant-aws/action/sync_folders.rb 
+      # Borrowed from the Vagrant AWS gem, see https://github.com/mitchellh/vagrant-aws/blob/master/lib/vagrant-aws/action/sync_folders.rb
       class SyncFolders
         include Vagrant::Util::ScopedHashOverride
 
@@ -17,7 +17,7 @@ module VagrantPlugins
 
         def call(env)
           @app.call(env)
-          
+
           ssh_info = env[:machine].ssh_info
 
           env[:machine].config.vm.synced_folders.each do |id, data|
@@ -27,7 +27,7 @@ module VagrantPlugins
             next if data[:disabled]
 
             unless Vagrant::Util::Which.which('rsync')
-              env[:ui].warn(I18n.t('errors.rsync_not_found'))
+              env[:ui].warn(I18n.t('vsphere.errors.rsync_not_found'))
               break
             end
             hostpath  = File.expand_path(data[:hostpath], env[:root_path])
@@ -45,7 +45,7 @@ module VagrantPlugins
             env[:ui].info(I18n.t("vsphere.rsync_folder",
                                 :hostpath => hostpath,
                                 :guestpath => guestpath))
-            
+
             # Create the guest path
             env[:machine].communicate.sudo("mkdir -p '#{guestpath}'")
             env[:machine].communicate.sudo("chown #{ssh_info[:username]} '#{guestpath}'")
@@ -57,7 +57,7 @@ module VagrantPlugins
               "-e", "ssh -p #{ssh_info[:port]} -o StrictHostKeyChecking=no #{get_private_key_options ssh_info}",
               hostpath,
               "#{ssh_info[:username]}@#{ssh_info[:host]}:#{guestpath}"]
-            
+
 
             # we need to fix permissions when using rsync.exe on windows, see
             # http://stackoverflow.com/questions/5798807/rsync-permission-denied-created-directories-have-no-permissions
@@ -71,20 +71,20 @@ module VagrantPlugins
                 :guestpath => guestpath,
                 :hostpath => hostpath,
                 :stderr => r.stderr
-            end            
+            end
           end
         end
-        
+
         private
-        
+
         def get_private_key_options(ssh_info)
           if ssh_info[:private_key_path].is_a? String
-            build_key_option ssh_info[:private_key_path] 
+            build_key_option ssh_info[:private_key_path]
           elsif ssh_info[:private_key_path].is_a? Array
             ssh_info[:private_key_path].map { |path| build_key_option path }.join(' ')
           end
         end
-        
+
         def build_key_option(key)
           "-i '#{key}'"
         end

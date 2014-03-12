@@ -10,9 +10,9 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   s.summary = 'VMWare vSphere provider'
   s.description = 'Enables Vagrant to manage machines with VMWare vSphere.'
-  
+
   # force the use of Nokogiri 1.5.10 to prevent conflicts with older versions of zlib
-  s.add_dependency 'nokogiri', '1.5.10'
+  s.add_dependency 'nokogiri', '~>1.5.10'
   # force the use of rbvmomi 1.6.x to get around this issue: https://github.com/vmware/rbvmomi/pull/32
   s.add_dependency 'rbvmomi', '~> 1.6.0'
   s.add_dependency 'i18n', '~> 0.6.4'
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-core'
   s.add_development_dependency 'rspec-expectations'
   s.add_development_dependency 'rspec-mocks'
-  
+
   s.files = `git ls-files`.split($/)
   s.executables = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.test_files = s.files.grep(%r{^(test|spec|features)/})
