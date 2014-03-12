@@ -72,9 +72,15 @@ RSpec.configure do |config|
     vm_folder.stub(:findByUuid).with(MISSING_UUID).and_return(nil)
     vm_folder.stub(:findByUuid).with(nil).and_return(nil)
 
+    host_folder = double('host_folder')
+    host_folder.stub(:is_a?).and_return(RbVmomi::VIM::ResourcePool)
+    host_folder.stub(:instance_of?).and_return(RbVmomi::VIM::ResourcePool)
+    host_folder.stub(:resourcePool).and_return(double('pools', :find => {}))
+
     @data_center = double('data_center',
                           :vmFolder => vm_folder,
-                          :find_compute_resource => double('compute resource', :resourcePool => double('pools', :find => {})))
+                          :find_compute_resource => double('compute resource', :resourcePool => double('pools', :find => {})),
+                          :hostFolder => host_folder)
 
     @template = double('template_vm',
                        :parent => @data_center,

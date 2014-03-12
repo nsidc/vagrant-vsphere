@@ -16,18 +16,18 @@ module VagrantPlugins
           dc = get_datacenter(connection, machine)
           pool_name = machine.provider_config.resource_pool_name
           maybe_resource_pool = dc.hostFolder
-          
+
           pool_candidates = pool_name.split('/')
           pool_candidates.each do |pool_candidate|
             if pool_candidate != ''
-              if maybe_resource_pool.is_a? RbVmomi::VIM::Folder
+              if maybe_resource_pool.instance_of? RbVmomi::VIM::ResourcePool
+                maybe_resource_pool = maybe_resource_pool.resourcePool.find { |f| f.name == pool_candidate } or 
+                  fail Errors::VSphereError, :message => I18n.t('errors.missing_resource_pool')
+              elsif maybe_resource_pool.instance_of? RbVmomi::VIM::Folder
                 maybe_resource_pool = maybe_resource_pool.childEntity.find { |f| f.name == pool_candidate } or 
                   fail Errors::VSphereError, :message => I18n.t('errors.missing_resource_pool')
-              elsif maybe_resource_pool.is_a? RbVmomi::VIM::ClusterComputeResource or maybe_resource_pool.is_a? RbVmomi::VIM::ComputeResource
+              elsif maybe_resource_pool.instance_of? RbVmomi::VIM::ClusterComputeResource or maybe_resource_pool.instance_of? RbVmomi::VIM::ComputeResource
                 maybe_resource_pool = maybe_resource_pool.resourcePool.resourcePool.find { |f| f.name == pool_candidate } or 
-                  fail Errors::VSphereError, :message => I18n.t('errors.missing_resource_pool')
-              elsif maybe_resource_pool.is_a? RbVmomi::VIM::ResourcePool
-                maybe_resource_pool = maybe_resource_pool.resourcePool.find { |f| f.name == pool_candidate } or 
                   fail Errors::VSphereError, :message => I18n.t('errors.missing_resource_pool')
               else
                 fail Errors::VSphereError, :message => I18n.t('errors.missing_resource_pool')
@@ -35,7 +35,7 @@ module VagrantPlugins
             end
           end
 
-          resource_pool = maybe_resource_pool.resourcePool if not maybe_resource_pool.is_a?(RbVmomi::VIM::ResourcePool) and maybe_resource_pool.respond_to?(:resourcePool)
+          resource_pool = maybe_resource_pool.resourcePool if not maybe_resource_pool.instance_of?(RbVmomi::VIM::ResourcePool) and maybe_resource_pool.respond_to?(:resourcePool)
           resource_pool
         end
         
