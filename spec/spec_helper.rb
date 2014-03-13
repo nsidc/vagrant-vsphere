@@ -72,9 +72,18 @@ RSpec.configure do |config|
     vm_folder.stub(:findByUuid).with(MISSING_UUID).and_return(nil)
     vm_folder.stub(:findByUuid).with(nil).and_return(nil)
 
+    host_folder = double('host_folder')
+    #We interrogate the type in vim_helpers.get_resource_pool, so make sure we act like a ResourcePool since that is easiest to mock
+    host_folder.stub(:is_a?).with(RbVmomi::VIM::ResourcePool).and_return(true)
+    host_folder.stub(:is_a?).with(RbVmomi::VIM::Folder).and_return(false)
+    host_folder.stub(:is_a?).with(RbVmomi::VIM::ClusterComputeResource).and_return(false)
+    host_folder.stub(:is_a?).with(RbVmomi::VIM::ComputeResource).and_return(false)
+    host_folder.stub(:resourcePool).and_return(double('pools', :find => {}))
+
     @data_center = double('data_center',
                           :vmFolder => vm_folder,
-                          :find_compute_resource => double('compute resource', :resourcePool => double('pools', :find => {})))
+                          :find_compute_resource => double('compute resource', :resourcePool => double('pools', :find => {})),
+                          :hostFolder => host_folder)
 
     @template = double('template_vm',
                        :parent => @data_center,
