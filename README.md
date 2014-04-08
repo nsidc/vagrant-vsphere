@@ -172,6 +172,7 @@ This plugin follows the principles of [Semantic Versioning 2.0.0](http://semver.
 ### Unit Tests
 
 Please run the unit tests to verify your changes. To do this simply run `rake`.
+If you want a quick merge, write a spec that fails before your changes are applied and that passes after.
 
 
 If you don't have rake installed, first install [bundler](http://bundler.io/) and run `bundle install`.
