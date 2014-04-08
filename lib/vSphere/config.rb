@@ -16,6 +16,8 @@ module VagrantPlugins
       attr_accessor :customization_spec_name
       attr_accessor :data_store_name
       attr_accessor :linked_clone
+      attr_accessor :proxy_host
+      attr_accessor :proxy_port
 
       def validate(machine)
         errors = _detected_errors
