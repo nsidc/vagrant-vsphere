@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.7.2**
+**0.8.0**
 
-vagrant-vsphere (0.7.2) is available from [RubyGems.org](https://rubygems.org/)
+vagrant-vsphere (0.8.0) is available from [RubyGems.org](https://rubygems.org/)
 
 ## Installation
 
@@ -151,6 +151,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
 * 0.7.2
   * includes template in get_location (from: tim95030 fixes issue #38)
   * updates Gemfile to fall back to old version of vagrant for if ruby < 2.0.0 is available.
+* 0.8.0
+  * Adds configuration for connecting via proxy server (tkak issue #40)
 
 
 

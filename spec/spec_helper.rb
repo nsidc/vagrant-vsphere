@@ -41,7 +41,9 @@ RSpec.configure do |config|
         :customization_spec_name => nil,
         :data_store_name => nil,
         :clone_from_vm => nil,
-        :linked_clone => nil)
+        :linked_clone => nil,
+        :proxy_host => nil,
+        :proxy_port => nil)
     vm_config = double(
       :vm => double('config_vm', :synced_folders => [], :provisioners => [], :networks => [[:private_network, {:ip => '0.0.0.0'}]]),
       :validate => []
@@ -84,7 +86,7 @@ RSpec.configure do |config|
     @data_center.stub(:find_vm).with(TEMPLATE).and_return(@template)
 
     service_instance = double 'service_instance', :find_datacenter => @data_center
-    @ip = double 'ip', :ipAddress= => nil 
+    @ip = double 'ip', :ipAddress= => nil
     customization_spec = double 'customization spec', :nicSettingMap => [double('nic setting', :adapter => double('adapter', :ip => @ip))]
     customization_spec.stub(:clone).and_return(customization_spec)
     customization_spec_manager = double 'customization spec manager', :GetCustomizationSpec => double('spec info', :spec => customization_spec)

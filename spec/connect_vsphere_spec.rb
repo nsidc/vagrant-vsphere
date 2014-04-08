@@ -11,6 +11,8 @@ describe VagrantPlugins::VSphere::Action::ConnectVSphere do
       :user => @env[:machine].provider_config.user,
       :password => @env[:machine].provider_config.password,
       :insecure => @env[:machine].provider_config.insecure,
+      :proxyHost => @env[:machine].provider_config.proxy_host,
+      :proxyPort => @env[:machine].provider_config.proxy_port,
     })
   end
 
