@@ -26,7 +26,7 @@ module VagrantPlugins
           vm = get_vm_by_uuid connection, machine
 
           return nil if vm.nil?
-
+          return nil if vm.guest.ipAddress.nil? || vm.guest.ipAddress.empty?
           return {
               :host => vm.guest.ipAddress,
               :port => 22
