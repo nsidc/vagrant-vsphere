@@ -25,7 +25,7 @@ module VagrantPlugins
           raise Error::VSphereError, :message => I18n.t('vsphere.errors.missing_template') if template.nil?
 
           begin
-            location = get_location connection, machine, config
+            location = get_location connection, machine, config, template
             spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => location, :powerOn => true, :template => false
             customization_info = get_customization_spec_info_by_name connection, machine
 
@@ -73,7 +73,7 @@ module VagrantPlugins
           customization_spec
         end
 
-        def get_location(connection, machine, config)
+        def get_location(connection, machine, config, template)
           if config.linked_clone
             # The API for linked clones is quite strange. We can't create a linked
             # straight from any VM. The disks of the VM for which we can create a
