@@ -153,6 +153,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * updates Gemfile to fall back to old version of vagrant for if ruby < 2.0.0 is available.
 * 0.8.0
   * Adds configuration for connecting via proxy server (tkak issue #40)
+* 0.8.1
+  * fixes [#47](https://github.com/nsidc/vagrant-vsphere/issues/47) via [olegz-alertlogic #52](https://github.com/nsidc/vagrant-vsphere/pull/52)
 
 
 
