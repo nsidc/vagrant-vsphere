@@ -5,7 +5,7 @@ en:
     vm_clone_success: |-
       New virtual machine successfully cloned and started
     destroy_vm: |-
-      Calling vShpere Destroy
+      Calling vSphere Destroy
     power_off_vm: |-
       Calling vSphere PowerOff
     power_on_vm: |-
