@@ -12,6 +12,8 @@ module VagrantPlugins
           begin
             env[:vSphere_connection].close
             @app.call env
+          rescue Errors::VSphereError => e
+            raise
           rescue Exception => e
             puts e
             #raise a properly namespaced error for Vagrant
