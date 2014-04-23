@@ -65,7 +65,7 @@ module VagrantPlugins
           return customization_spec if private_networks.nil?
 
           # make sure we have enough NIC settings to override with the private network settings
-          raise Error::VSphereError, :message => I18n.t('vsphere.errors.too_many_private_networks') if private_networks.length > customization_spec.nicSettingMap.length
+          raise Errors::VSphereError, :'too_many_private_networks' if private_networks.length > customization_spec.nicSettingMap.length
 
           # assign the private network IP to the NIC
           private_networks.each_index do |idx|
