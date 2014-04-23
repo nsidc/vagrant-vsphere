@@ -154,7 +154,11 @@ This is useful if running Vagrant from multiple directories or if multiple machi
 * 0.8.0
   * Adds configuration for connecting via proxy server (tkak issue #40)
 * 0.8.1
-  * fixes [#47](https://github.com/nsidc/vagrant-vsphere/issues/47) via [olegz-alertlogic #52](https://github.com/nsidc/vagrant-vsphere/pull/52)
+  * Fixes [#47](https://github.com/nsidc/vagrant-vsphere/issues/47) via [olegz-alertlogic #52](https://github.com/nsidc/vagrant-vsphere/pull/52)
+* 0.8.2
+  * fixes no error messages [#58 leth:no-error-message](https://github.com/nsidc/vagrant-vsphere/pull/58)
+  * fixes typo [#57 targetx007](https://github.com/nsidc/vagrant-vsphere/pull/57)
+  * fixes additional no error messages
 
 
 
