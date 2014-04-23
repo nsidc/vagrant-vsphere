@@ -22,7 +22,7 @@ module VagrantPlugins
           dc = get_datacenter connection, machine
           template = dc.find_vm config.template_name
 
-          raise Error::VSphereError, :message => I18n.t('vsphere.errors.missing_template') if template.nil?
+          raise Errors::VSphereError, :'missing_template' if template.nil?
 
           begin
             location = get_location connection, machine, config, template
@@ -36,6 +36,8 @@ module VagrantPlugins
             env[:ui].info " -- Name: #{name}"
 
             new_vm = template.CloneVM_Task(:folder => template.parent, :name => name, :spec => spec).wait_for_completion
+          rescue Errors::VSphereError => e
+            raise
           rescue Exception => e
             puts e.message
             raise Errors::VSphereError, :message => e.message
