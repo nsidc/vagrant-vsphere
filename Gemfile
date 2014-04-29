@@ -9,8 +9,8 @@ group :development do
 
   if RUBY_VERSION < "2.0.0" then
     puts "Found old ruby #{RUBY_VERSION}, using old vagrant (v1.4.3)"
-    gem 'vagrant', :git => 'git://github.com/mitchellh/vagrant.git', :tag => 'v1.4.3'
+    gem 'vagrant', :git => 'https://github.com/mitchellh/vagrant.git', :tag => 'v1.4.3'
   else
-    gem 'vagrant', :git => 'git://github.com/mitchellh/vagrant.git'
+    gem 'vagrant', :git => 'https://github.com/mitchellh/vagrant.git'
   end
 end
