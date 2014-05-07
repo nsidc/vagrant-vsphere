@@ -107,16 +107,15 @@ module VagrantPlugins
               template.ReconfigVM_Task(:spec => spec).wait_for_completion
             end
 
-            RbVmomi::VIM.VirtualMachineRelocateSpec(:diskMoveType => :moveChildMostDiskBacking)
+            location = RbVmomi::VIM.VirtualMachineRelocateSpec(:diskMoveType => :moveChildMostDiskBacking)
           else
             location = RbVmomi::VIM.VirtualMachineRelocateSpec
-            location[:pool] = get_resource_pool(connection, machine) unless config.clone_from_vm
 
             datastore = get_datastore connection, machine
             location[:datastore] = datastore unless datastore.nil?
-
-            location
           end
+          location[:pool] = get_resource_pool(connection, machine) unless config.clone_from_vm
+          location
         end
 
         def get_name(machine, config)
