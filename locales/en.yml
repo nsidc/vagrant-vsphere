@@ -18,8 +18,6 @@ en:
       The VM is not running
     waiting_for_ssh: |-
       Waiting for SSH to become available...
-    rsync_folder: |-
-      Rsyncing folder: %{hostpath} => %{guestpath}
 
     errors:
       missing_template: |-
@@ -36,19 +34,8 @@ en:
         Configured configuration spec not found
       missing_datastore: |-
         Configured data store not found
-      rsync_error: |-
-        There was an error when attemping to rsync a share folder.
-        Please inspect the error message below for more info.
-
-        Host path: %{hostpath}
-        Guest path: %{guestpath}
-        Error: %{stderr}
       too_many_private_networks: |-
         There a more private networks configured than can be assigned to the customization spec
-      rsync_not_found: |-
-        Warning! Folder sync disabled because the rsync binary is
-        missing. Make sure rsync is installed and the binary can
-        be found in PATH.
     config:
       host: |-
         Configuration must specify a vSphere host
