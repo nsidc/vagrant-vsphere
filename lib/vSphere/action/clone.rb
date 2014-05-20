@@ -123,7 +123,7 @@ module VagrantPlugins
           return config.name unless config.name.nil?
 
           prefix = "#{machine.name}"
-          prefix.gsub!(/[^-a-z0-9_]/i, "")
+          prefix.gsub!(/[^-a-z0-9_\.]/i, "")
           # milliseconds + random number suffix to allow for simultaneous `vagrant up` of the same box in different dirs
           prefix + "_#{(Time.now.to_f * 1000.0).to_i}_#{rand(100000)}"
         end
