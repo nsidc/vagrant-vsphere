@@ -7,10 +7,7 @@ group :development do
   # gem dependency because we expect to be installed within the
   # Vagrant environment itself using `vagrant plugin`.
 
-  if RUBY_VERSION < "2.0.0" then
-    puts "Found old ruby #{RUBY_VERSION}, using old vagrant (v1.4.3)"
-    gem 'vagrant', :git => 'git://github.com/mitchellh/vagrant.git', :tag => 'v1.4.3'
-  else
-    gem 'vagrant', :git => 'git://github.com/mitchellh/vagrant.git'
-  end
+ruby "2.0.0"
+gem 'vagrant', :git => 'git://github.com/mitchellh/vagrant.git', :tag => 'v1.5.0'
+
 end
