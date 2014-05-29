@@ -105,6 +105,7 @@ module VagrantPlugins
           b.use CloseVSphere 
           b.use Provision          
           b.use SyncFolders          
+          b.use SetHostname
         end
       end
 
