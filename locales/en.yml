@@ -24,6 +24,8 @@ en:
     errors:
       missing_template: |-
         Configured template/source VM could not be found
+      invalid_base_path: |-
+        Could not find base path for target VM, check 'vm_base_path' configuration value
       missing_datacenter: |-
         Configured data center not found
       missing_compute_resource: |-

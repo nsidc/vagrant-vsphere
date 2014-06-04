@@ -21,8 +21,9 @@ module VagrantPlugins
           name = get_name machine, config
           dc = get_datacenter connection, machine
           template = dc.find_vm config.template_name
-
           raise Errors::VSphereError, :'missing_template' if template.nil?
+          vm_base_folder = get_vm_base_folder dc, template, config
+          raise Errors::VSphereError, :'invalid_base_path' if vm_base_folder.nil?
 
           begin
             location = get_location connection, machine, config, template
@@ -35,7 +36,7 @@ module VagrantPlugins
             env[:ui].info " -- #{config.clone_from_vm ? "Source" : "Template"} VM: #{config.template_name}"
             env[:ui].info " -- Name: #{name}"
 
-            new_vm = template.CloneVM_Task(:folder => template.parent, :name => name, :spec => spec).wait_for_completion
+            new_vm = template.CloneVM_Task(:folder => vm_base_folder, :name => name, :spec => spec).wait_for_completion
           rescue Errors::VSphereError => e
             raise
           rescue Exception => e
@@ -125,6 +126,14 @@ module VagrantPlugins
           prefix.gsub!(/[^-a-z0-9_\.]/i, "")
           # milliseconds + random number suffix to allow for simultaneous `vagrant up` of the same box in different dirs
           prefix + "_#{(Time.now.to_f * 1000.0).to_i}_#{rand(100000)}"
+        end
+
+        def get_vm_base_folder(dc, template, config)
+          if config.vm_base_path.nil?
+            template.parent
+          else
+            dc.vmFolder.traverse(config.vm_base_path, RbVmomi::VIM::Folder)
+          end
         end
       end
     end

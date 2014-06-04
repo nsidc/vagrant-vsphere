@@ -34,6 +34,7 @@ RSpec.configure do |config|
         :data_center_name => nil,
         :compute_resource_name => 'testcomputeresource',
         :resource_pool_name => 'testresourcepool',
+        :vm_base_path => nil,
         :template_name => TEMPLATE,
         :name => NAME,
         :insecure => true,

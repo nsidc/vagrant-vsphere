@@ -13,6 +13,7 @@ module VagrantPlugins
       attr_accessor :clone_from_vm
       attr_accessor :template_name
       attr_accessor :name
+      attr_accessor :vm_base_path
       attr_accessor :customization_spec_name
       attr_accessor :data_store_name
       attr_accessor :linked_clone
