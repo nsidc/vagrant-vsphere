@@ -93,6 +93,7 @@ This provider has the following settings, all are required unless noted:
 * `resource_pool_name` - _Required if cloning from template_ the resource pool for the new VM
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as the source for the cloning operation
 * `template_name` - the VM or VM template to clone
+* `vm_base_path` - _Optional_ path to folder where new VM sould be created, if not specified template's parent folder will be used
 * `name` - _Optional_ name of the new VM, if missing the name will be auto generated
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
