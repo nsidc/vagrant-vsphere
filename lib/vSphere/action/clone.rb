@@ -33,8 +33,8 @@ module VagrantPlugins
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
 
             env[:ui].info I18n.t('vsphere.creating_cloned_vm')
-            env[:ui].info " -- #{config.clone_from_vm ? "Source" : "Template"} VM: #{config.template_name}"
-            env[:ui].info " -- Name: #{name}"
+            env[:ui].info " -- #{config.clone_from_vm ? "Source" : "Template"} VM: #{template.pretty_path}"
+            env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
 
             new_vm = template.CloneVM_Task(:folder => vm_base_folder, :name => name, :spec => spec).wait_for_completion
           rescue Errors::VSphereError => e

@@ -17,7 +17,8 @@ describe VagrantPlugins::VSphere::Action::Clone do
   end
 
   it 'should create a CloneVM task with custom folder when given vm base path' do
-    custom_base_folder = double(CUSTOM_VM_FOLDER)
+    custom_base_folder = double(CUSTOM_VM_FOLDER,
+                                :pretty_path => "#{@data_center.pretty_path}/#{CUSTOM_VM_FOLDER}")
     @machine.provider_config.stub(:vm_base_path).and_return(CUSTOM_VM_FOLDER)
     @data_center.vmFolder.stub(:traverse).with(CUSTOM_VM_FOLDER, RbVmomi::VIM::Folder).and_return(custom_base_folder)
     call

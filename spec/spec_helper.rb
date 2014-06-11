@@ -77,10 +77,12 @@ RSpec.configure do |config|
 
     @data_center = double('data_center',
                           :vmFolder => vm_folder,
+                          :pretty_path => "data_center/#{vm_folder}",
                           :find_compute_resource => double('compute resource', :resourcePool => double('pools', :find => {})))
 
     @template = double('template_vm',
                        :parent => @data_center,
+                       :pretty_path => "#{@data_center.pretty_path}/template_vm",
                        :CloneVM_Task => double('result',
                                                 :wait_for_completion => double('new_vm', :config => double('config', :uuid => NEW_UUID))))
 
