@@ -6,7 +6,7 @@ provider to Vagrant, allowing Vagrant to control and provision machines using VM
 This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi) Ruby interface to the vSphere API.
 
 ## Requirements
-* Vagrant 1.2+
+* Vagrant 1.5+
 * VMware + vSphere API
 * Ruby 1.9+
 * libxml2, libxml2-dev, libxslt, libxslt-dev
@@ -159,6 +159,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * fixes no error messages [#58 leth:no-error-message](https://github.com/nsidc/vagrant-vsphere/pull/58)
   * fixes typo [#57 targetx007](https://github.com/nsidc/vagrant-vsphere/pull/57)
   * fixes additional no error messages
+* 0.8.3
+  * Fixed "No error message" on rbvmomi method calls. [#74: mkuzmin:rbvmomi-error-messages](https://github.com/nsidc/vagrant-vsphere/pull/74)
 
 
 
