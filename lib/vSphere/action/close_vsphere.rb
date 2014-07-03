@@ -15,9 +15,7 @@ module VagrantPlugins
           rescue Errors::VSphereError => e
             raise
           rescue Exception => e
-            puts e
-            #raise a properly namespaced error for Vagrant
-            raise Errors::VSphereError, :message => e.message
+            raise Errors::VSphereError.new, e.message
           end
         end
       end
