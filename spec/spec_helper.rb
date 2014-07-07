@@ -1,4 +1,5 @@
 require 'rbvmomi'
+require 'pathname'
 require 'vSphere/errors'
 require 'vSphere/action'
 require 'vSphere/action/connect_vsphere'
@@ -62,8 +63,11 @@ RSpec.configure do |config|
                       :state => double('state', :id => nil),
                       :communicate => double('communicator', :ready? => true),
                       :ssh_info => {},
+                      :data_dir => Pathname.new(''),
                       :id => nil,
                       :id= => nil
+
+
     @env = {
         :machine => @machine,
         :ui => double('ui', :info => nil)
@@ -80,6 +84,7 @@ RSpec.configure do |config|
     vm_folder.stub(:findByUuid).with(EXISTING_UUID).and_return(@vm)
     vm_folder.stub(:findByUuid).with(MISSING_UUID).and_return(nil)
     vm_folder.stub(:findByUuid).with(nil).and_return(nil)
+
 
     @child_resource_pool = double('testresourcepool')
     @root_resource_pool = double('pools', :find => @child_resource_pool)
