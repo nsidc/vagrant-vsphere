@@ -29,13 +29,13 @@ module VagrantPlugins
               b2.use MessageNotCreated
               next
             end
-            
+
             b2.use Call, IsRunning do |env, b3|
               if !env[:result]
                 b3.use MessageNotRunning
-                next       
+                next
               end
-              
+
               b3.use Provision
               b3.use SyncedFolders
             end
@@ -51,19 +51,19 @@ module VagrantPlugins
               b2.use MessageNotCreated
               next
             end
-            
+
             b2.use Call, IsRunning do |env, b3|
               if !env[:result]
                 b3.use MessageNotRunning
                 next
               end
-              
+
               b3.use SSHExec
             end
           end
         end
       end
-      
+
       def self.action_ssh_run
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
@@ -78,7 +78,7 @@ module VagrantPlugins
                 b3.use MessageNotRunning
                 next
               end
-              
+
               b3.use SSHRun
             end
           end
@@ -95,16 +95,17 @@ module VagrantPlugins
               next
             end
 
-            b2.use Clone 
+            b2.use Clone
           end
           b.use Call, IsRunning do |env, b2|
             if !env[:result]
               b2.use PowerOn
             end
           end
-          b.use CloseVSphere 
-          b.use Provision          
+          b.use CloseVSphere
+          b.use Provision
           b.use SyncedFolders
+          b.use SetHostname
         end
       end
 
@@ -117,13 +118,13 @@ module VagrantPlugins
               b2.use MessageNotCreated
               next
             end
-            
+
             b2.use Call, IsRunning do |env, b3|
               if !env[:result]
                 b3.use MessageNotRunning
                 next
               end
-              
+
               b3.use PowerOff
             end
           end
@@ -168,4 +169,3 @@ module VagrantPlugins
     end
   end
 end
-

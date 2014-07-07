@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.9.1**
+**0.9.2**
 
-vagrant-vsphere (0.9.1) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (0.9.2) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -170,6 +170,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Supports differentiating between SSH/WinRM communicator [#67 marnovdm:feature/waiting-for-winrm](https://github.com/nsidc/vagrant-vsphere/pull/67)
 * 0.9.1
   * reuse folder sync code from Vagrant core. [#66 mkuzmin:sync-folders](https://github.com/nsidc/vagrant-vsphere/pull/66)
+* 0.9.2
+  * Instruct vagrant to set the guest hostname according to Vagrantfile [#69 ddub:set-hostname](https://github.com/nsidc/vagrant-vsphere/pull/69)
 
 
 ## Versioning
