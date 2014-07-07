@@ -74,9 +74,12 @@ RSpec.configure do |config|
     vm_folder.stub(:findByUuid).with(MISSING_UUID).and_return(nil)
     vm_folder.stub(:findByUuid).with(nil).and_return(nil)
 
+    @child_resource_pool = double('testresourcepool')
+    @root_resource_pool = double('pools', :find => @child_resource_pool)
+
     @data_center = double('data_center',
                           :vmFolder => vm_folder,
-                          :find_compute_resource => double('compute resource', :resourcePool => double('pools', :find => {})))
+                          :find_compute_resource => double('compute resource', :resourcePool => @root_resource_pool))
 
     @template = double('template_vm',
                        :parent => @data_center,
@@ -87,14 +90,15 @@ RSpec.configure do |config|
 
     service_instance = double 'service_instance', :find_datacenter => @data_center
     @ip = double 'ip', :ipAddress= => nil
-    customization_spec = double 'customization spec', :nicSettingMap => [double('nic setting', :adapter => double('adapter', :ip => @ip))]
-    customization_spec.stub(:clone).and_return(customization_spec)
-    customization_spec_manager = double 'customization spec manager', :GetCustomizationSpec => double('spec info', :spec => customization_spec)
+    @customization_spec = double 'customization spec', :nicSettingMap => [double('nic setting', :adapter => double('adapter', :ip => @ip))]
+    @customization_spec.stub(:clone).and_return(@customization_spec)
+    customization_spec_manager = double 'customization spec manager', :GetCustomizationSpec => double('spec info', :spec => @customization_spec)
     service_content = double 'service content', :customizationSpecManager => customization_spec_manager
     @vim = double 'vim', :serviceInstance => service_instance, :close => true, :serviceContent => service_content
 
     VIM.stub(:connect).and_return(@vim)
     VIM.stub(:VirtualMachineRelocateSpec).and_return({})
-    VIM.stub(:VirtualMachineCloneSpec).and_return({})
+    VIM.stub(:VirtualMachineCloneSpec) do |location, powerOn, template| { :location => location[:location] } end
+
   end
 end

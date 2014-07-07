@@ -6,11 +6,11 @@ describe VagrantPlugins::VSphere::Action::Clone do
   end
 
   it 'should create a CloneVM task' do
-    call    
+    call
     @template.should have_received(:CloneVM_Task).with({
       :folder => @data_center,
       :name => NAME,
-      :spec => {}
+      :spec => {:location => {:pool => @child_resource_pool} }
     })
   end
 
@@ -23,10 +23,20 @@ describe VagrantPlugins::VSphere::Action::Clone do
     call
     @app.should have_received :call
   end
-  
+
   it 'should set static IP when given config spec' do
     @machine.provider_config.stub(:customization_spec_name).and_return('spec')
     call
     @ip.should have_received(:ipAddress=).with('0.0.0.0')
+  end
+
+  it 'should use root resource pool when cloning from template and no resource pool specified' do
+    @machine.provider_config.stub(:resource_pool_name).and_return(nil)
+    call
+    @template.should have_received(:CloneVM_Task).with({
+      :folder => @data_center,
+      :name => NAME,
+      :spec => {:location => {:pool => @root_resource_pool } }
+    })
   end
 end

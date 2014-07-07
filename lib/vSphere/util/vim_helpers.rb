@@ -14,7 +14,11 @@ module VagrantPlugins
 
         def get_resource_pool(connection, machine)
           cr = get_datacenter(connection, machine).find_compute_resource(machine.provider_config.compute_resource_name) or fail Errors::VSphereError, :missing_compute_resource
-          cr.resourcePool.find(machine.provider_config.resource_pool_name) or fail Errors::VSphereError, :missing_resource_pool
+          rp = cr.resourcePool
+          if !(machine.provider_config.resource_pool_name.nil?)
+            rp = cr.resourcePool.find(machine.provider_config.resource_pool_name) or  fail Errors::VSphereError, :missing_resource_pool
+          end
+          rp
         end
 
         def get_customization_spec_info_by_name(connection, machine)
