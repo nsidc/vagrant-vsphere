@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.9.0**
+**0.9.1**
 
-vagrant-vsphere (0.9.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (0.9.1) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -168,7 +168,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
 * 0.9.0
   * increases Vagrant requirements to 1.6.3+
   * Supports differentiating between SSH/WinRM communicator [#67 marnovdm:feature/waiting-for-winrm](https://github.com/nsidc/vagrant-vsphere/pull/67)
-
+* 0.9.1
+  * reuse folder sync code from Vagrant core. [#66 mkuzmin:sync-folders](https://github.com/nsidc/vagrant-vsphere/pull/66)
 
 
 ## Versioning
