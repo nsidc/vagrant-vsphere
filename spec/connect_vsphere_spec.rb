@@ -6,7 +6,7 @@ describe VagrantPlugins::VSphere::Action::ConnectVSphere do
   end
 
   it 'should connect to vSphere' do
-    VIM.should have_received(:connect).with({
+    expect(VIM).to have_received(:connect).with({
       :host => @env[:machine].provider_config.host,
       :user => @env[:machine].provider_config.user,
       :password => @env[:machine].provider_config.password,
@@ -17,10 +17,10 @@ describe VagrantPlugins::VSphere::Action::ConnectVSphere do
   end
 
   it 'should add the vSphere connection to the environment' do
-    @env[:vSphere_connection].should be @vim
+    expect(@env[:vSphere_connection]).to be @vim
   end
 
   it 'should call the next item in the middleware stack' do
-    @app.should have_received :call
+    expect(@app).to have_received :call
   end
 end

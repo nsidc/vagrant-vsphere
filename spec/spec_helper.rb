@@ -22,6 +22,13 @@ NAME = 'vm'
 IP_ADDRESS = '127.0.0.1'
 
 RSpec.configure do |config|
+
+  # removes deprecation warnings.
+  # http://stackoverflow.com/questions/20275510/how-to-avoid-deprecation-warning-for-stub-chain-in-rspec-3-0/20296359#20296359
+  config.mock_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+
   config.before(:each) do
     def call
       described_class.new(@app, @env).call(@env)
