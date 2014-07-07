@@ -42,6 +42,7 @@ RSpec.configure do |config|
         :data_center_name => nil,
         :compute_resource_name => 'testcomputeresource',
         :resource_pool_name => 'testresourcepool',
+        :vm_base_path => nil,
         :template_name => TEMPLATE,
         :name => NAME,
         :insecure => true,
@@ -96,12 +97,14 @@ RSpec.configure do |config|
 
     @data_center = double('data_center',
                           :vmFolder => vm_folder,
+                          :pretty_path => "data_center/#{vm_folder}",
                           :find_compute_resource => double('compute resource', :resourcePool => @root_resource_pool))
 
     @template = double('template_vm',
                        :parent => @data_center,
+                       :pretty_path => "#{@data_center.pretty_path}/template_vm",
                        :CloneVM_Task => double('result',
-                                                :wait_for_completion => double('new_vm', :config => double('config', :uuid => NEW_UUID))))
+                                               :wait_for_completion => double('new_vm', :config => double('config', :uuid => NEW_UUID))))
 
     @data_center.stub(:find_vm).with(TEMPLATE).and_return(@template)
 

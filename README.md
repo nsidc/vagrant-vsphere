@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.9.2**
+**0.9.3**
 
-vagrant-vsphere (0.9.2) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (0.9.3) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -93,6 +93,7 @@ This provider has the following settings, all are required unless noted:
 * `resource_pool_name` - the resource pool for the new VM. If not supplied, and cloning from a template, uses the root resource pool
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as the source for the cloning operation
 * `template_name` - the VM or VM template to clone
+* `vm_base_path` - _Optional_ path to folder where new VM sould be created, if not specified template's parent folder will be used
 * `name` - _Optional_ name of the new VM, if missing the name will be auto generated
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
@@ -172,7 +173,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * reuse folder sync code from Vagrant core. [#66 mkuzmin:sync-folders](https://github.com/nsidc/vagrant-vsphere/pull/66)
 * 0.9.2
   * Instruct vagrant to set the guest hostname according to Vagrantfile [#69 ddub:set-hostname](https://github.com/nsidc/vagrant-vsphere/pull/69)
-
+* 0.9.3
+  * new optional parameter to clone into custom folder in vSphere [#73 mikola-spb:vm-base-path](https://github.com/nsidc/vagrant-vsphere/pull/73)
 
 ## Versioning
 
