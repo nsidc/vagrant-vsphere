@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.9.3**
+**0.10.0**
 
-vagrant-vsphere (0.9.3) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (0.10.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -173,8 +173,9 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * reuse folder sync code from Vagrant core. [#66 mkuzmin:sync-folders](https://github.com/nsidc/vagrant-vsphere/pull/66)
 * 0.9.2
   * Instruct vagrant to set the guest hostname according to Vagrantfile [#69 ddub:set-hostname](https://github.com/nsidc/vagrant-vsphere/pull/69)
-* 0.9.3
+* 0.10.0
   * new optional parameter to clone into custom folder in vSphere [#73 mikola-spb:vm-base-path](https://github.com/nsidc/vagrant-vsphere/pull/73)
+  * follows semvar better, this adds functionality in a backwards compatible way, so bumps the minor. 0.9.0, should have been a major version.
 
 ## Versioning
 
