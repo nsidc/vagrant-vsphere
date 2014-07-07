@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.8.4**
+**0.8.5**
 
-vagrant-vsphere (0.8.4) is available from [RubyGems.org](https://rubygems.org/)
+vagrant-vsphere (0.8.5) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -162,7 +162,9 @@ This is useful if running Vagrant from multiple directories or if multiple machi
 * 0.8.3
   * Fixed "No error message" on rbvmomi method calls. [#74: mkuzmin:rbvmomi-error-messages](https://github.com/nsidc/vagrant-vsphere/pull/74)
 * 0.8.4
-  * Use root resource pool when cloning from template[#63: matt-richardson:support-resource-pools-on-vsphere-standard-edition](https://github.com/nsidc/vagrant-vsphere/pull/63)
+  * Use root resource pool when cloning from template [#63: matt-richardson:support-resource-pools-on-vsphere-standard-edition](https://github.com/nsidc/vagrant-vsphere/pull/63)
+* 0.8.5
+  * fixed synced folders to work with WinRM communicator [#72 10thmagnitude:master](https://github.com/nsidc/vagrant-vsphere/pull/72)
 
 
 
