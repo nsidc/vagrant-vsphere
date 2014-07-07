@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.8.0**
+**0.8.3**
 
-vagrant-vsphere (0.8.0) is available from [RubyGems.org](https://rubygems.org/)
+vagrant-vsphere (0.8.3) is available from [RubyGems.org](https://rubygems.org/)
 
 ## Installation
 
