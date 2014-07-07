@@ -53,7 +53,12 @@ RSpec.configure do |config|
         :proxy_host => nil,
         :proxy_port => nil)
     vm_config = double(
-      :vm => double('config_vm', :synced_folders => [], :provisioners => [], :communicator => nil, :networks => [[:private_network, {:ip => '0.0.0.0'}]]),
+      :vm => double('config_vm',
+                    :synced_folders => [],
+                    :provisioners => [],
+                    :hostname => nil,
+                    :communicator => nil,
+                    :networks => [[:private_network, {:ip => '0.0.0.0'}]]),
       :validate => []
     )
     @app = double 'app', :call => true
