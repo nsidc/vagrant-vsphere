@@ -4,3 +4,4 @@ Vagrantfile
 pkg/*
 *.box
 Gemfile.lock
+/vendor/
