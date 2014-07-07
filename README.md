@@ -1,20 +1,20 @@
 # Vagrant vSphere Provider
 
-This is a [Vagrant](http://www.vagrantup.com) 1.5+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
+This is a [Vagrant](http://www.vagrantup.com) 1.6.3+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
 provider to Vagrant, allowing Vagrant to control and provision machines using VMware. New machines are created from virtual machines or templates which must be configured prior to using using this provider.
 
 This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi) Ruby interface to the vSphere API.
 
 ## Requirements
-* Vagrant 1.5+
+* Vagrant 1.6.3+
 * VMware + vSphere API
 * Ruby 1.9+
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.8.5**
+**0.9.0**
 
-vagrant-vsphere (0.8.5) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (0.9.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -165,7 +165,9 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Use root resource pool when cloning from template [#63: matt-richardson:support-resource-pools-on-vsphere-standard-edition](https://github.com/nsidc/vagrant-vsphere/pull/63)
 * 0.8.5
   * fixed synced folders to work with WinRM communicator [#72 10thmagnitude:master](https://github.com/nsidc/vagrant-vsphere/pull/72)
-
+* 0.9.0
+  * increases Vagrant requirements to 1.6.3+
+  * Supports differentiating between SSH/WinRM communicator [#67 marnovdm:feature/waiting-for-winrm](https://github.com/nsidc/vagrant-vsphere/pull/67)
 
 
 
