@@ -131,7 +131,7 @@ module VagrantPlugins
           if config.vm_base_path.nil?
             template.parent
           else
-            dc.vmFolder.traverse(config.vm_base_path, RbVmomi::VIM::Folder)
+            dc.vmFolder.traverse(config.vm_base_path, RbVmomi::VIM::Folder, create=true)
           end
         end
       end
