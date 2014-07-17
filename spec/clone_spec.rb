@@ -20,7 +20,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
     custom_base_folder = double(CUSTOM_VM_FOLDER,
                                 :pretty_path => "#{@data_center.pretty_path}/#{CUSTOM_VM_FOLDER}")
     @machine.provider_config.stub(:vm_base_path).and_return(CUSTOM_VM_FOLDER)
-    @data_center.vmFolder.stub(:traverse).with(CUSTOM_VM_FOLDER, RbVmomi::VIM::Folder).and_return(custom_base_folder)
+    @data_center.vmFolder.stub(:traverse).with(CUSTOM_VM_FOLDER, RbVmomi::VIM::Folder, true).and_return(custom_base_folder)
     call
     expect(@template).to have_received(:CloneVM_Task).with({
       :folder => custom_base_folder,
