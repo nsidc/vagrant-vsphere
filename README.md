@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.10.0**
+**0.11.0**
 
-vagrant-vsphere (0.10.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (0.11.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -176,6 +176,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
 * 0.10.0
   * new optional parameter to clone into custom folder in vSphere [#73 mikola-spb:vm-base-path](https://github.com/nsidc/vagrant-vsphere/pull/73)
   * follows semvar better, this adds functionality in a backwards compatible way, so bumps the minor. 0.9.0, should have been a major version.
+* 0.11.0
+  * Create the VM target folder if it doesn't exist #76 marnovdm:feature/create_vm_folder.
 
 ## Versioning
 
