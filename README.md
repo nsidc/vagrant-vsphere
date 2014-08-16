@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.11.0**
+**0.12.0**
 
-vagrant-vsphere (0.11.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (0.12.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -178,6 +178,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * follows semvar better, this adds functionality in a backwards compatible way, so bumps the minor. 0.9.0, should have been a major version.
 * 0.11.0
   * Create the VM target folder if it doesn't exist #76 marnovdm:feature/create_vm_folder.
+* 0.12.0
+  * Use a directory name where Vagrantfile is stored as a prefix for VM name [#82 mkuzmin:name-prefix](https://github.com/nsidc/vagrant-vsphere/pull/82).
 
 ## Versioning
 
