@@ -55,6 +55,7 @@ RSpec.configure do |config|
         :proxy_port => nil)
     vm_config = double(
       :vm => double('config_vm',
+                    :box => nil,
                     :synced_folders => [],
                     :provisioners => [],
                     :hostname => nil,
