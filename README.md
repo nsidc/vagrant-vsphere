@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.12.0**
+**0.13.0**
 
-vagrant-vsphere (0.12.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (0.13.0) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -180,6 +180,10 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Create the VM target folder if it doesn't exist #76 marnovdm:feature/create_vm_folder.
 * 0.12.0
   * Use a directory name where Vagrantfile is stored as a prefix for VM name [#82 mkuzmin:name-prefix](https://github.com/nsidc/vagrant-vsphere/pull/82).
+* 0.13.0
+  * Find and install box file for multi-provider boxes automatically [#86 mkuzmin:install-box](https://github.com/nsidc/vagrant-vsphere/pull/86) & [#87 mkuzmin/provider-name](https://github.com/nsidc/vagrant-vsphere/pull/87).
+
+
 
 ## Versioning
 
