@@ -34,7 +34,7 @@ After the gem is built, run the plugin install command from the build directory.
 The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for
 detailed instructions.
 
-The plugin forces use of Nokogiri >= 1.5.10 to prevent conflicts with older versions of system libraries, specifically zlib.
+The plugin forces use of Nokogiri ~> 1.5 to prevent conflicts with older versions of system libraries, specifically zlib.
 
 ## Usage
 
@@ -182,6 +182,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Use a directory name where Vagrantfile is stored as a prefix for VM name [#82 mkuzmin:name-prefix](https://github.com/nsidc/vagrant-vsphere/pull/82).
 * 0.13.0
   * Find and install box file for multi-provider boxes automatically [#86 mkuzmin:install-box](https://github.com/nsidc/vagrant-vsphere/pull/86) & [#87 mkuzmin/provider-name](https://github.com/nsidc/vagrant-vsphere/pull/87).
+* 0.13.1
+  * Change Nokogiri Major Version dependency [#90 highsineburgh:SAITRADLab-master](https://github.com/nsidc/vagrant-vsphere/pull/90)
 
 
 
