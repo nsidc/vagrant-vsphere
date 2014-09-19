@@ -8,7 +8,7 @@ describe VagrantPlugins::VSphere::Action::GetState do
   it 'should set state id to not created if machine ID is not set' do
     call
 
-    @env[:machine_state_id].should be :not_created
+    expect(@env[:machine_state_id]).to be :not_created
   end
 
   it 'should set state id to not created if VM is not found' do
@@ -16,7 +16,7 @@ describe VagrantPlugins::VSphere::Action::GetState do
 
     call
 
-    @env[:machine_state_id].should be :not_created
+    expect(@env[:machine_state_id]).to be :not_created
   end
 
   it 'should set state id to running if machine is powered on' do
@@ -25,7 +25,7 @@ describe VagrantPlugins::VSphere::Action::GetState do
 
     call
 
-    @env[:machine_state_id].should be :running
+    expect(@env[:machine_state_id]).to be :running
   end
 
   it 'should set state id to powered off if machine is powered off' do
@@ -34,7 +34,7 @@ describe VagrantPlugins::VSphere::Action::GetState do
 
     call
 
-    @env[:machine_state_id].should be :poweroff
+    expect(@env[:machine_state_id]).to be :poweroff
   end
 
   it 'should set state id to powered off if machine is suspended' do
@@ -43,12 +43,12 @@ describe VagrantPlugins::VSphere::Action::GetState do
 
     call
 
-    @env[:machine_state_id].should be :poweroff
+    expect(@env[:machine_state_id]).to be :poweroff
   end
 
   it 'should call the next item in the middleware stack' do
     call
 
-    @app.should have_received :call
+    expect(@app).to have_received :call
   end
 end

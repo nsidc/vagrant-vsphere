@@ -11,7 +11,7 @@ describe VagrantPlugins::VSphere::Action::IsCreated do
 
     call
 
-    @env[:result].should be true
+    expect(@env[:result]).to be true
   end
 
   it 'should set result to false if the VM does not exist' do
@@ -19,11 +19,11 @@ describe VagrantPlugins::VSphere::Action::IsCreated do
 
     call
 
-    @env[:result].should be false
+    expect(@env[:result]).to be false
   end
 
   it 'should call the next item in the middleware stack' do
     call
-    @app.should have_received :call
+    expect(@app).to have_received :call
   end
 end

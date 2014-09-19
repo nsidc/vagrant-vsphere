@@ -8,8 +8,8 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
   it 'should set the ssh info to nil if machine ID is not set' do
     call
 
-    @env.has_key?(:machine_ssh_info).should be true
-    @env[:machine_ssh_info].should be nil
+    expect(@env.has_key?(:machine_ssh_info)).to be true
+    expect(@env[:machine_ssh_info]).to be nil
   end
 
   it 'should set the ssh info to nil for a VM that does not exist' do
@@ -17,8 +17,8 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
 
     call
 
-    @env.has_key?(:machine_ssh_info).should be true
-    @env[:machine_ssh_info].should be nil
+    expect(@env.has_key?(:machine_ssh_info)).to be true
+    expect(@env[:machine_ssh_info]).to be nil
   end
 
   it 'should set the ssh info host to the IP an existing VM' do
@@ -26,6 +26,6 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
 
     call
 
-    @env[:machine_ssh_info][:host].should be IP_ADDRESS
+    expect(@env[:machine_ssh_info][:host]).to be IP_ADDRESS
   end
 end

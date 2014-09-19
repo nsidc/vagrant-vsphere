@@ -1,20 +1,20 @@
 # Vagrant vSphere Provider
 
-This is a [Vagrant](http://www.vagrantup.com) 1.2+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
+This is a [Vagrant](http://www.vagrantup.com) 1.6.3+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
 provider to Vagrant, allowing Vagrant to control and provision machines using VMware. New machines are created from virtual machines or templates which must be configured prior to using using this provider.
 
 This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi) Ruby interface to the vSphere API.
 
 ## Requirements
-* Vagrant 1.2+
+* Vagrant 1.6.3+
 * VMware + vSphere API
 * Ruby 1.9+
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**0.7.0**
+**version: 0.13.1**
 
-vagrant-vsphere (0.7.0) is available from [RubyGems.org](https://rubygems.org/)
+vagrant-vsphere (**version: 0.13.1**) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -24,17 +24,17 @@ Install using standard Vagrant plugin method:
 $ vagrant plugin install vagrant-vsphere
 ```
 
-This will install the plugin from RubGems.org.
+This will install the plugin from RubyGems.org.
 
 Alternatively, you can clone this repository and build the source with `gem build vSphere.gemspec`.
 After the gem is built, run the plugin install command from the build directory.
 
 ### Potential Intallation Problems
 
-The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for 
-detailed instructions. 
+The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for
+detailed instructions.
 
-The plugin forces use of Nokogiri 1.5.10 to prevent conflicts with older versions of system libraries, specifically zlib.
+The plugin forces use of Nokogiri ~> 1.5 to prevent conflicts with older versions of system libraries, specifically zlib.
 
 ## Usage
 
@@ -86,17 +86,20 @@ This provider has the following settings, all are required unless noted:
 
 * `host` -  IP or name for the vSphere API
 * `insecure` - _Optional_ verify SSL certificate from the host
-* `user' - user name for connecting to vSphere
+* `user` - user name for connecting to vSphere
 * `password` - password  for connecting to vSphere
 * `data_center_name` - _Optional_ datacenter containing the computed resource, the template and where the new VM will be created, if not specified the first datacenter found will be used
 * `compute_resource_name` - _Required if cloning from template_ the name of the host containing the resource pool for the new VM
-* `resource_pool_name` - _Required if cloning from template_ the resource pool for the new VM
+* `resource_pool_name` - the resource pool for the new VM. If not supplied, and cloning from a template, uses the root resource pool
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as the source for the cloning operation
 * `template_name` - the VM or VM template to clone
+* `vm_base_path` - _Optional_ path to folder where new VM sould be created, if not specified template's parent folder will be used
 * `name` - _Optional_ name of the new VM, if missing the name will be auto generated
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
 * `linked_clone` - _Optional_ link the cloned VM to the parent to share virtual disks
+* `proxy_host` - _Optional_ proxy host name for connecting to vSphere via proxy
+* `proxy_port` - _Optional_ proxy port number for connecting to vSphere via proxy
 
 ### Cloning from a VM rather than a template
 
@@ -142,6 +145,47 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * handle multiple private key paths
   * add auto name generation based on machine name
   * add support for linked clones
+* 0.7.1
+  * fixes rsync error reporting
+  * updates locales yaml
+  * restricts rbvmomi dependency
+* 0.7.2
+  * includes template in get_location (from: tim95030 fixes issue #38)
+  * updates Gemfile to fall back to old version of vagrant for if ruby < 2.0.0 is available.
+* 0.8.0
+  * Adds configuration for connecting via proxy server (tkak issue #40)
+* 0.8.1
+  * Fixes [#47](https://github.com/nsidc/vagrant-vsphere/issues/47) via [olegz-alertlogic #52](https://github.com/nsidc/vagrant-vsphere/pull/52)
+* 0.8.2
+  * fixes no error messages [#58 leth:no-error-message](https://github.com/nsidc/vagrant-vsphere/pull/58)
+  * fixes typo [#57 targetx007](https://github.com/nsidc/vagrant-vsphere/pull/57)
+  * fixes additional no error messages
+* 0.8.3
+  * Fixed "No error message" on rbvmomi method calls. [#74: mkuzmin:rbvmomi-error-messages](https://github.com/nsidc/vagrant-vsphere/pull/74)
+* 0.8.4
+  * Use root resource pool when cloning from template [#63: matt-richardson:support-resource-pools-on-vsphere-standard-edition](https://github.com/nsidc/vagrant-vsphere/pull/63)
+* 0.8.5
+  * fixed synced folders to work with WinRM communicator [#72 10thmagnitude:master](https://github.com/nsidc/vagrant-vsphere/pull/72)
+* 0.9.0
+  * increases Vagrant requirements to 1.6.3+
+  * Supports differentiating between SSH/WinRM communicator [#67 marnovdm:feature/waiting-for-winrm](https://github.com/nsidc/vagrant-vsphere/pull/67)
+* 0.9.1
+  * reuse folder sync code from Vagrant core. [#66 mkuzmin:sync-folders](https://github.com/nsidc/vagrant-vsphere/pull/66)
+* 0.9.2
+  * Instruct vagrant to set the guest hostname according to Vagrantfile [#69 ddub:set-hostname](https://github.com/nsidc/vagrant-vsphere/pull/69)
+* 0.10.0
+  * new optional parameter to clone into custom folder in vSphere [#73 mikola-spb:vm-base-path](https://github.com/nsidc/vagrant-vsphere/pull/73)
+  * follows semvar better, this adds functionality in a backwards compatible way, so bumps the minor. 0.9.0, should have been a major version.
+* 0.11.0
+  * Create the VM target folder if it doesn't exist #76 marnovdm:feature/create_vm_folder.
+* 0.12.0
+  * Use a directory name where Vagrantfile is stored as a prefix for VM name [#82 mkuzmin:name-prefix](https://github.com/nsidc/vagrant-vsphere/pull/82).
+* 0.13.0
+  * Find and install box file for multi-provider boxes automatically [#86 mkuzmin:install-box](https://github.com/nsidc/vagrant-vsphere/pull/86) & [#87 mkuzmin/provider-name](https://github.com/nsidc/vagrant-vsphere/pull/87).
+* 0.13.1
+  * Change Nokogiri Major Version dependency [#90 highsineburgh:SAITRADLab-master](https://github.com/nsidc/vagrant-vsphere/pull/90)
+
+
 
 ## Versioning
 
@@ -158,6 +202,7 @@ This plugin follows the principles of [Semantic Versioning 2.0.0](http://semver.
 ### Unit Tests
 
 Please run the unit tests to verify your changes. To do this simply run `rake`.
+If you want a quick merge, write a spec that fails before your changes are applied and that passes after.
 
 
 If you don't have rake installed, first install [bundler](http://bundler.io/) and run `bundle install`.

@@ -4,3 +4,5 @@ Vagrantfile
 pkg/*
 *.box
 Gemfile.lock
+/vendor/
+/synced_folders

@@ -1,4 +1,5 @@
 require 'rbvmomi'
+require 'pathname'
 require 'vSphere/errors'
 require 'vSphere/action'
 require 'vSphere/action/connect_vsphere'
@@ -22,6 +23,13 @@ NAME = 'vm'
 IP_ADDRESS = '127.0.0.1'
 
 RSpec.configure do |config|
+
+  # removes deprecation warnings.
+  # http://stackoverflow.com/questions/20275510/how-to-avoid-deprecation-warning-for-stub-chain-in-rspec-3-0/20296359#20296359
+  config.mock_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+
   config.before(:each) do
     def call
       described_class.new(@app, @env).call(@env)
@@ -34,6 +42,7 @@ RSpec.configure do |config|
         :data_center_name => nil,
         :compute_resource_name => 'testcomputeresource',
         :resource_pool_name => 'testresourcepool',
+        :vm_base_path => nil,
         :template_name => TEMPLATE,
         :name => NAME,
         :insecure => true,
@@ -41,9 +50,17 @@ RSpec.configure do |config|
         :customization_spec_name => nil,
         :data_store_name => nil,
         :clone_from_vm => nil,
-        :linked_clone => nil)
+        :linked_clone => nil,
+        :proxy_host => nil,
+        :proxy_port => nil)
     vm_config = double(
-      :vm => double('config_vm', :synced_folders => [], :provisioners => [], :networks => [[:private_network, {:ip => '0.0.0.0'}]]),
+      :vm => double('config_vm',
+                    :box => nil,
+                    :synced_folders => [],
+                    :provisioners => [],
+                    :hostname => nil,
+                    :communicator => nil,
+                    :networks => [[:private_network, {:ip => '0.0.0.0'}]]),
       :validate => []
     )
     @app = double 'app', :call => true
@@ -53,8 +70,11 @@ RSpec.configure do |config|
                       :state => double('state', :id => nil),
                       :communicate => double('communicator', :ready? => true),
                       :ssh_info => {},
+                      :data_dir => Pathname.new(''),
                       :id => nil,
                       :id= => nil
+
+
     @env = {
         :machine => @machine,
         :ui => double('ui', :info => nil)
@@ -72,27 +92,34 @@ RSpec.configure do |config|
     vm_folder.stub(:findByUuid).with(MISSING_UUID).and_return(nil)
     vm_folder.stub(:findByUuid).with(nil).and_return(nil)
 
+
+    @child_resource_pool = double('testresourcepool')
+    @root_resource_pool = double('pools', :find => @child_resource_pool)
+
     @data_center = double('data_center',
                           :vmFolder => vm_folder,
-                          :find_compute_resource => double('compute resource', :resourcePool => double('pools', :find => {})))
+                          :pretty_path => "data_center/#{vm_folder}",
+                          :find_compute_resource => double('compute resource', :resourcePool => @root_resource_pool))
 
     @template = double('template_vm',
                        :parent => @data_center,
+                       :pretty_path => "#{@data_center.pretty_path}/template_vm",
                        :CloneVM_Task => double('result',
-                                                :wait_for_completion => double('new_vm', :config => double('config', :uuid => NEW_UUID))))
+                                               :wait_for_completion => double('new_vm', :config => double('config', :uuid => NEW_UUID))))
 
     @data_center.stub(:find_vm).with(TEMPLATE).and_return(@template)
 
     service_instance = double 'service_instance', :find_datacenter => @data_center
-    @ip = double 'ip', :ipAddress= => nil 
-    customization_spec = double 'customization spec', :nicSettingMap => [double('nic setting', :adapter => double('adapter', :ip => @ip))]
-    customization_spec.stub(:clone).and_return(customization_spec)
-    customization_spec_manager = double 'customization spec manager', :GetCustomizationSpec => double('spec info', :spec => customization_spec)
+    @ip = double 'ip', :ipAddress= => nil
+    @customization_spec = double 'customization spec', :nicSettingMap => [double('nic setting', :adapter => double('adapter', :ip => @ip))]
+    @customization_spec.stub(:clone).and_return(@customization_spec)
+    customization_spec_manager = double 'customization spec manager', :GetCustomizationSpec => double('spec info', :spec => @customization_spec)
     service_content = double 'service content', :customizationSpecManager => customization_spec_manager
     @vim = double 'vim', :serviceInstance => service_instance, :close => true, :serviceContent => service_content
 
     VIM.stub(:connect).and_return(@vim)
     VIM.stub(:VirtualMachineRelocateSpec).and_return({})
-    VIM.stub(:VirtualMachineCloneSpec).and_return({})
+    VIM.stub(:VirtualMachineCloneSpec) do |location, powerOn, template| { :location => location[:location] } end
+
   end
 end

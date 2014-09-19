@@ -5,7 +5,7 @@ en:
     vm_clone_success: |-
       New virtual machine successfully cloned and started
     destroy_vm: |-
-      Calling vShpere Destroy
+      Calling vSphere Destroy
     power_off_vm: |-
       Calling vSphere PowerOff
     power_on_vm: |-
@@ -18,48 +18,40 @@ en:
       The VM is not running
     waiting_for_ssh: |-
       Waiting for SSH to become available...
-    rsync_folder: |-
-      Rsyncing folder: %{hostpath} => %{guestpath}
-  errors:
-    missing_template: |-
-      Configured template/source VM could not be found
-    missing_datacenter: |-
-      Configured data center not found
-    missing_compute_resource: |-
-      Configured compute resource not found
-    missing_resource_pool: |-
-      Configured resource pool not found
-    null_configuration_spec_manager: |-
-      Configuration spec manager not configured in the ServiceInstance
-    missing_configuration_spec: |-
-      Configured configuration spec not found
-    missing_datastore: |-
-      Configured data store not found 
-    rsync_error: |-
-      There was an error when attemping to rsync a share folder.
-      Please inspect the error message below for more info.
+    waiting_for_winrm: |-
+      Waiting for WinRM to become available...
 
-      Host path: %{hostpath}
-      Guest path: %{guestpath}
-      Error: %{stderr}
-    too_many_private_networks: |-
-      There a more private networks configured than can be assigned to the customization spec
-    rsync_not_found: |-
-      Warning! Folder sync disabled because the rsync binary is
-      missing. Make sure rsync is installed and the binary can
-      be found in PATH.
-  config:
-    host: |-
-      Configuration must specify a vSphere host
-    user: |-
-      Configuration must specify a vSphere user
-    password: |-
-      Configuration must specify a vSphere password
-    name: |-
-      Configuration must specify a VM name
-    template: |-
-      Configuration must specify a template name
-    compute_resource: |-
-      Configuration must specify a compute resource name
-    resource_pool: |-
-      Configuration must specify a resource pool name
+    errors:
+      missing_template: |-
+        Configured template/source VM could not be found
+      invalid_base_path: |-
+        Could not find base path for target VM, check 'vm_base_path' configuration value
+      missing_datacenter: |-
+        Configured data center not found
+      missing_compute_resource: |-
+        Configured compute resource not found
+      missing_resource_pool: |-
+        Configured resource pool not found
+      null_configuration_spec_manager: |-
+        Configuration spec manager not configured in the ServiceInstance
+      missing_configuration_spec: |-
+        Configured configuration spec not found
+      missing_datastore: |-
+        Configured data store not found
+      too_many_private_networks: |-
+        There a more private networks configured than can be assigned to the customization spec
+    config:
+      host: |-
+        Configuration must specify a vSphere host
+      user: |-
+        Configuration must specify a vSphere user
+      password: |-
+        Configuration must specify a vSphere password
+      name: |-
+        Configuration must specify a VM name
+      template: |-
+        Configuration must specify a template name
+      compute_resource: |-
+        Configuration must specify a compute resource name
+      resource_pool: |-
+        Configuration must specify a resource pool name
