@@ -40,6 +40,10 @@ en:
         Configured data store not found
       too_many_private_networks: |-
         There a more private networks configured than can be assigned to the customization spec
+      missing_vlan: |-
+        Configured vlan not found
+      missing_network_card: |-
+        Cannot find network card to customize
     config:
       host: |-
         Configuration must specify a vSphere host
