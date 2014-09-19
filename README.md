@@ -184,7 +184,9 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Find and install box file for multi-provider boxes automatically [#86 mkuzmin:install-box](https://github.com/nsidc/vagrant-vsphere/pull/86) & [#87 mkuzmin/provider-name](https://github.com/nsidc/vagrant-vsphere/pull/87).
 * 0.13.1
   * Change Nokogiri Major Version dependency [#90 highsineburgh:SAITRADLab-master](https://github.com/nsidc/vagrant-vsphere/pull/90)
-
+* 0.14.0 Add vlan configuration [#91 rylarson:add-vlan-configuration](https://github.com/nsidc/vagrant-vsphere/pull/91)
+  * Added a new configuration option 'vlan' that lets you specify the vlan string
+  * If vlan is set, the clone spec is modified with an edit action to connect the first NIC on the VM to the configured VLAN.
 
 
 ## Versioning
