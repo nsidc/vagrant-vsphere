@@ -14,7 +14,7 @@ describe VagrantPlugins::VSphere::Action::PowerOff do
     expect(@vm).to have_received :PowerOffVM_Task
   end
 
-  it 'should not power off the VM if is powered on' do
+  it 'should not power off the VM if is powered off' do
     @machine.stub(:id).and_return(EXISTING_UUID)
     @vm.runtime.stub(:powerState).and_return(VagrantPlugins::VSphere::Util::VmState::POWERED_OFF)
 
