@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'vSphere/util/vim_helpers'
 
 describe VagrantPlugins::VSphere::Action::GetState do
   before :each do
@@ -21,7 +22,7 @@ describe VagrantPlugins::VSphere::Action::GetState do
 
   it 'should set state id to running if machine is powered on' do
     @env[:machine].stub(:id).and_return(EXISTING_UUID)
-    @vm.runtime.stub(:powerState).and_return(described_class::POWERED_ON)
+    @vm.runtime.stub(:powerState).and_return(VagrantPlugins::VSphere::Util::VmState::POWERED_ON)
 
     call
 
@@ -30,7 +31,7 @@ describe VagrantPlugins::VSphere::Action::GetState do
 
   it 'should set state id to powered off if machine is powered off' do
     @env[:machine].stub(:id).and_return(EXISTING_UUID)
-    @vm.runtime.stub(:powerState).and_return(described_class::POWERED_OFF)
+    @vm.runtime.stub(:powerState).and_return(VagrantPlugins::VSphere::Util::VmState::POWERED_OFF)
 
     call
 
@@ -39,7 +40,7 @@ describe VagrantPlugins::VSphere::Action::GetState do
 
   it 'should set state id to powered off if machine is suspended' do
     @env[:machine].stub(:id).and_return(EXISTING_UUID)
-    @vm.runtime.stub(:powerState).and_return(described_class::SUSPENDED)
+    @vm.runtime.stub(:powerState).and_return(VagrantPlugins::VSphere::Util::VmState::SUSPENDED)
 
     call
 
