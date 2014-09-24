@@ -35,6 +35,10 @@ module VagrantPlugins
 
           get_datacenter(connection, machine).find_datastore name or fail Errors::VSphereError, :missing_datastore
         end
+
+        def get_network_by_name(dc, name)
+          dc.network.find { |f| f.name == name } or fail Errors::VSphereError, :missing_vlan
+        end
       end
     end
   end

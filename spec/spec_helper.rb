@@ -52,7 +52,8 @@ RSpec.configure do |config|
         :clone_from_vm => nil,
         :linked_clone => nil,
         :proxy_host => nil,
-        :proxy_port => nil)
+        :proxy_port => nil,
+        :vlan => nil)
     vm_config = double(
       :vm => double('config_vm',
                     :box => nil,
@@ -101,11 +102,20 @@ RSpec.configure do |config|
                           :pretty_path => "data_center/#{vm_folder}",
                           :find_compute_resource => double('compute resource', :resourcePool => @root_resource_pool))
 
+    @device = RbVmomi::VIM::VirtualEthernetCard.new
+    @device.stub(:backing).and_return(RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo.new)
+
+    @virtual_hardware = double('virtual_hardware',
+                               :device => [@device])
+    @template_config = double('template_config',
+                              :hardware => @virtual_hardware)
+
     @template = double('template_vm',
                        :parent => @data_center,
                        :pretty_path => "#{@data_center.pretty_path}/template_vm",
                        :CloneVM_Task => double('result',
-                                               :wait_for_completion => double('new_vm', :config => double('config', :uuid => NEW_UUID))))
+                                               :wait_for_completion => double('new_vm', :config => double('config', :uuid => NEW_UUID))),
+                       :config => @template_config)
 
     @data_center.stub(:find_vm).with(TEMPLATE).and_return(@template)
 

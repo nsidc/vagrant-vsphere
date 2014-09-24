@@ -12,9 +12,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**version: 0.13.1**
+**version: 0.15.0**
 
-vagrant-vsphere (**version: 0.13.1**) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (**version: 0.15.0**) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -185,7 +185,13 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Find and install box file for multi-provider boxes automatically [#86 mkuzmin:install-box](https://github.com/nsidc/vagrant-vsphere/pull/86) & [#87 mkuzmin/provider-name](https://github.com/nsidc/vagrant-vsphere/pull/87).
 * 0.13.1
   * Change Nokogiri Major Version dependency [#90 highsineburgh:SAITRADLab-master](https://github.com/nsidc/vagrant-vsphere/pull/90)
-
+* 0.14.0 Add vlan configuration [#91 rylarson:add-vlan-configuration](https://github.com/nsidc/vagrant-vsphere/pull/91)
+  * Added a new configuration option 'vlan' that lets you specify the vlan string
+  * If vlan is set, the clone spec is modified with an edit action to connect the first NIC on the VM to the configured VLAN.
+* 0.15.0 Make destroy work in all vm states [#93 rylarson:make-destroy-work-in-all-vm-states](https://github.com/nsidc/vagrant-vsphere/pull/93) (fixes #77)
+  * If the VM is powered on, then it is powered off, and destroyed.
+  * If the VM is powered off, it is just destroyed.
+  * If the VM is suspended, it is powered on, then powered off, then destroyed.
 
 
 ## Versioning
