@@ -34,6 +34,7 @@ module VagrantPlugins
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
             add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
+            add_custom_cpu(spec, config.cpu_count) unless config.cpu_count.nil?
 
             env[:ui].info I18n.t('vsphere.creating_cloned_vm')
             env[:ui].info " -- #{config.clone_from_vm ? "Source" : "Template"} VM: #{template.pretty_path}"
@@ -156,6 +157,10 @@ module VagrantPlugins
 
         def add_custom_memory(spec, memory_mb)
           spec[:config][:memoryMB] = Integer(memory_mb)
+        end
+
+        def add_custom_cpu(spec, cpu_count)
+          spec[:config][:numCPUs] = Integer(cpu_count)
         end
       end
     end
