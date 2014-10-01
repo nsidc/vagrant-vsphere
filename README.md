@@ -101,6 +101,7 @@ This provider has the following settings, all are required unless noted:
 * `proxy_host` - _Optional_ proxy host name for connecting to vSphere via proxy
 * `proxy_port` - _Optional_ proxy port number for connecting to vSphere via proxy
 * `vlan` - _Optional_ vlan to connect the first NIC to
+* `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
 
 ### Cloning from a VM rather than a template
 
@@ -192,6 +193,7 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * If the VM is powered on, then it is powered off, and destroyed.
   * If the VM is powered off, it is just destroyed.
   * If the VM is suspended, it is powered on, then powered off, then destroyed.
+* 0.16.0 Add ability to configure amount of memory the new cloned VM will have [#94 rylarson:add-memory-configuration](https://github.com/nsidc/vagrant-vsphere/pull/94).
 
 
 ## Versioning

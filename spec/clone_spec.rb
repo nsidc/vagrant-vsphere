@@ -12,7 +12,8 @@ describe VagrantPlugins::VSphere::Action::Clone do
     expect(@template).to have_received(:CloneVM_Task).with({
       :folder => @data_center,
       :name => NAME,
-      :spec => {:location => {:pool => @child_resource_pool} }
+      :spec => {:location => {:pool => @child_resource_pool}, 
+        :config => RbVmomi::VIM.VirtualMachineConfigSpec }
     })
   end
 
@@ -25,7 +26,8 @@ describe VagrantPlugins::VSphere::Action::Clone do
     expect(@template).to have_received(:CloneVM_Task).with({
       :folder => custom_base_folder,
       :name => NAME,
-      :spec => {:location => {:pool => @child_resource_pool} }
+      :spec => {:location => {:pool => @child_resource_pool},
+        :config => RbVmomi::VIM.VirtualMachineConfigSpec }
     })
   end
 
@@ -55,8 +57,19 @@ describe VagrantPlugins::VSphere::Action::Clone do
       :name => NAME,
       :spec => {:location => 
         {:pool => @child_resource_pool},
-        :config => expected_config
+          :config => expected_config
       }
+    })
+  end
+
+  it 'should create a CloneVM spec with configured memory_mb' do
+    @machine.provider_config.stub(:memory_mb).and_return(2048)
+    call
+    expect(@template).to have_received(:CloneVM_Task).with({
+      :folder => @data_center,
+      :name => NAME,
+      :spec => {:location => {:pool => @child_resource_pool}, 
+        :config => RbVmomi::VIM.VirtualMachineConfigSpec(:memoryMB => 2048) },
     })
   end
 
@@ -72,7 +85,8 @@ describe VagrantPlugins::VSphere::Action::Clone do
     expect(@template).to have_received(:CloneVM_Task).with({
       :folder => @data_center,
       :name => NAME,
-      :spec => {:location => {:pool => @root_resource_pool } }
+      :spec => {:location => {:pool => @root_resource_pool }, 
+        :config => RbVmomi::VIM.VirtualMachineConfigSpec }
     })
   end
 end
