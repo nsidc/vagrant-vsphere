@@ -193,6 +193,7 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * If the VM is powered on, then it is powered off, and destroyed.
   * If the VM is powered off, it is just destroyed.
   * If the VM is suspended, it is powered on, then powered off, then destroyed.
+* 0.16.0 Add ability to configure amount of memory the new cloned VM will have [#94 rylarson:add-memory-configuration](https://github.com/nsidc/vagrant-vsphere/pull/94).
 
 
 ## Versioning
