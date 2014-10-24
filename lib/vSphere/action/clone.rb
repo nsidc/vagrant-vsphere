@@ -26,7 +26,11 @@ module VagrantPlugins
           raise Errors::VSphereError, :'invalid_base_path' if vm_base_folder.nil?
 
           begin
-            location = get_location connection, machine, config, template
+# Storage DRS does not support vSphere linked clones. http://www.vmware.com/files/pdf/techpaper/vsphere-storage-drs-interoperability.pdf
+            ds = get_datastore dc, machine
+            raise Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone and datastore.is_a? RbVmomi::VIM::StoragePod
+
+            location = get_location ds, dc, machine, template
             spec = RbVmomi::VIM.VirtualMachineCloneSpec :location => location, :powerOn => true, :template => false
             spec[:config] = RbVmomi::VIM.VirtualMachineConfigSpec
             customization_info = get_customization_spec_info_by_name connection, machine
@@ -35,11 +39,40 @@ module VagrantPlugins
             add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
 
-            env[:ui].info I18n.t('vsphere.creating_cloned_vm')
-            env[:ui].info " -- #{config.clone_from_vm ? "Source" : "Template"} VM: #{template.pretty_path}"
-            env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
+            if !config.clone_from_vm and ds.is_a? RbVmomi::VIM::StoragePod
 
-            new_vm = template.CloneVM_Task(:folder => vm_base_folder, :name => name, :spec => spec).wait_for_completion
+              storageMgr = connection.serviceContent.storageResourceManager
+              podSpec = RbVmomi::VIM.StorageDrsPodSelectionSpec(:storagePod => ds)
+# TODO: May want to add option on type? 
+              storageSpec = RbVmomi::VIM.StoragePlacementSpec(:type => 'clone', :cloneName => name, :folder => vm_base_folder, :podSelectionSpec => podSpec, :vm => template, :cloneSpec => spec)
+
+              env[:ui].info I18n.t('vsphere.requesting_sdrs_recommendation')
+              env[:ui].info " -- DatastoreCluster: #{ds.name}"
+              env[:ui].info " -- Template VM: #{template.pretty_path}"
+              env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
+
+              result = storageMgr.RecommendDatastores(:storageSpec => storageSpec)
+
+              recommendation = result.recommendations[0]
+              key = recommendation.key ||= ''
+              if key == ''
+                raise Errors::VSphereError, :missing_datastore_recommendation
+              end
+
+              env[:ui].info I18n.t('vsphere.creating_cloned_vm_sdrs')
+              env[:ui].info " -- Storage DRS recommendation: #{recommendation.target.name} #{recommendation.reasonText}"
+
+              applySRresult = storageMgr.ApplyStorageDrsRecommendation_Task(:key => [key]).wait_for_completion
+              new_vm = applySRresult.vm
+
+            else
+
+              env[:ui].info I18n.t('vsphere.creating_cloned_vm')
+              env[:ui].info " -- #{config.clone_from_vm ? "Source" : "Template"} VM: #{template.pretty_path}"
+              env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
+
+              new_vm = template.CloneVM_Task(:folder => vm_base_folder, :name => name, :spec => spec).wait_for_completion
+            end
           rescue Errors::VSphereError => e
             raise
           rescue Exception => e
@@ -78,8 +111,8 @@ module VagrantPlugins
           customization_spec
         end
 
-        def get_location(connection, machine, config, template)
-          if config.linked_clone
+        def get_location(datastore, dc, machine, template)
+          if machine.provider_config.linked_clone
             # The API for linked clones is quite strange. We can't create a linked
             # straight from any VM. The disks of the VM for which we can create a
             # linked clone need to be read-only and thus VC demands that the VM we
@@ -111,13 +144,14 @@ module VagrantPlugins
             end
 
             location = RbVmomi::VIM.VirtualMachineRelocateSpec(:diskMoveType => :moveChildMostDiskBacking)
+          elsif datastore.is_a? RbVmomi::VIM::StoragePod
+            location = RbVmomi::VIM.VirtualMachineRelocateSpec
           else
             location = RbVmomi::VIM.VirtualMachineRelocateSpec
 
-            datastore = get_datastore connection, machine
             location[:datastore] = datastore unless datastore.nil?
           end
-          location[:pool] = get_resource_pool(connection, machine) unless config.clone_from_vm
+          location[:pool] = get_resource_pool(dc, machine) unless machine.provider_config.clone_from_vm
           location
         end
 

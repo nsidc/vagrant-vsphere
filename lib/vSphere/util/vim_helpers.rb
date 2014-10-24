@@ -12,17 +12,16 @@ module VagrantPlugins
           get_datacenter(connection, machine).vmFolder.findByUuid machine.id
         end
 
-        def get_resource_pool(connection, machine)
-          cr = get_compute_resource(connection, machine)
-          rp = cr.resourcePool
+        def get_resource_pool(datacenter, machine)
+          computeResource = get_compute_resource(datacenter, machine)
+          rp = computeResource.resourcePool
           if !(machine.provider_config.resource_pool_name.nil?)
-            rp = cr.resourcePool.find(machine.provider_config.resource_pool_name) or  fail Errors::VSphereError, :missing_resource_pool
+            rp = computeResource.resourcePool.find(machine.provider_config.resource_pool_name) or  fail Errors::VSphereError, :missing_resource_pool
           end
           rp
         end
 
-        def get_compute_resource(connection, machine)
-          datacenter = get_datacenter(connection, machine);
+        def get_compute_resource(datacenter, machine)
           cr = find_clustercompute_or_compute_resource(datacenter, machine.provider_config.compute_resource_name) or fail Errors::VSphereError, :missing_compute_resource
           cr
         end
@@ -56,7 +55,7 @@ module VagrantPlugins
             if x.is_a? RbVmomi::VIM::ClusterComputeResource or x.is_a? RbVmomi::VIM::ComputeResource
               x
             else
-              puts "ex unknonw type " + x.to_json
+              puts "ex unknown type " + x.to_json
               nil
             end
           end
@@ -71,11 +70,12 @@ module VagrantPlugins
           spec = manager.GetCustomizationSpec(:name => name) or fail Errors::VSphereError, :missing_configuration_spec if spec.nil?
         end
 
-        def get_datastore(connection, machine)
+        def get_datastore(datacenter, machine)
           name = machine.provider_config.data_store_name
           return if name.nil? || name.empty?
 
-          get_datacenter(connection, machine).find_datastore name or fail Errors::VSphereError, :missing_datastore
+# find_datastore uses folder datastore that only lists Datastore and not StoragePod, if not found also try datastoreFolder which contains StoragePod(s)
+          datacenter.find_datastore name or datacenter.datastoreFolder.find name or fail Errors::VSphereError, :missing_datastore
         end
 
         def get_network_by_name(dc, name)

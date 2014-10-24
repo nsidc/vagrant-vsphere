@@ -2,6 +2,10 @@ en:
   vsphere:
     creating_cloned_vm: |-
       Calling vSphere CloneVM with the following settings:
+    creating_cloned_vm_sdrs: |-
+      Calling vSphere ApplyStorageDrsRecommendation with the following settings:
+    requesting_sdrs_recommendation: |-
+      Calling vSphere RecommendDatastores with StoragePlacementSpec of the following settings:
     vm_clone_success: |-
       New virtual machine successfully cloned and started
     destroy_vm: |-
@@ -44,6 +48,9 @@ en:
         Configured vlan not found
       missing_network_card: |-
         Cannot find network card to customize
+      invalid_configuration_linked_clone_with_sdrs: |-
+        Cannot use Linked Clone with Storage DRS
+
     config:
       host: |-
         Configuration must specify a vSphere host
