@@ -13,7 +13,7 @@ module VagrantPlugins
           b.use ConnectVSphere
           b.use Call, IsRunning do |env, b2|
             if [:result]
-                b2.use PowerOff
+                b2.use action_halt
                 next
             end
           end
@@ -126,7 +126,11 @@ module VagrantPlugins
                 next
               end
 
-              b3.use PowerOff
+              b3.use Call, GracefulHalt, :poweroff, :running do |env, b4|
+                if !env[:result]
+                  b4.use PowerOff
+                end
+              end
             end
           end
           b.use CloseVSphere
