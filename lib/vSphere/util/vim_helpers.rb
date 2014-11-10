@@ -75,7 +75,7 @@ module VagrantPlugins
           return if name.nil? || name.empty?
 
 # find_datastore uses folder datastore that only lists Datastore and not StoragePod, if not found also try datastoreFolder which contains StoragePod(s)
-          datacenter.find_datastore name or datacenter.datastoreFolder.find name or fail Errors::VSphereError, :missing_datastore
+          datacenter.find_datastore name or datacenter.datastoreFolder.traverse name or fail Errors::VSphereError, :missing_datastore
         end
 
         def get_network_by_name(dc, name)
