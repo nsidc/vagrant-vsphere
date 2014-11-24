@@ -145,10 +145,7 @@ module VagrantPlugins
           card = config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first or fail Errors::VSphereError, :missing_network_card
           card.macAddress = mac
           card_spec = { :deviceChange => [ { :operation => :edit, :device => card } ] }
-          #dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(:device => card, :operation => "edit")
-          #spec[:config][:deviceChange].push dev_spec
           template.ReconfigVM_Task(:spec => card_spec).wait_for_completion
-          puts "Finished Changing the MAC to #{mac}"
         end
 
         def add_custom_vlan(template, dc, spec, vlan)
