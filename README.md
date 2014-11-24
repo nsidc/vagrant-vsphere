@@ -102,6 +102,7 @@ This provider has the following settings, all are required unless noted:
 * `proxy_port` - _Optional_ proxy port number for connecting to vSphere via proxy
 * `vlan` - _Optional_ vlan to connect the first NIC to
 * `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
+* `mac` - _Optional_ Used to set the mac address of the new VM
 
 ### Cloning from a VM rather than a template
 
@@ -122,6 +123,17 @@ The IP address will only be set if a customization spec name is given. The custo
 The name for the new VM will be automagically generated from the Vagrant machine name, the current timestamp and a random number to allow for simultaneous executions.
 
 This is useful if running Vagrant from multiple directories or if multiple machines are defined in the Vagrantfile.
+
+### Setting the MAC address
+
+To set a static MAC address, add a vsphere.mac to your vagrant file:
+
+```ruby
+vsphere.mac = '00:50:56:XX:YY:ZZ'
+```
+
+Be careful you could easily break networking if you use invalid or duplicate VMware MAC address.
+
 
 ## Version History
 * 0.0.1
