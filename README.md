@@ -114,7 +114,7 @@ To clone from an existing VM rather than a template, set `clone_from_vm` to true
 ```
 vsphere.template_name = "vagrant-templates/ubuntu-lucid-template"
 ```
-![Vagrant Vsphere Screenshot]https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png
+![Vagrant Vsphere Screenshot](https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png)
 
 
 ### VM_Base_Path
