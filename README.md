@@ -126,7 +126,7 @@ vsphere.template_name = "vagrant-templates/ubuntu-lucid-template"
 vsphere.vm_base_path = "vagrant-machines"
 ```
 
-![Vagrant Vsphere Screenshot]https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png
+![Vagrant Vsphere Screenshot](https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png)
 
 
 ### Setting a static IP address
