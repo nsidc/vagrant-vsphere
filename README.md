@@ -87,8 +87,9 @@ This provider has the following settings, all are required unless noted:
 * `host` -  IP or name for the vSphere API
 * `insecure` - _Optional_ verify SSL certificate from the host
 * `user` - user name for connecting to vSphere
-* `password` - password for connecting to vSphere (or the special keyword
-  `:ask` to be prompted on each invocation
+* `password` - password for connecting to vSphere. If no value is given, or the
+  value is set to `:ask`, the user will be prompted to enter the password on
+  each invocation.
 * `data_center_name` - _Optional_ datacenter containing the computed resource, the template and where the new VM will be created, if not specified the first datacenter found will be used
 * `compute_resource_name` - _Required if cloning from template_ the name of the host containing the resource pool for the new VM
 * `resource_pool_name` - the resource pool for the new VM. If not supplied, and cloning from a template, uses the root resource pool
@@ -199,6 +200,9 @@ This is useful if running Vagrant from multiple directories or if multiple machi
 * 0.17.0
   * Add ability to configure the CPU Count
     [#96 rylarson:add-cpu-configuration](https://github.com/nsidc/vagrant-vsphere/pull/96).
+  * Prompt the user to enter a password if none is given, or the configuration
+    value is set to `:ask`
+    [#97 topmedia:password-prompt](https://github.com/nsidc/vagrant-vsphere/pull/97).
 
 ## Versioning
 
