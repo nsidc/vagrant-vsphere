@@ -26,6 +26,10 @@ module VagrantPlugins
       def validate(machine)
         errors = _detected_errors
 
+        if password == :ask
+          self.password = machine.ui.ask("vSphere Password (will be hidden): ", echo: false)
+        end
+
         # TODO: add blank?
         errors << I18n.t('vsphere.config.host') if host.nil?
         errors <<  I18n.t('vsphere.config.user') if user.nil?

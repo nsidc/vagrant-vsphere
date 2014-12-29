@@ -87,7 +87,8 @@ This provider has the following settings, all are required unless noted:
 * `host` -  IP or name for the vSphere API
 * `insecure` - _Optional_ verify SSL certificate from the host
 * `user` - user name for connecting to vSphere
-* `password` - password  for connecting to vSphere
+* `password` - password for connecting to vSphere (or the special keyword
+  `:ask` to be prompted on each invocation
 * `data_center_name` - _Optional_ datacenter containing the computed resource, the template and where the new VM will be created, if not specified the first datacenter found will be used
 * `compute_resource_name` - _Required if cloning from template_ the name of the host containing the resource pool for the new VM
 * `resource_pool_name` - the resource pool for the new VM. If not supplied, and cloning from a template, uses the root resource pool
