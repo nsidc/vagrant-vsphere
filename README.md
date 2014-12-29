@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nsidc/vagrant-vsphere.svg?branch=master)](https://travis-ci.org/nsidc/vagrant-vsphere)
+
 # Vagrant vSphere Provider
 
 This is a [Vagrant](http://www.vagrantup.com) 1.6.3+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
