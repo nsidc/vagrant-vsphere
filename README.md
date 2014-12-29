@@ -102,6 +102,7 @@ This provider has the following settings, all are required unless noted:
 * `proxy_port` - _Optional_ proxy port number for connecting to vSphere via proxy
 * `vlan` - _Optional_ vlan to connect the first NIC to
 * `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
+* `cpu_count` - _Optional_ Configure the number of CPUs for the new VM
 
 ### Cloning from a VM rather than a template
 
