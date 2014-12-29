@@ -54,7 +54,8 @@ RSpec.configure do |config|
         :proxy_host => nil,
         :proxy_port => nil,
         :vlan => nil,
-        :memory_mb => nil)
+        :memory_mb => nil,
+        :cpu_count => nil)
     vm_config = double(
       :vm => double('config_vm',
                     :box => nil,
