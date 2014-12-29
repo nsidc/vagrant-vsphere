@@ -205,6 +205,8 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Prompt the user to enter a password if none is given, or the configuration
     value is set to `:ask`
     [#97 topmedia:password-prompt](https://github.com/nsidc/vagrant-vsphere/pull/97).
+  * Add support for `vagrant reload`
+    [#105 clintoncwolfe:add-reload-action](https://github.com/nsidc/vagrant-vsphere/pull/105).
 
 ## Versioning
 
