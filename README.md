@@ -210,6 +210,10 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Fix compatibility with Vagrant 1.7 to use vSphere connection info from a base
     box
     [#111 mkuzmin:get-state](https://github.com/nsidc/vagrant-vsphere/pull/111).
+* 0.18.0
+  * Gracefully power off the VM with `vagrant halt`, and shutdown before
+    deleting the VM with `vagrant destroy`
+    [#104 clintoncwolfe:shutdown-guest-on-halt](https://github.com/nsidc/vagrant-vsphere/pull/104).
 
 ## Versioning
 
