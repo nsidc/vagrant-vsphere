@@ -207,6 +207,9 @@ This is useful if running Vagrant from multiple directories or if multiple machi
     [#97 topmedia:password-prompt](https://github.com/nsidc/vagrant-vsphere/pull/97).
   * Add support for `vagrant reload`
     [#105 clintoncwolfe:add-reload-action](https://github.com/nsidc/vagrant-vsphere/pull/105).
+  * Fix compatibility with Vagrant 1.7 to use vSphere connection info from a base
+    box
+    [#111 mkuzmin:get-state](https://github.com/nsidc/vagrant-vsphere/pull/111).
 
 ## Versioning
 
