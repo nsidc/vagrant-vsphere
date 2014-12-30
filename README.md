@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nsidc/vagrant-vsphere.svg?branch=master)](https://travis-ci.org/nsidc/vagrant-vsphere)
+
 # Vagrant vSphere Provider
 
 This is a [Vagrant](http://www.vagrantup.com) 1.6.3+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
@@ -12,9 +14,9 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**version: 0.16.0**
+**version: 0.17.0**
 
-vagrant-vsphere (**version: 0.16.0**) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (**version: 0.17.0**) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
@@ -87,7 +89,9 @@ This provider has the following settings, all are required unless noted:
 * `host` -  IP or name for the vSphere API
 * `insecure` - _Optional_ verify SSL certificate from the host
 * `user` - user name for connecting to vSphere
-* `password` - password  for connecting to vSphere
+* `password` - password for connecting to vSphere. If no value is given, or the
+  value is set to `:ask`, the user will be prompted to enter the password on
+  each invocation.
 * `data_center_name` - _Optional_ datacenter containing the computed resource, the template and where the new VM will be created, if not specified the first datacenter found will be used
 * `compute_resource_name` - _Required if cloning from template_ the name of the host containing the resource pool for the new VM
 * `resource_pool_name` - the resource pool for the new VM. If not supplied, and cloning from a template, uses the root resource pool
@@ -102,6 +106,7 @@ This provider has the following settings, all are required unless noted:
 * `proxy_port` - _Optional_ proxy port number for connecting to vSphere via proxy
 * `vlan` - _Optional_ vlan to connect the first NIC to
 * `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
+* `cpu_count` - _Optional_ Configure the number of CPUs for the new VM
 
 ### Cloning from a VM rather than a template
 
@@ -194,7 +199,17 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * If the VM is powered off, it is just destroyed.
   * If the VM is suspended, it is powered on, then powered off, then destroyed.
 * 0.16.0 Add ability to configure amount of memory the new cloned VM will have [#94 rylarson:add-memory-configuration](https://github.com/nsidc/vagrant-vsphere/pull/94).
-
+* 0.17.0
+  * Add ability to configure the CPU Count
+    [#96 rylarson:add-cpu-configuration](https://github.com/nsidc/vagrant-vsphere/pull/96).
+  * Prompt the user to enter a password if none is given, or the configuration
+    value is set to `:ask`
+    [#97 topmedia:password-prompt](https://github.com/nsidc/vagrant-vsphere/pull/97).
+  * Add support for `vagrant reload`
+    [#105 clintoncwolfe:add-reload-action](https://github.com/nsidc/vagrant-vsphere/pull/105).
+  * Fix compatibility with Vagrant 1.7 to use vSphere connection info from a base
+    box
+    [#111 mkuzmin:get-state](https://github.com/nsidc/vagrant-vsphere/pull/111).
 
 ## Versioning
 
@@ -216,7 +231,33 @@ If you want a quick merge, write a spec that fails before your changes are appli
 
 If you don't have rake installed, first install [bundler](http://bundler.io/) and run `bundle install`.
 
+### Development Without Building the Plugin
 
+To test your changes when developing the plugin, you have two main
+options. First, you can build and install the plugin from source every time you
+make a change:
+
+1. Make changes
+2. `rake build`
+3. `vagrant plugin install ./pkg/vagrant-vsphere-$VERSION.gem`
+4. `vagrant up --provider=vsphere`
+
+Second, you can use Bundler and the Vagrant gem to execute vagrant commands,
+saving time as you never have to wait for the plugin to build and install:
+
+1. Make changes
+2. `bundle exec vagrant up --provider=vsphere`
+
+This method uses the version of Vagrant specified in
+[`Gemfile`](https://github.com/nsidc/vagrant-vsphere/blob/master/Gemfile). It
+will also cause Bundler and Vagrant to output warnings every time you run
+`bundle exec vagrant`, because `Gemfile` lists **vagrant-vsphere** twice (once
+with `gemspec` and another time in the `group :plugins` block), and Vagrant
+prefers to be run from the official installer rather than through the gem.
+
+Despite those warning messages, this is the
+[officially recommended](https://docs.vagrantup.com/v2/plugins/development-basics.html)
+method for Vagrant plugin development.
 
 ## License
 

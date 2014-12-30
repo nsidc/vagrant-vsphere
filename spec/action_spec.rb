@@ -5,7 +5,7 @@ describe VagrantPlugins::VSphere::Action do
   def run(action)
     Vagrant::Action::Runner.new.run described_class.send("action_#{action}"), @env
   end
-  
+
   before :each do
     @machine.stub(:id).and_return(EXISTING_UUID)
   end
@@ -71,7 +71,7 @@ describe VagrantPlugins::VSphere::Action do
   describe 'halt' do
     it 'should power off the VM' do
       @machine.state.stub(:id).and_return(:running)
-      
+
       VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
 
       run :halt
@@ -94,6 +94,12 @@ describe VagrantPlugins::VSphere::Action do
 
       run_get_state
     end
+
+    it 'should handle the values in a base vagrant box' do
+      Vagrant::Action::Builtin::HandleBox.any_instance.should_receive(:call)
+
+      run_get_state
+    end
   end
 
   describe 'get ssh info' do
@@ -111,6 +117,40 @@ describe VagrantPlugins::VSphere::Action do
       VagrantPlugins::VSphere::Action::GetSshInfo.any_instance.should_receive(:call)
 
       run_get_ssh_info
+    end
+  end
+
+  describe 'reload' do
+    after :each do
+      run :reload
+    end
+
+    it 'should power off the VM' do
+      @machine.state.stub(:id).and_return(:running)
+
+      VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
+    end
+
+    it 'should connect to vSphere' do
+      VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+    end
+
+    it 'should check if the VM exits' do
+      VagrantPlugins::VSphere::Action::IsCreated.any_instance.should_receive(:call)
+    end
+
+    it 'should not create the VM when the VM does already not exist' do
+      @machine.state.stub(:id).and_return(:not_created)
+
+      VagrantPlugins::VSphere::Action::Clone.any_instance.should_not_receive(:call)
+      VagrantPlugins::VSphere::Action::MessageNotCreated.any_instance.should_receive(:call)
+    end
+
+    it 'should not create the VM when the VM already exists' do
+      @machine.state.stub(:id).and_return(:running)
+
+      VagrantPlugins::VSphere::Action::Clone.any_instance.should_not_receive(:call)
+      VagrantPlugins::VSphere::Action::MessageAlreadyCreated.any_instance.should_receive(:call)
     end
   end
 end
