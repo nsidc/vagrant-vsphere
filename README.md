@@ -231,7 +231,33 @@ If you want a quick merge, write a spec that fails before your changes are appli
 
 If you don't have rake installed, first install [bundler](http://bundler.io/) and run `bundle install`.
 
+### Development Without Building the Plugin
 
+To test your changes when developing the plugin, you have two main
+options. First, you can build and install the plugin from source every time you
+make a change:
+
+1. Make changes
+2. `rake build`
+3. `vagrant plugin install ./pkg/vagrant-vsphere-$VERSION.gem`
+4. `vagrant up --provider=vsphere`
+
+Second, you can use Bundler and the Vagrant gem to execute vagrant commands,
+saving time as you never have to wait for the plugin to build and install:
+
+1. Make changes
+2. `bundle exec vagrant up --provider=vsphere`
+
+This method uses the version of Vagrant specified in
+[`Gemfile`](https://github.com/nsidc/vagrant-vsphere/blob/master/Gemfile). It
+will also cause Bundler and Vagrant to output warnings every time you run
+`bundle exec vagrant`, because `Gemfile` lists **vagrant-vsphere** twice (once
+with `gemspec` and another time in the `group :plugins` block), and Vagrant
+prefers to be run from the official installer rather than through the gem.
+
+Despite those warning messages, this is the
+[officially recommended](https://docs.vagrantup.com/v2/plugins/development-basics.html)
+method for Vagrant plugin development.
 
 ## License
 
