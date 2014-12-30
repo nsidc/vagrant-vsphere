@@ -5,7 +5,7 @@ describe VagrantPlugins::VSphere::Action do
   def run(action)
     Vagrant::Action::Runner.new.run described_class.send("action_#{action}"), @env
   end
-  
+
   before :each do
     @machine.stub(:id).and_return(EXISTING_UUID)
   end
@@ -71,7 +71,7 @@ describe VagrantPlugins::VSphere::Action do
   describe 'halt' do
     it 'should power off the VM' do
       @machine.state.stub(:id).and_return(:running)
-      
+
       VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
 
       run :halt
@@ -91,6 +91,12 @@ describe VagrantPlugins::VSphere::Action do
 
     it 'should get the power state' do
       VagrantPlugins::VSphere::Action::GetState.any_instance.should_receive(:call)
+
+      run_get_state
+    end
+
+    it 'should handle the values in a base vagrant box' do
+      Vagrant::Action::Builtin::HandleBox.any_instance.should_receive(:call)
 
       run_get_state
     end
