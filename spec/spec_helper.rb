@@ -63,7 +63,8 @@ RSpec.configure do |config|
                     :provisioners => [],
                     :hostname => nil,
                     :communicator => nil,
-                    :networks => [[:private_network, {:ip => '0.0.0.0'}]]),
+                    :networks => [[:private_network, {:ip => '0.0.0.0'}]],
+                    :graceful_halt_timeout => 0.1),
       :validate => []
     )
     @app = double 'app', :call => true
@@ -75,12 +76,13 @@ RSpec.configure do |config|
                       :ssh_info => {},
                       :data_dir => Pathname.new(''),
                       :id => nil,
-                      :id= => nil
+                      :id= => nil,
+                      :guest => double('guest', :capability => nil)
 
 
     @env = {
         :machine => @machine,
-        :ui => double('ui', :info => nil)
+        :ui => double('ui', :info => nil, :output => nil)
     }
 
     @vm = double('vm',

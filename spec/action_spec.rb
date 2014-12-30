@@ -69,12 +69,17 @@ describe VagrantPlugins::VSphere::Action do
   end
 
   describe 'halt' do
-    it 'should power off the VM' do
-      @machine.state.stub(:id).and_return(:running)
-
-      VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
-
+    after :each do
       run :halt
+    end
+
+    it 'should connect to vSphere' do
+      VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+    end
+
+    it 'should gracefully power off the VM' do
+      @machine.state.stub(:id).and_return(:running)
+      VagrantPlugins::VSphere::Action::GracefulHalt.any_instance.should_receive(:call)
     end
   end
 
@@ -125,10 +130,10 @@ describe VagrantPlugins::VSphere::Action do
       run :reload
     end
 
-    it 'should power off the VM' do
+    it 'should gracefully power off the VM' do
       @machine.state.stub(:id).and_return(:running)
 
-      VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
+      VagrantPlugins::VSphere::Action::GracefulHalt.any_instance.should_receive(:call)
     end
 
     it 'should connect to vSphere' do
