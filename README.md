@@ -181,12 +181,12 @@ vagrant up --provider=vsphere
 
 ### Vagrant SSH
 ```bash
-vagrant ssh --provider=vsphere
+vagrant ssh
 ```
 
 ### Vagrant Destroy
 ```bash
-vagrant destroy --provider=vsphere
+vagrant destroy
 ```
 
 ## Version History
@@ -243,7 +243,9 @@ vagrant destroy --provider=vsphere
   * Instruct vagrant to set the guest hostname according to Vagrantfile [#69 ddub:set-hostname](https://github.com/nsidc/vagrant-vsphere/pull/69)
 * 0.10.0
   * new optional parameter to clone into custom folder in vSphere [#73 mikola-spb:vm-base-path](https://github.com/nsidc/vagrant-vsphere/pull/73)
-  * follows [semvar](http://semver.org/) better, this adds functionality in a backwards compatible way, so bumps the minor. 0.9.0, should have been a major version.
+  * follows [semver](http://semver.org/) better, this adds functionality in a
+    backwards compatible way, so bumps the minor. 0.9.0, should have been a
+    major version.
 * 0.11.0
   * Create the VM target folder if it doesn't exist #76 marnovdm:feature/create_vm_folder.
 * 0.12.0
