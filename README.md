@@ -9,7 +9,7 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 
 ## Requirements
 * Vagrant 1.6.3+
-* VMware + vSphere API
+* VMware with vSphere API
 * Ruby 1.9+
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
@@ -22,8 +22,8 @@ vagrant-vsphere (**version: 0.17.0**) is available from [RubyGems.org](https://r
 
 Install using standard Vagrant plugin method:
 
-```
-$ vagrant plugin install vagrant-vsphere
+```bash
+vagrant plugin install vagrant-vsphere
 ```
 
 This will install the plugin from RubyGems.org.
@@ -31,9 +31,9 @@ This will install the plugin from RubyGems.org.
 Alternatively, you can clone this repository and build the source with `gem build vSphere.gemspec`.
 After the gem is built, run the plugin install command from the build directory.
 
-### Potential Intallation Problems
+### Potential Installation Problems
 
-The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for
+The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See the [Nokogiri tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for
 detailed instructions.
 
 The plugin forces use of Nokogiri ~> 1.5 to prevent conflicts with older versions of system libraries, specifically zlib.
@@ -43,8 +43,8 @@ The plugin forces use of Nokogiri ~> 1.5 to prevent conflicts with older version
 After installing the plugin, you must create a vSphere box. The example_box directory contains a metadata.json file
 that can be used to create a dummy box with the command:
 
-```
-$ tar cvzf dummy.box ./metadata.json
+```bash
+tar cvzf dummy.box ./metadata.json
 ```
 
 This can be installed using the standard Vagrant methods or specified in the Vagrantfile.
@@ -98,7 +98,7 @@ This provider has the following settings, all are required unless noted:
 * `resource_pool_name` - the resource pool for the new VM. If not supplied, and cloning from a template, uses the root resource pool
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as the source for the cloning operation
 * `template_name` - the VM or VM template to clone
-* `vm_base_path` - _Optional_ path to folder where new VM sould be created, if not specified template's parent folder will be used
+* `vm_base_path` - _Optional_ path to folder where new VM should be created, if not specified template's parent folder will be used
 * `name` - _Optional_ name of the new VM, if missing the name will be auto generated
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
@@ -112,6 +112,28 @@ This provider has the following settings, all are required unless noted:
 ### Cloning from a VM rather than a template
 
 To clone from an existing VM rather than a template, set `clone_from_vm` to true. If this value is set, `compute_resource_name` and `resource_pool_name` are not required.
+
+### Template_Name
+
+* The template name includes the actual template name and the directory path containing the template.
+* **For example:** if the template is a directory called **vagrant-templates** and the template is called **ubuntu-lucid-template** the `template_name` setting would be:
+```
+vsphere.template_name = "vagrant-templates/ubuntu-lucid-template"
+```
+![Vagrant Vsphere Screenshot](https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png)
+
+
+### VM_Base_Path
+
+* The new vagrant VM will be created in the same directory as the template it originated from.
+* To create the VM in a directory other than the one where the template was located, include the **vm_base_path** setting.
+* **For example:** if the machines will be stored in a directory called **vagrant-machines** the `vm_base_path` would be:
+```
+vsphere.vm_base_path = "vagrant-machines"
+```
+
+![Vagrant Vsphere Screenshot](https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png)
+
 
 ### Setting a static IP address
 
@@ -129,12 +151,56 @@ The name for the new VM will be automagically generated from the Vagrant machine
 
 This is useful if running Vagrant from multiple directories or if multiple machines are defined in the Vagrantfile.
 
+## Example Usage
+
+### FILE: Vagrantfile
+```ruby
+VAGRANT_INSTANCE_NAME   = "vagrant-vsphere"
+
+Vagrant.configure("2") do |config|
+  config.vm.box     = 'vsphere'
+  config.vm.box_url = 'https://vagrantcloud.com/ssx/boxes/vsphere-dummy/versions/0.0.1/providers/vsphere.box'
+
+  config.vm.hostname = VAGRANT_INSTANCE_NAME
+  config.vm.define VAGRANT_INSTANCE_NAME do |d|
+  end
+
+  config.vm.provider :vsphere do |vsphere|
+    vsphere.host                  = 'vsphere.local'
+    vsphere.name                  = VAGRANT_INSTANCE_NAME
+    vsphere.compute_resource_name = 'vagrant01.vsphere.local'
+    vsphere.resource_pool_name    = 'vagrant'
+    vsphere.template_name         = 'vagrant-templates/ubuntu14041'
+    vsphere.vm_base_path          = "vagrant-machines"
+
+    vsphere.user     = 'vagrant-user@vsphere'
+    vsphere.password = '***************'
+    vsphere.insecure = true
+  end
+end
+```
+
+### Vagrant Up
+```bash
+vagrant up --provider=vsphere
+```
+
+### Vagrant SSH
+```bash
+vagrant ssh
+```
+
+### Vagrant Destroy
+```bash
+vagrant destroy
+```
+
 ## Version History
 * 0.0.1
   * Initial release
 * 0.1.0
   * Add folder syncing with guest OS
-  * Add provisoning
+  * Add provisioning
 * 0.2.0
   * Merge halt action from [catharsis](https://github.com/catharsis)
 * 0.3.0
@@ -183,7 +249,9 @@ This is useful if running Vagrant from multiple directories or if multiple machi
   * Instruct vagrant to set the guest hostname according to Vagrantfile [#69 ddub:set-hostname](https://github.com/nsidc/vagrant-vsphere/pull/69)
 * 0.10.0
   * new optional parameter to clone into custom folder in vSphere [#73 mikola-spb:vm-base-path](https://github.com/nsidc/vagrant-vsphere/pull/73)
-  * follows semvar better, this adds functionality in a backwards compatible way, so bumps the minor. 0.9.0, should have been a major version.
+  * follows [semver](http://semver.org/) better, this adds functionality in a
+    backwards compatible way, so bumps the minor. 0.9.0, should have been a
+    major version.
 * 0.11.0
   * Create the VM target folder if it doesn't exist #76 marnovdm:feature/create_vm_folder.
 * 0.12.0
