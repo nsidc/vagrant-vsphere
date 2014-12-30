@@ -94,6 +94,12 @@ describe VagrantPlugins::VSphere::Action do
 
       run_get_state
     end
+
+    it 'should handle the values in a base vagrant box' do
+      Vagrant::Action::Builtin::HandleBox.any_instance.should_receive(:call)
+
+      run_get_state
+    end
   end
 
   describe 'get ssh info' do

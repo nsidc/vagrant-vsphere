@@ -150,6 +150,7 @@ module VagrantPlugins
       #vSphere specific actions
       def self.action_get_state
         Vagrant::Action::Builder.new.tap do |b|
+          b.use HandleBox
           b.use ConfigValidate
           b.use ConnectVSphere
           b.use GetState
