@@ -45,10 +45,6 @@ Style/Documentation:
 Style/IfUnlessModifier:
   Enabled: false
 
-# Offense count: 2
-Style/RegexpLiteral:
-  MaxSlashes: 0
-
 # Offense count: 5
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/VariableName:
