@@ -15,9 +15,7 @@ module VagrantPlugins
           b.use Call, IsRunning do |env, b2|
             if env[:result]
               b2.use Call, GracefulHalt, :poweroff, :running do |env2, b3|
-                unless env2[:result]
-                  b3.use PowerOff
-                end
+                b3.use PowerOff unless env2[:result]
               end
             end
           end
@@ -103,9 +101,7 @@ module VagrantPlugins
             b2.use Clone
           end
           b.use Call, IsRunning do |env, b2|
-            unless env[:result]
-              b2.use PowerOn
-            end
+            b2.use PowerOn unless env[:result]
           end
           b.use CloseVSphere
           b.use Provision
@@ -131,9 +127,7 @@ module VagrantPlugins
               end
 
               b3.use Call, GracefulHalt, :poweroff, :running do |env3, b4|
-                unless env3[:result]
-                  b4.use PowerOff
-                end
+                b4.use PowerOff unless env3[:result]
               end
             end
           end

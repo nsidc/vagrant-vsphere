@@ -26,9 +26,7 @@ module VagrantPlugins
 
           vm = get_vm_by_uuid connection, machine
 
-          if vm.nil?
-            return :not_created
-          end
+          return :not_created if vm.nil?
 
           if powered_on?(vm)
             :running
