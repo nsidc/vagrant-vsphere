@@ -20,6 +20,7 @@ module VagrantPlugins
       attr_accessor :proxy_host
       attr_accessor :proxy_port
       attr_accessor :vlan
+      attr_accessor :mac
       attr_accessor :memory_mb
       attr_accessor :cpu_count
 
