@@ -154,13 +154,14 @@ This is useful if running Vagrant from multiple directories or if multiple machi
 
 ### Setting the MAC address
 
-To set a static MAC address, add a vsphere.mac to your vagrant file:
+To set a static MAC address, add a `vsphere.mac` to your `Vagrantfile`:
 
 ```ruby
 vsphere.mac = '00:50:56:XX:YY:ZZ'
 ```
 
-Be careful you could easily break networking if you use invalid or duplicate VMware MAC address.
+Take care to avoid using invalid or duplicate VMware MAC addresses, as this can
+easily break networking.
 
 ## Example Usage
 
@@ -294,6 +295,8 @@ vagrant destroy
   * Gracefully power off the VM with `vagrant halt`, and shutdown before
     deleting the VM with `vagrant destroy`
     [#104 clintoncwolfe:shutdown-guest-on-halt](https://github.com/nsidc/vagrant-vsphere/pull/104).
+  * Add configuration option `mac` to specify a MAC address for the VM
+    [#108 dataplayer:master](https://github.com/nsidc/vagrant-vsphere/pull/108).
 
 ## Versioning
 
