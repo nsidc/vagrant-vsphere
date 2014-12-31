@@ -102,10 +102,16 @@ RSpec.configure do |config|
     @child_resource_pool = double('testresourcepool')
     @root_resource_pool = double('pools', :find => @child_resource_pool)
 
+    @compute_resource = RbVmomi::VIM::ComputeResource.new(nil, nil)
+    @compute_resource.stub(:resourcePool).and_return(@root_resource_pool)
+
+    @host_folder = double('hostFolder', :childEntity => double('childEntity', :find => @compute_resource))
+
     @data_center = double('data_center',
                           :vmFolder => vm_folder,
                           :pretty_path => "data_center/#{vm_folder}",
-                          :find_compute_resource => double('compute resource', :resourcePool => @root_resource_pool))
+                          :find_compute_resource => @compute_resource,
+                          :hostFolder => @host_folder)
 
     @device = RbVmomi::VIM::VirtualEthernetCard.new
     @device.stub(:backing).and_return(RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo.new)
