@@ -10,10 +10,6 @@
 Lint/AssignmentInCondition:
   Enabled: false
 
-# Offense count: 1
-Lint/LiteralInCondition:
-  Enabled: false
-
 # Offense count: 5
 Lint/RescueException:
   Enabled: false

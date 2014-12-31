@@ -12,10 +12,10 @@ module VagrantPlugins
           b.use ConfigValidate
           b.use ConnectVSphere
 
-          b.use Call, IsRunning do |_env, b2|
-            if [:result]
-              b2.use Call, GracefulHalt, :poweroff, :running do |env, b3|
-                unless env[:result]
+          b.use Call, IsRunning do |env, b2|
+            if env[:result]
+              b2.use Call, GracefulHalt, :poweroff, :running do |env2, b3|
+                unless env2[:result]
                   b3.use PowerOff
                 end
               end

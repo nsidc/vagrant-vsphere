@@ -56,6 +56,7 @@ describe VagrantPlugins::VSphere::Action do
     end
 
     it 'should power off the VM' do
+      @machine.state.stub(:id).and_return(:running)
       VagrantPlugins::VSphere::Action::PowerOff.any_instance.should_receive(:call)
 
       run_destroy
