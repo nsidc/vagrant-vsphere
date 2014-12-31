@@ -13,7 +13,7 @@ module VagrantPlugins
           @app.call env
         rescue Errors::VSphereError
           raise
-        rescue Exception => e
+        rescue StandardError => e
           raise Errors::VSphereError.new, e.message
         end
       end

@@ -3,3 +3,11 @@ inherit_from: .rubocop_todo.yml
 Style/FileName:
   Exclude:
     - 'lib/vagrant-vsphere.rb'
+
+Lint/RescueException:
+  Exclude:
+    # the logic in the method `find_clustercompute_or_compute_resource` does not
+    # work when rescuing StandardError, so exclude
+    # lib/vSphere/util/vim_helpers.rb to continue rescuing Exception in that
+    # method
+    - 'lib/vSphere/util/vim_helpers.rb'

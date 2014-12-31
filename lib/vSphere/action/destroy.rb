@@ -30,7 +30,7 @@ module VagrantPlugins
             vm.Destroy_Task.wait_for_completion
           rescue Errors::VSphereError
             raise
-          rescue Exception => e
+          rescue StandardError => e
             raise Errors::VSphereError.new, e.message
           end
         end

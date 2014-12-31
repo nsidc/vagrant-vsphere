@@ -77,7 +77,7 @@ module VagrantPlugins
             end
           rescue Errors::VSphereError
             raise
-          rescue Exception => e
+          rescue StandardError => e
             raise Errors::VSphereError.new, e.message
           end
 
