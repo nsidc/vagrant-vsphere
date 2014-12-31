@@ -51,7 +51,7 @@ module VagrantPlugins
             end
           rescue Exception
             # When looking for the ClusterComputeResource there seems to be some parser error in RbVmomi Folder.find, try this instead
-            x = p.childEntity.find { |x| x.name == final }
+            x = p.childEntity.find { |x2| x2.name == final }
             if x.is_a?(RbVmomi::VIM::ClusterComputeResource) || x.is_a?(RbVmomi::VIM::ComputeResource)
               x
             else
