@@ -28,9 +28,9 @@ module VagrantPlugins
           begin
             env[:ui].info I18n.t('vsphere.destroy_vm')
             vm.Destroy_Task.wait_for_completion
-          rescue Errors::VSphereError => e
+          rescue Errors::VSphereError
             raise
-          rescue Exception => e
+          rescue StandardError => e
             raise Errors::VSphereError.new, e.message
           end
         end

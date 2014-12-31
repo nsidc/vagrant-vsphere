@@ -13,16 +13,18 @@ module VagrantPlugins
         end
 
         def get_resource_pool(datacenter, machine)
-          computeResource = get_compute_resource(datacenter, machine)
-          rp = computeResource.resourcePool
+          compute_resource = get_compute_resource(datacenter, machine)
+          rp = compute_resource.resourcePool
           unless machine.provider_config.resource_pool_name.nil?
-            rp = computeResource.resourcePool.find(machine.provider_config.resource_pool_name) or  fail Errors::VSphereError, :missing_resource_pool
+            rp = compute_resource.resourcePool.find(machine.provider_config.resource_pool_name)
+            fail Errors::VSphereError, :missing_resource_pool if rp.nil?
           end
           rp
         end
 
         def get_compute_resource(datacenter, machine)
-          cr = find_clustercompute_or_compute_resource(datacenter, machine.provider_config.compute_resource_name) or fail Errors::VSphereError, :missing_compute_resource
+          cr = find_clustercompute_or_compute_resource(datacenter, machine.provider_config.compute_resource_name)
+          fail Errors::VSphereError, :missing_compute_resource if cr.nil?
           cr
         end
 
@@ -42,16 +44,14 @@ module VagrantPlugins
           end
 
           begin
-            if x = p.find(final, RbVmomi::VIM::ComputeResource)
+            if (x = p.find(final, RbVmomi::VIM::ComputeResource))
               x
-            elsif x = p.find(final, RbVmomi::VIM::ClusterComputeResource)
+            elsif (x = p.find(final, RbVmomi::VIM::ClusterComputeResource))
               x
-            else
-              nil
             end
-          rescue Exception => e
+          rescue Exception
             # When looking for the ClusterComputeResource there seems to be some parser error in RbVmomi Folder.find, try this instead
-            x = p.childEntity.find { |x| x.name == final }
+            x = p.childEntity.find { |x2| x2.name == final }
             if x.is_a?(RbVmomi::VIM::ClusterComputeResource) || x.is_a?(RbVmomi::VIM::ComputeResource)
               x
             else
@@ -65,8 +65,13 @@ module VagrantPlugins
           name = machine.provider_config.customization_spec_name
           return if name.nil? || name.empty?
 
-          manager = connection.serviceContent.customizationSpecManager or fail Errors::VSphereError, :null_configuration_spec_manager if manager.nil?
-          spec = manager.GetCustomizationSpec(name: name) or fail Errors::VSphereError, :missing_configuration_spec if spec.nil?
+          manager = connection.serviceContent.customizationSpecManager
+          fail Errors::VSphereError, :null_configuration_spec_manager if manager.nil?
+
+          spec = manager.GetCustomizationSpec(name: name)
+          fail Errors::VSphereError, :missing_configuration_spec if spec.nil?
+
+          spec
         end
 
         def get_datastore(datacenter, machine)

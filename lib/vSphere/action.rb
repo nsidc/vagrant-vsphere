@@ -12,12 +12,10 @@ module VagrantPlugins
           b.use ConfigValidate
           b.use ConnectVSphere
 
-          b.use Call, IsRunning do |_env, b2|
-            if [:result]
-              b2.use Call, GracefulHalt, :poweroff, :running do |env, b3|
-                unless env[:result]
-                  b3.use PowerOff
-                end
+          b.use Call, IsRunning do |env, b2|
+            if env[:result]
+              b2.use Call, GracefulHalt, :poweroff, :running do |env2, b3|
+                b3.use PowerOff unless env2[:result]
               end
             end
           end
@@ -34,8 +32,8 @@ module VagrantPlugins
               next
             end
 
-            b2.use Call, IsRunning do |env, b3|
-              unless env[:result]
+            b2.use Call, IsRunning do |env2, b3|
+              unless env2[:result]
                 b3.use MessageNotRunning
                 next
               end
@@ -56,8 +54,8 @@ module VagrantPlugins
               next
             end
 
-            b2.use Call, IsRunning do |env, b3|
-              unless env[:result]
+            b2.use Call, IsRunning do |env2, b3|
+              unless env2[:result]
                 b3.use MessageNotRunning
                 next
               end
@@ -77,8 +75,8 @@ module VagrantPlugins
               next
             end
 
-            b2.use Call, IsRunning do |env, b3|
-              unless env[:result]
+            b2.use Call, IsRunning do |env2, b3|
+              unless env2[:result]
                 b3.use MessageNotRunning
                 next
               end
@@ -103,9 +101,7 @@ module VagrantPlugins
             b2.use Clone
           end
           b.use Call, IsRunning do |env, b2|
-            unless env[:result]
-              b2.use PowerOn
-            end
+            b2.use PowerOn unless env[:result]
           end
           b.use CloseVSphere
           b.use Provision
@@ -124,16 +120,14 @@ module VagrantPlugins
               next
             end
 
-            b2.use Call, IsRunning do |env, b3|
-              unless env[:result]
+            b2.use Call, IsRunning do |env2, b3|
+              unless env2[:result]
                 b3.use MessageNotRunning
                 next
               end
 
-              b3.use Call, GracefulHalt, :poweroff, :running do |env, b4|
-                unless env[:result]
-                  b4.use PowerOff
-                end
+              b3.use Call, GracefulHalt, :poweroff, :running do |env3, b4|
+                b4.use PowerOff unless env3[:result]
               end
             end
           end
