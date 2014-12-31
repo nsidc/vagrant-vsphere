@@ -9,7 +9,7 @@ module VagrantPlugins
         include Util::VimHelpers
         include Util::VmHelpers
 
-        def initialize(app, env)
+        def initialize(app, _env)
           @app = app
         end
 

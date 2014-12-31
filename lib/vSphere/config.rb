@@ -28,7 +28,7 @@ module VagrantPlugins
         errors = _detected_errors
 
         if password == :ask || password.nil?
-          self.password = machine.ui.ask("vSphere Password (will be hidden): ", echo: false)
+          self.password = machine.ui.ask('vSphere Password (will be hidden): ', echo: false)
         end
 
         # TODO: add blank?
@@ -38,7 +38,7 @@ module VagrantPlugins
         errors <<  I18n.t('vsphere.config.template') if template_name.nil?
 
         # Only required if we're cloning from an actual template
-        errors << I18n.t('vsphere.config.compute_resource') if compute_resource_name.nil? and not clone_from_vm
+        errors << I18n.t('vsphere.config.compute_resource') if compute_resource_name.nil? && !clone_from_vm
 
         { 'vSphere Provider' => errors }
       end

@@ -5,8 +5,8 @@ module VagrantPlugins
     module Action
       class IsRunning
         include Util::MachineHelpers
-        
-        def initialize(app, env)
+
+        def initialize(app, _env)
           @app = app
         end
 

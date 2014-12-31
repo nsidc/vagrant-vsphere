@@ -4,7 +4,7 @@ module VagrantPlugins
   module VSphere
     module Action
       class MessageNotRunning
-        def initialize(app, env)
+        def initialize(app, _env)
           @app = app
         end
 

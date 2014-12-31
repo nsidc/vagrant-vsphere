@@ -3,7 +3,6 @@ require 'rbvmomi'
 module VagrantPlugins
   module VSphere
     module Util
-
       module VmState
         POWERED_ON = 'poweredOn'
         POWERED_OFF = 'poweredOff'

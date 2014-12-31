@@ -6,16 +6,16 @@ module VagrantPlugins
     module Action
       include Vagrant::Action::Builtin
 
-      #Vagrant commands
+      # Vagrant commands
       def self.action_destroy
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectVSphere
 
-          b.use Call, IsRunning do |env, b2|
+          b.use Call, IsRunning do |_env, b2|
             if [:result]
               b2.use Call, GracefulHalt, :poweroff, :running do |env, b3|
-                if !env[:result]
+                unless env[:result]
                   b3.use PowerOff
                 end
               end
@@ -29,13 +29,13 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
 
             b2.use Call, IsRunning do |env, b3|
-              if !env[:result]
+              unless env[:result]
                 b3.use MessageNotRunning
                 next
               end
@@ -51,13 +51,13 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
 
             b2.use Call, IsRunning do |env, b3|
-              if !env[:result]
+              unless env[:result]
                 b3.use MessageNotRunning
                 next
               end
@@ -72,13 +72,13 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
 
             b2.use Call, IsRunning do |env, b3|
-              if !env[:result]
+              unless env[:result]
                 b3.use MessageNotRunning
                 next
               end
@@ -103,7 +103,7 @@ module VagrantPlugins
             b2.use Clone
           end
           b.use Call, IsRunning do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use PowerOn
             end
           end
@@ -119,19 +119,19 @@ module VagrantPlugins
           b.use ConfigValidate
           b.use ConnectVSphere
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
 
             b2.use Call, IsRunning do |env, b3|
-              if !env[:result]
+              unless env[:result]
                 b3.use MessageNotRunning
                 next
               end
 
               b3.use Call, GracefulHalt, :poweroff, :running do |env, b4|
-                if !env[:result]
+                unless env[:result]
                   b4.use PowerOff
                 end
               end
@@ -145,7 +145,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConnectVSphere
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
@@ -155,7 +155,7 @@ module VagrantPlugins
         end
       end
 
-      #vSphere specific actions
+      # vSphere specific actions
       def self.action_get_state
         Vagrant::Action::Builder.new.tap do |b|
           b.use HandleBox
@@ -175,7 +175,7 @@ module VagrantPlugins
         end
       end
 
-      #autoload
+      # autoload
       action_root = Pathname.new(File.expand_path('../action', __FILE__))
       autoload :Clone, action_root.join('clone')
       autoload :CloseVSphere, action_root.join('close_vsphere')
