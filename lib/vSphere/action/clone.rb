@@ -36,8 +36,10 @@ module VagrantPlugins
             customization_info = get_customization_spec_info_by_name connection, machine
 
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
+            add_custom_mac(template, spec, config.mac) unless config.mac.nil?
             add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
+            add_custom_cpu(spec, config.cpu_count) unless config.cpu_count.nil?
 
             if !config.clone_from_vm and ds.is_a? RbVmomi::VIM::StoragePod
 
@@ -172,24 +174,45 @@ module VagrantPlugins
           end
         end
 
-        def add_custom_vlan(template, dc, spec, vlan)
-          spec[:config][:deviceChange] = []
-          network = get_network_by_name(dc, vlan)
-          config = template.config
-          card = config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first or fail Errors::VSphereError, :missing_network_card
-          begin
-            switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(:switchUuid => network.config.distributedVirtualSwitch.uuid, :portgroupKey => network.key)
-            card.backing.port = switch_port
-          rescue
-            # not connected to a distibuted switch?
-            card.backing.deviceName = network.name
-          end
-          dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(:device => card, :operation => "edit")
+        def modify_network_card(template, spec)
+          spec[:config][:deviceChange] ||= []
+          @card ||= template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first
+
+          fail Errors::VSphereError, :missing_network_card if @card.nil?
+
+          yield(@card)
+
+          dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(:device => @card, :operation => "edit")
           spec[:config][:deviceChange].push dev_spec
+          spec[:config][:deviceChange].uniq!
+        end
+
+        def add_custom_mac(template, spec, mac)
+          modify_network_card(template, spec) do |card|
+            card.macAddress = mac
+          end
+        end
+
+        def add_custom_vlan(template, dc, spec, vlan)
+          network = get_network_by_name(dc, vlan)
+
+          modify_network_card(template, spec) do |card|
+            begin
+              switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(:switchUuid => network.config.distributedVirtualSwitch.uuid, :portgroupKey => network.key)
+              card.backing.port = switch_port
+            rescue
+              # not connected to a distibuted switch?
+              card.backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(:network => network, :deviceName => network.name)
+            end
+          end
         end
 
         def add_custom_memory(spec, memory_mb)
           spec[:config][:memoryMB] = Integer(memory_mb)
+        end
+
+        def add_custom_cpu(spec, cpu_count)
+          spec[:config][:numCPUs] = Integer(cpu_count)
         end
       end
     end

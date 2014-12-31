@@ -20,10 +20,16 @@ module VagrantPlugins
       attr_accessor :proxy_host
       attr_accessor :proxy_port
       attr_accessor :vlan
+      attr_accessor :mac
       attr_accessor :memory_mb
+      attr_accessor :cpu_count
 
       def validate(machine)
         errors = _detected_errors
+
+        if password == :ask || password.nil?
+          self.password = machine.ui.ask("vSphere Password (will be hidden): ", echo: false)
+        end
 
         # TODO: add blank?
         errors << I18n.t('vsphere.config.host') if host.nil?

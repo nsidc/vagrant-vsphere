@@ -73,6 +73,18 @@ describe VagrantPlugins::VSphere::Action::Clone do
     })
   end
 
+
+  it 'should create a CloneVM spec with configured number of cpus' do
+    @machine.provider_config.stub(:cpu_count).and_return(4)
+    call
+    expect(@template).to have_received(:CloneVM_Task).with({
+      :folder => @data_center,
+      :name => NAME,
+      :spec => {:location => {:pool => @child_resource_pool}, 
+        :config => RbVmomi::VIM.VirtualMachineConfigSpec(:numCPUs => 4) },
+    })
+  end
+
   it 'should set static IP when given config spec' do
     @machine.provider_config.stub(:customization_spec_name).and_return('spec')
     call
