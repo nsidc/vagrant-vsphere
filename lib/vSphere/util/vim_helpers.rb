@@ -42,9 +42,9 @@ module VagrantPlugins
           end
 
           begin
-            if x = p.find(final, RbVmomi::VIM::ComputeResource)
+            if (x = p.find(final, RbVmomi::VIM::ComputeResource))
               x
-            elsif x = p.find(final, RbVmomi::VIM::ClusterComputeResource)
+            elsif (x = p.find(final, RbVmomi::VIM::ClusterComputeResource))
               x
             else
               nil
