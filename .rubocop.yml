@@ -1,1 +1,5 @@
 inherit_from: .rubocop_todo.yml
+
+Style/FileName:
+  Exclude:
+    - 'lib/vagrant-vsphere.rb'
