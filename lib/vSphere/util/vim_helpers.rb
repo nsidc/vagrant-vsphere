@@ -49,7 +49,7 @@ module VagrantPlugins
             else
               nil
             end
-          rescue Exception => e
+          rescue Exception
             # When looking for the ClusterComputeResource there seems to be some parser error in RbVmomi Folder.find, try this instead
             x = p.childEntity.find { |x| x.name == final }
             if x.is_a?(RbVmomi::VIM::ClusterComputeResource) || x.is_a?(RbVmomi::VIM::ComputeResource)
@@ -66,7 +66,11 @@ module VagrantPlugins
           return if name.nil? || name.empty?
 
           manager = connection.serviceContent.customizationSpecManager or fail Errors::VSphereError, :null_configuration_spec_manager if manager.nil?
-          spec = manager.GetCustomizationSpec(name: name) or fail Errors::VSphereError, :missing_configuration_spec if spec.nil?
+
+          spec = manager.GetCustomizationSpec(name: name)
+          fail Errors::VSphereError, :missing_configuration_spec if spec.nil?
+
+          spec
         end
 
         def get_datastore(datacenter, machine)

@@ -75,7 +75,7 @@ module VagrantPlugins
 
               new_vm = template.CloneVM_Task(folder: vm_base_folder, name: name, spec: spec).wait_for_completion
             end
-          rescue Errors::VSphereError => e
+          rescue Errors::VSphereError
             raise
           rescue Exception => e
             raise Errors::VSphereError.new, e.message
@@ -170,7 +170,7 @@ module VagrantPlugins
           if config.vm_base_path.nil?
             template.parent
           else
-            dc.vmFolder.traverse(config.vm_base_path, RbVmomi::VIM::Folder, create = true)
+            dc.vmFolder.traverse(config.vm_base_path, RbVmomi::VIM::Folder, true)
           end
         end
 

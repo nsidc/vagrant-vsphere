@@ -17,7 +17,7 @@ module VagrantPlugins
                                                             insecure: config.insecure, proxyHost: config.proxy_host,
                                                             proxyPort: config.proxy_port
             @app.call env
-          rescue Errors::VSphereError => e
+          rescue Errors::VSphereError
             raise
           rescue Exception => e
             raise Errors::VSphereError.new, e.message

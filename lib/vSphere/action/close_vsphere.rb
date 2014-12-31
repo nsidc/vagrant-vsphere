@@ -11,7 +11,7 @@ module VagrantPlugins
         def call(env)
           env[:vSphere_connection].close
           @app.call env
-        rescue Errors::VSphereError => e
+        rescue Errors::VSphereError
           raise
         rescue Exception => e
           raise Errors::VSphereError.new, e.message
