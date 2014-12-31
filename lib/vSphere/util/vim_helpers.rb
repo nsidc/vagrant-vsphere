@@ -48,8 +48,6 @@ module VagrantPlugins
               x
             elsif (x = p.find(final, RbVmomi::VIM::ClusterComputeResource))
               x
-            else
-              nil
             end
           rescue Exception
             # When looking for the ClusterComputeResource there seems to be some parser error in RbVmomi Folder.find, try this instead

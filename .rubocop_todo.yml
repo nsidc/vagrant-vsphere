@@ -41,10 +41,6 @@ Style/Documentation:
   Enabled: false
 
 # Offense count: 1
-Style/EmptyElse:
-  Enabled: false
-
-# Offense count: 1
 # Configuration parameters: Exclude.
 Style/FileName:
   Enabled: false
