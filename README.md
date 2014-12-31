@@ -297,6 +297,9 @@ vagrant destroy
     [#104 clintoncwolfe:shutdown-guest-on-halt](https://github.com/nsidc/vagrant-vsphere/pull/104).
   * Add configuration option `mac` to specify a MAC address for the VM
     [#108 dataplayer:master](https://github.com/nsidc/vagrant-vsphere/pull/108).
+* 0.19.0
+  * Add support for ClusterComputeResource and DatastoreCluster
+    [#101 GregDomjan:StorageSDRS](https://github.com/nsidc/vagrant-vsphere/pull/101).
 
 ## Versioning
 
