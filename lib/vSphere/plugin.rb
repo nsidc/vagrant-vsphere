@@ -1,13 +1,13 @@
 begin
-  require "vagrant"
+  require 'vagrant'
 rescue LoadError
-  raise "The Vagrant vSphere plugin must be run within Vagrant."
+  raise 'The Vagrant vSphere plugin must be run within Vagrant.'
 end
 
 # This is a sanity check to make sure no one is attempting to install
 # this into an early Vagrant version.
-if Vagrant::VERSION < "1.5"
-  raise "The Vagrant vSphere plugin is only compatible with Vagrant 1.5+"
+if Vagrant::VERSION < '1.5'
+  fail 'The Vagrant vSphere plugin is only compatible with Vagrant 1.5+'
 end
 
 module VagrantPlugins
@@ -29,7 +29,6 @@ module VagrantPlugins
         require_relative 'provider'
         Provider
       end
-
 
       def self.setup_i18n
         I18n.load_path << File.expand_path('locales/en.yml', VSphere.source_root)

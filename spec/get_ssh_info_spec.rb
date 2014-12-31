@@ -8,7 +8,7 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
   it 'should set the ssh info to nil if machine ID is not set' do
     call
 
-    expect(@env.has_key?(:machine_ssh_info)).to be true
+    expect(@env.key?(:machine_ssh_info)).to be true
     expect(@env[:machine_ssh_info]).to be nil
   end
 
@@ -17,7 +17,7 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
 
     call
 
-    expect(@env.has_key?(:machine_ssh_info)).to be true
+    expect(@env.key?(:machine_ssh_info)).to be true
     expect(@env[:machine_ssh_info]).to be nil
   end
 

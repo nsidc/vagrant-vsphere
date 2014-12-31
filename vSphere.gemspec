@@ -1,4 +1,4 @@
-$:.unshift File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 require 'vSphere/version'
 
 Gem::Specification.new do |s|
@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-mocks'
   s.add_development_dependency 'rubocop', '~> 0.28'
 
-  s.files = `git ls-files`.split($/)
+  s.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
   s.executables = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
   s.test_files = s.files.grep(%r{^(test|spec|features)/})
   s.require_path = 'lib'

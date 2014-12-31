@@ -7,8 +7,7 @@ module VagrantPlugins
       class GetSshInfo
         include Util::VimHelpers
 
-
-        def initialize(app, env)
+        def initialize(app, _env)
           @app = app
         end
 
@@ -27,9 +26,9 @@ module VagrantPlugins
 
           return nil if vm.nil?
           return nil if vm.guest.ipAddress.nil? || vm.guest.ipAddress.empty?
-          return {
-              :host => vm.guest.ipAddress,
-              :port => 22
+          {
+            host: vm.guest.ipAddress,
+            port: 22
           }
         end
       end
