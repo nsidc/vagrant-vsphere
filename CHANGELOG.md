@@ -1,3 +1,9 @@
+## 0.19.1 (2014-12-31)
+
+  - Move version history and contributing notes out of `README.md` into separate
+    files
+  - Add RuboCop, fail the Travis-CI build if RuboCop or unit tests fail
+
 ## 0.19.0 (2014-12-31)
 
   - Add support for ClusterComputeResource and DatastoreCluster
