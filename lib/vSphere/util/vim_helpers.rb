@@ -13,10 +13,10 @@ module VagrantPlugins
         end
 
         def get_resource_pool(datacenter, machine)
-          computeResource = get_compute_resource(datacenter, machine)
-          rp = computeResource.resourcePool
+          compute_resource = get_compute_resource(datacenter, machine)
+          rp = compute_resource.resourcePool
           unless machine.provider_config.resource_pool_name.nil?
-            rp = computeResource.resourcePool.find(machine.provider_config.resource_pool_name)
+            rp = compute_resource.resourcePool.find(machine.provider_config.resource_pool_name)
             fail Errors::VSphereError, :missing_resource_pool if rp.nil?
           end
           rp

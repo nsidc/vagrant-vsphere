@@ -43,17 +43,17 @@ module VagrantPlugins
 
             if !config.clone_from_vm && ds.is_a?(RbVmomi::VIM::StoragePod)
 
-              storageMgr = connection.serviceContent.storageResourceManager
-              podSpec = RbVmomi::VIM.StorageDrsPodSelectionSpec(storagePod: ds)
+              storage_mgr = connection.serviceContent.storageResourceManager
+              pod_spec = RbVmomi::VIM.StorageDrsPodSelectionSpec(storagePod: ds)
               # TODO: May want to add option on type?
-              storageSpec = RbVmomi::VIM.StoragePlacementSpec(type: 'clone', cloneName: name, folder: vm_base_folder, podSelectionSpec: podSpec, vm: template, cloneSpec: spec)
+              storage_spec = RbVmomi::VIM.StoragePlacementSpec(type: 'clone', cloneName: name, folder: vm_base_folder, podSelectionSpec: pod_spec, vm: template, cloneSpec: spec)
 
               env[:ui].info I18n.t('vsphere.requesting_sdrs_recommendation')
               env[:ui].info " -- DatastoreCluster: #{ds.name}"
               env[:ui].info " -- Template VM: #{template.pretty_path}"
               env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
 
-              result = storageMgr.RecommendDatastores(storageSpec: storageSpec)
+              result = storage_mgr.RecommendDatastores(storageSpec: storage_spec)
 
               recommendation = result.recommendations[0]
               key = recommendation.key ||= ''
@@ -64,8 +64,8 @@ module VagrantPlugins
               env[:ui].info I18n.t('vsphere.creating_cloned_vm_sdrs')
               env[:ui].info " -- Storage DRS recommendation: #{recommendation.target.name} #{recommendation.reasonText}"
 
-              applySRresult = storageMgr.ApplyStorageDrsRecommendation_Task(key: [key]).wait_for_completion
-              new_vm = applySRresult.vm
+              apply_sr_result = storage_mgr.ApplyStorageDrsRecommendation_Task(key: [key]).wait_for_completion
+              new_vm = apply_sr_result.vm
 
             else
 

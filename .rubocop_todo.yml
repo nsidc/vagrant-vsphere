@@ -39,8 +39,3 @@ Metrics/PerceivedComplexity:
 # Offense count: 24
 Style/Documentation:
   Enabled: false
-
-# Offense count: 5
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/VariableName:
-  Enabled: false
