@@ -16,13 +16,15 @@ module VagrantPlugins
           computeResource = get_compute_resource(datacenter, machine)
           rp = computeResource.resourcePool
           unless machine.provider_config.resource_pool_name.nil?
-            rp = computeResource.resourcePool.find(machine.provider_config.resource_pool_name) or  fail Errors::VSphereError, :missing_resource_pool
+            rp = computeResource.resourcePool.find(machine.provider_config.resource_pool_name)
+            fail Errors::VSphereError, :missing_resource_pool if rp.nil?
           end
           rp
         end
 
         def get_compute_resource(datacenter, machine)
-          cr = find_clustercompute_or_compute_resource(datacenter, machine.provider_config.compute_resource_name) or fail Errors::VSphereError, :missing_compute_resource
+          cr = find_clustercompute_or_compute_resource(datacenter, machine.provider_config.compute_resource_name)
+          fail Errors::VSphereError, :missing_compute_resource if cr.nil?
           cr
         end
 
@@ -65,7 +67,8 @@ module VagrantPlugins
           name = machine.provider_config.customization_spec_name
           return if name.nil? || name.empty?
 
-          manager = connection.serviceContent.customizationSpecManager or fail Errors::VSphereError, :null_configuration_spec_manager if manager.nil?
+          manager = connection.serviceContent.customizationSpecManager
+          fail Errors::VSphereError, :null_configuration_spec_manager if manager.nil?
 
           spec = manager.GetCustomizationSpec(name: name)
           fail Errors::VSphereError, :missing_configuration_spec if spec.nil?
