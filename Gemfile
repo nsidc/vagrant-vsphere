@@ -11,3 +11,7 @@ ruby "2.0.0"
 gem 'vagrant', :git => 'git://github.com/mitchellh/vagrant.git', :tag => 'v1.6.3'
 
 end
+
+group :plugins do
+  gem 'vagrant-vsphere', path: '.'
+end

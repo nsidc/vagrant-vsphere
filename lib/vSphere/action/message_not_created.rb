@@ -3,7 +3,7 @@ require 'i18n'
 module VagrantPlugins
   module VSphere
     module Action
-      class MessageAlreadyCreated
+      class MessageNotCreated
         def initialize(app, env)
           @app = app
         end

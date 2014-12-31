@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nsidc/vagrant-vsphere.svg?branch=master)](https://travis-ci.org/nsidc/vagrant-vsphere)
+
 # Vagrant vSphere Provider
 
 This is a [Vagrant](http://www.vagrantup.com) 1.6.3+ plugin that adds a [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
@@ -7,21 +9,21 @@ This provider is built on top of the [RbVmomi](https://github.com/vmware/rbvmomi
 
 ## Requirements
 * Vagrant 1.6.3+
-* VMware + vSphere API
+* VMware with vSphere API
 * Ruby 1.9+
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**version: 0.16.0**
+**version: 0.17.0**
 
-vagrant-vsphere (**version: 0.16.0**) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+vagrant-vsphere (**version: 0.17.0**) is available from [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
 
 Install using standard Vagrant plugin method:
 
-```
-$ vagrant plugin install vagrant-vsphere
+```bash
+vagrant plugin install vagrant-vsphere
 ```
 
 This will install the plugin from RubyGems.org.
@@ -29,9 +31,9 @@ This will install the plugin from RubyGems.org.
 Alternatively, you can clone this repository and build the source with `gem build vSphere.gemspec`.
 After the gem is built, run the plugin install command from the build directory.
 
-### Potential Intallation Problems
+### Potential Installation Problems
 
-The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See Nokogiri's [tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for
+The requirements for [Nokogiri](http://nokogiri.org/) must be installed before the plugin can be installed. See the [Nokogiri tutorial](http://nokogiri.org/tutorials/installing_nokogiri.html) for
 detailed instructions.
 
 The plugin forces use of Nokogiri ~> 1.5 to prevent conflicts with older versions of system libraries, specifically zlib.
@@ -41,8 +43,8 @@ The plugin forces use of Nokogiri ~> 1.5 to prevent conflicts with older version
 After installing the plugin, you must create a vSphere box. The example_box directory contains a metadata.json file
 that can be used to create a dummy box with the command:
 
-```
-$ tar cvzf dummy.box ./metadata.json
+```bash
+tar cvzf dummy.box ./metadata.json
 ```
 
 This can be installed using the standard Vagrant methods or specified in the Vagrantfile.
@@ -75,7 +77,8 @@ and the Vagrant [AWS provider](https://github.com/mitchellh/vagrant-aws/tree/mas
 
 ### Supported Commands
 
-Currently the only implemented actions are `up`, `halt`, `destroy`, and `ssh`.
+Currently the only implemented actions are `up`, `halt`, `reload`, `destroy`,
+and `ssh`.
 
 `up` supports provisioning of the new VM with the standard Vagrant provisioners.
 
@@ -87,13 +90,15 @@ This provider has the following settings, all are required unless noted:
 * `host` -  IP or name for the vSphere API
 * `insecure` - _Optional_ verify SSL certificate from the host
 * `user` - user name for connecting to vSphere
-* `password` - password  for connecting to vSphere
+* `password` - password for connecting to vSphere. If no value is given, or the
+  value is set to `:ask`, the user will be prompted to enter the password on
+  each invocation.
 * `data_center_name` - _Optional_ datacenter containing the computed resource, the template and where the new VM will be created, if not specified the first datacenter found will be used
 * `compute_resource_name` - _Required if cloning from template_ the name of the host containing the resource pool for the new VM
 * `resource_pool_name` - the resource pool for the new VM. If not supplied, and cloning from a template, uses the root resource pool
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as the source for the cloning operation
 * `template_name` - the VM or VM template to clone
-* `vm_base_path` - _Optional_ path to folder where new VM sould be created, if not specified template's parent folder will be used
+* `vm_base_path` - _Optional_ path to folder where new VM should be created, if not specified template's parent folder will be used
 * `name` - _Optional_ name of the new VM, if missing the name will be auto generated
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
@@ -102,11 +107,34 @@ This provider has the following settings, all are required unless noted:
 * `proxy_port` - _Optional_ proxy port number for connecting to vSphere via proxy
 * `vlan` - _Optional_ vlan to connect the first NIC to
 * `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
+* `cpu_count` - _Optional_ Configure the number of CPUs for the new VM
 * `mac` - _Optional_ Used to set the mac address of the new VM
 
 ### Cloning from a VM rather than a template
 
 To clone from an existing VM rather than a template, set `clone_from_vm` to true. If this value is set, `compute_resource_name` and `resource_pool_name` are not required.
+
+### Template_Name
+
+* The template name includes the actual template name and the directory path containing the template.
+* **For example:** if the template is a directory called **vagrant-templates** and the template is called **ubuntu-lucid-template** the `template_name` setting would be:
+```
+vsphere.template_name = "vagrant-templates/ubuntu-lucid-template"
+```
+![Vagrant Vsphere Screenshot](https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png)
+
+
+### VM_Base_Path
+
+* The new vagrant VM will be created in the same directory as the template it originated from.
+* To create the VM in a directory other than the one where the template was located, include the **vm_base_path** setting.
+* **For example:** if the machines will be stored in a directory called **vagrant-machines** the `vm_base_path` would be:
+```
+vsphere.vm_base_path = "vagrant-machines"
+```
+
+![Vagrant Vsphere Screenshot](https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png)
+
 
 ### Setting a static IP address
 
@@ -134,13 +162,56 @@ vsphere.mac = '00:50:56:XX:YY:ZZ'
 
 Be careful you could easily break networking if you use invalid or duplicate VMware MAC address.
 
+## Example Usage
+
+### FILE: Vagrantfile
+```ruby
+VAGRANT_INSTANCE_NAME   = "vagrant-vsphere"
+
+Vagrant.configure("2") do |config|
+  config.vm.box     = 'vsphere'
+  config.vm.box_url = 'https://vagrantcloud.com/ssx/boxes/vsphere-dummy/versions/0.0.1/providers/vsphere.box'
+
+  config.vm.hostname = VAGRANT_INSTANCE_NAME
+  config.vm.define VAGRANT_INSTANCE_NAME do |d|
+  end
+
+  config.vm.provider :vsphere do |vsphere|
+    vsphere.host                  = 'vsphere.local'
+    vsphere.name                  = VAGRANT_INSTANCE_NAME
+    vsphere.compute_resource_name = 'vagrant01.vsphere.local'
+    vsphere.resource_pool_name    = 'vagrant'
+    vsphere.template_name         = 'vagrant-templates/ubuntu14041'
+    vsphere.vm_base_path          = "vagrant-machines"
+
+    vsphere.user     = 'vagrant-user@vsphere'
+    vsphere.password = '***************'
+    vsphere.insecure = true
+  end
+end
+```
+
+### Vagrant Up
+```bash
+vagrant up --provider=vsphere
+```
+
+### Vagrant SSH
+```bash
+vagrant ssh
+```
+
+### Vagrant Destroy
+```bash
+vagrant destroy
+```
 
 ## Version History
 * 0.0.1
   * Initial release
 * 0.1.0
   * Add folder syncing with guest OS
-  * Add provisoning
+  * Add provisioning
 * 0.2.0
   * Merge halt action from [catharsis](https://github.com/catharsis)
 * 0.3.0
@@ -189,7 +260,9 @@ Be careful you could easily break networking if you use invalid or duplicate VMw
   * Instruct vagrant to set the guest hostname according to Vagrantfile [#69 ddub:set-hostname](https://github.com/nsidc/vagrant-vsphere/pull/69)
 * 0.10.0
   * new optional parameter to clone into custom folder in vSphere [#73 mikola-spb:vm-base-path](https://github.com/nsidc/vagrant-vsphere/pull/73)
-  * follows semvar better, this adds functionality in a backwards compatible way, so bumps the minor. 0.9.0, should have been a major version.
+  * follows [semver](http://semver.org/) better, this adds functionality in a
+    backwards compatible way, so bumps the minor. 0.9.0, should have been a
+    major version.
 * 0.11.0
   * Create the VM target folder if it doesn't exist #76 marnovdm:feature/create_vm_folder.
 * 0.12.0
@@ -206,7 +279,21 @@ Be careful you could easily break networking if you use invalid or duplicate VMw
   * If the VM is powered off, it is just destroyed.
   * If the VM is suspended, it is powered on, then powered off, then destroyed.
 * 0.16.0 Add ability to configure amount of memory the new cloned VM will have [#94 rylarson:add-memory-configuration](https://github.com/nsidc/vagrant-vsphere/pull/94).
-
+* 0.17.0
+  * Add ability to configure the CPU Count
+    [#96 rylarson:add-cpu-configuration](https://github.com/nsidc/vagrant-vsphere/pull/96).
+  * Prompt the user to enter a password if none is given, or the configuration
+    value is set to `:ask`
+    [#97 topmedia:password-prompt](https://github.com/nsidc/vagrant-vsphere/pull/97).
+  * Add support for `vagrant reload`
+    [#105 clintoncwolfe:add-reload-action](https://github.com/nsidc/vagrant-vsphere/pull/105).
+  * Fix compatibility with Vagrant 1.7 to use vSphere connection info from a base
+    box
+    [#111 mkuzmin:get-state](https://github.com/nsidc/vagrant-vsphere/pull/111).
+* 0.18.0
+  * Gracefully power off the VM with `vagrant halt`, and shutdown before
+    deleting the VM with `vagrant destroy`
+    [#104 clintoncwolfe:shutdown-guest-on-halt](https://github.com/nsidc/vagrant-vsphere/pull/104).
 
 ## Versioning
 
@@ -228,7 +315,33 @@ If you want a quick merge, write a spec that fails before your changes are appli
 
 If you don't have rake installed, first install [bundler](http://bundler.io/) and run `bundle install`.
 
+### Development Without Building the Plugin
 
+To test your changes when developing the plugin, you have two main
+options. First, you can build and install the plugin from source every time you
+make a change:
+
+1. Make changes
+2. `rake build`
+3. `vagrant plugin install ./pkg/vagrant-vsphere-$VERSION.gem`
+4. `vagrant up --provider=vsphere`
+
+Second, you can use Bundler and the Vagrant gem to execute vagrant commands,
+saving time as you never have to wait for the plugin to build and install:
+
+1. Make changes
+2. `bundle exec vagrant up --provider=vsphere`
+
+This method uses the version of Vagrant specified in
+[`Gemfile`](https://github.com/nsidc/vagrant-vsphere/blob/master/Gemfile). It
+will also cause Bundler and Vagrant to output warnings every time you run
+`bundle exec vagrant`, because `Gemfile` lists **vagrant-vsphere** twice (once
+with `gemspec` and another time in the `group :plugins` block), and Vagrant
+prefers to be run from the official installer rather than through the gem.
+
+Despite those warning messages, this is the
+[officially recommended](https://docs.vagrantup.com/v2/plugins/development-basics.html)
+method for Vagrant plugin development.
 
 ## License
 
