@@ -1,4 +1,4 @@
-Copyright (c) 2013 Regents of the University of Colorado
+Copyright (c) 2013-2015 Regents of the University of Colorado
 
 This software was developed by the National Snow and Ice Data Center with funding from multiple sources.
 

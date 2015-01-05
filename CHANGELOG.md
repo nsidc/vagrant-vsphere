@@ -1,6 +1,7 @@
 ## unreleased
 
   - Increase Vagrant requirement to 1.6.4+
+  - Update copyright date in LICENSE.txt
 
 ## 0.19.1 (2014-12-31)
 
