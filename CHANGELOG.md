@@ -1,3 +1,7 @@
+## unreleased
+
+  - Increase Vagrant requirement to 1.6.4+
+
 ## 0.19.1 (2014-12-31)
 
   - Move version history and contributing notes out of `README.md` into separate
