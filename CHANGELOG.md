@@ -1,4 +1,4 @@
-## unreleased
+## 1.0.0 (2015-01-05)
 
   - Increase Vagrant requirement to 1.6.4+
   - Update copyright date in LICENSE.txt
