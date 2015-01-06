@@ -1,3 +1,12 @@
+## 1.0.1 (2015-01-06)
+
+  - Fix "undefined local variable or method datastore" error due to typo in a
+    variable name
+    ([#116 mkuzmin:datastore](https://github.com/nsidc/vagrant-vsphere/pull/116))
+  - Remove "missing required parameter uuid" error from `vagrant destroy` output
+    when no machine exists
+    ([#117 mkuzmin:destroy](https://github.com/nsidc/vagrant-vsphere/pull/117))
+
 ## 1.0.0 (2015-01-05)
 
   - Increase Vagrant requirement to 1.6.4+
