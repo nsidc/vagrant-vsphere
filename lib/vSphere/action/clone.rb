@@ -28,7 +28,7 @@ module VagrantPlugins
           begin
             # Storage DRS does not support vSphere linked clones. http://www.vmware.com/files/pdf/techpaper/vsphere-storage-drs-interoperability.pdf
             ds = get_datastore dc, machine
-            fail Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && datastore.is_a?(RbVmomi::VIM::StoragePod)
+            fail Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && ds.is_a?(RbVmomi::VIM::StoragePod)
 
             location = get_location ds, dc, machine, template
             spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: true, template: false
