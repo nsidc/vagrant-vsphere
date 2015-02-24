@@ -190,9 +190,24 @@ executions.
 This is useful if running Vagrant from multiple directories or if multiple
 machines are defined in the Vagrantfile.
 
+### Setting addresType for network adapter
+
+This sets the addressType of the network adapter, for example 'Manual' to 
+be able to set a manual mac address. 
+This value may depend on the version of vSphere you use. It may be necessary 
+to set this in combination with the mac field, in order to set a manual 
+mac address. For valid values for this field see VirtualEthernetCard api 
+documentation of vSphere.
+
+```ruby
+vsphere.addressType = 'Manual'
+```
+
 ### Setting the MAC address
 
-To set a static MAC address, add a `vsphere.mac` to your `Vagrantfile`:
+To set a static MAC address, add a `vsphere.mac` to your `Vagrantfile`.
+In some cases you must also set `vsphere.addressType` (see above) 
+to make this work:
 
 ```ruby
 vsphere.mac = '00:50:56:XX:YY:ZZ'
