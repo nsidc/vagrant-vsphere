@@ -201,6 +201,16 @@ vsphere.mac = '00:50:56:XX:YY:ZZ'
 Take care to avoid using invalid or duplicate VMware MAC addresses, as this can
 easily break networking.
 
+## Troubleshooting
+
+### vCenter
+ESXi is not supported. Make sure to connect to a vCenter server and not directly to an ESXi host. [ESXi vs vCenter](http://www.mustbegeek.com/difference-between-vsphere-esxi-and-vcenter/)
+
+### Permissions
+If you have permission issues:
+1. give the connecting user read only access to everything, and full permission to a specific data center.  Narrow the permissions down after a VM is created. 
+2. Be sure the path to the VM is correct. see  the "Template_Name" screenshots above for more information.
+
 ## Example Usage
 
 ### FILE: Vagrantfile
