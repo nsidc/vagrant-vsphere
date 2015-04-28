@@ -30,8 +30,8 @@ module VagrantPlugins
         Provider
       end
 
-      provider_capability("vsphere", "public_address") do
-        require_relative "cap/public_address"
+      provider_capability('vsphere', 'public_address') do
+        require_relative 'cap/public_address'
         Cap::PublicAddress
       end
 
