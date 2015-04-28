@@ -30,6 +30,11 @@ module VagrantPlugins
         Provider
       end
 
+      provider_capability("vsphere", "public_address") do
+        require_relative "cap/public_address"
+        Cap::PublicAddress
+      end
+
       def self.setup_i18n
         I18n.load_path << File.expand_path('locales/en.yml', VSphere.source_root)
         I18n.reload!
