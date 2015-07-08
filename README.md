@@ -131,6 +131,8 @@ This provider has the following settings, all are required unless noted:
 * `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
 * `cpu_count` - _Optional_ Configure the number of CPUs for the new VM
 * `mac` - _Optional_ Used to set the mac address of the new VM
+* `cpu_reservation` - _Optional_ Configure the CPU time (in MHz) to reserve for this VM
+* `mem_reservation` - _Optional_ Configure the memory (in MB) to reserve for this VM
 
 ### Cloning from a VM rather than a template
 
