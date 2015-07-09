@@ -1,3 +1,10 @@
+## [1.2.0 (2015-07-09)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.2.0)
+
+  - Add `public_address` provider capability
+    ([mkuzmin:public-address](https://github.com/nsidc/vagrant-vsphere/pull/130))
+  - Documentation update
+    ([standaloneSA:update-readme](https://github.com/nsidc/vagrant-vsphere/pull/133))
+
 ## [1.1.0 (2015-07-09)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.1.0)
 
   - Add explicit support for parallelization
