@@ -176,8 +176,10 @@ config.vm.network 'private_network', ip: '192.168.50.4'
 ```
 
 The IP address will only be set if a customization spec name is given. The
-customization spec must have network adapter settings configured. For each
-private network specified, there needs to be a corresponding network adapter in
+customization spec must have network adapter settings configured with a static 
+IP address(just an unused address NOT the address you want the VM to be). The 
+config.vm.network line will overwrite the ip in the customization spec with the one you set. 
+For each private network specified, there needs to be a corresponding network adapter in
 the customization spec. An error will be thrown if there are more networks than
 adapters.
 
