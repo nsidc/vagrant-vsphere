@@ -1,4 +1,4 @@
-## 1.1.0 (2015-07-09)
+## [1.1.0 (2015-07-09)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.1.0)
 
   - Add explicit support for parallelization
     ([xlucas:xlucas-patch-parallelization](https://github.com/nsidc/vagrant-vsphere/pull/126))
