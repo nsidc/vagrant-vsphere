@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/nsidc/vagrant-vsphere.svg?branch=master)](https://travis-ci.org/nsidc/vagrant-vsphere)
+[![Build Status](https://travis-ci.org/nsidc/vagrant-vsphere.svg?branch=master)](https://travis-ci.org/nsidc/vagrant-vsphere) [![Gem Version](https://badge.fury.io/rb/vagrant-vsphere.svg)](http://badge.fury.io/rb/vagrant-vsphere)
 
 # Vagrant vSphere Provider
 
