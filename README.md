@@ -208,6 +208,7 @@ ESXi is not supported. Make sure to connect to a vCenter server and not directly
 
 ### Permissions
 If you have permission issues:
+
 1. give the connecting user read only access to everything, and full permission to a specific data center.  Narrow the permissions down after a VM is created. 
 2. Be sure the path to the VM is correct. see  the "Template_Name" screenshots above for more information.
 
