@@ -1,3 +1,12 @@
+## 1.1.0 (2015-07-09)
+
+  - Add explicit support for parallelization
+    ([xlucas:xlucas-patch-parallelization](https://github.com/nsidc/vagrant-vsphere/pull/126))
+  - Documentation updates
+    ([metrix78:metrix78-patch-1](https://github.com/nsidc/vagrant-vsphere/pull/127)
+    and
+    [fabriciocolombo:readme-ipaddress](https://github.com/nsidc/vagrant-vsphere/pull/128))
+
 ## 1.0.1 (2015-01-06)
 
   - Fix "undefined local variable or method datastore" error due to typo in a

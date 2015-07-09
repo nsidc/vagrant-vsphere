@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/nsidc/vagrant-vsphere.svg?branch=master)](https://travis-ci.org/nsidc/vagrant-vsphere)
+[![Build Status](https://travis-ci.org/nsidc/vagrant-vsphere.svg?branch=master)](https://travis-ci.org/nsidc/vagrant-vsphere) [![Gem Version](https://badge.fury.io/rb/vagrant-vsphere.svg)](http://badge.fury.io/rb/vagrant-vsphere)
 
 # Vagrant vSphere Provider
 
@@ -19,9 +19,9 @@ This provider is built on top of the
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**version: 1.0.1**
+**version: 1.1.0**
 
-vagrant-vsphere (**version: 1.0.1**) is available from
+vagrant-vsphere (**version: 1.1.0**) is available from
 [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
@@ -178,8 +178,10 @@ config.vm.network 'private_network', ip: '192.168.50.4'
 ```
 
 The IP address will only be set if a customization spec name is given. The
-customization spec must have network adapter settings configured. For each
-private network specified, there needs to be a corresponding network adapter in
+customization spec must have network adapter settings configured with a static 
+IP address(just an unused address NOT the address you want the VM to be). The 
+config.vm.network line will overwrite the ip in the customization spec with the one you set. 
+For each private network specified, there needs to be a corresponding network adapter in
 the customization spec. An error will be thrown if there are more networks than
 adapters.
 
@@ -202,6 +204,17 @@ vsphere.mac = '00:50:56:XX:YY:ZZ'
 
 Take care to avoid using invalid or duplicate VMware MAC addresses, as this can
 easily break networking.
+
+## Troubleshooting
+
+### vCenter
+ESXi is not supported. Make sure to connect to a vCenter server and not directly to an ESXi host. [ESXi vs vCenter](http://www.mustbegeek.com/difference-between-vsphere-esxi-and-vcenter/)
+
+### Permissions
+If you have permission issues:
+
+1. give the connecting user read only access to everything, and full permission to a specific data center.  Narrow the permissions down after a VM is created. 
+2. Be sure the path to the VM is correct. see  the "Template_Name" screenshots above for more information.
 
 ## Example Usage
 

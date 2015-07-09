@@ -21,7 +21,7 @@ module VagrantPlugins
         Config
       end
 
-      provider(:vsphere) do
+      provider(:vsphere, parallel: true) do
         # TODO: add logging
         setup_i18n
 
