@@ -72,7 +72,7 @@ Vagrant.configure("2") do |config|
     vsphere.host = 'HOST NAME OF YOUR VSPHERE INSTANCE'
     vsphere.compute_resource_name = 'YOUR COMPUTE RESOURCE'
     vsphere.resource_pool_name = 'YOUR RESOURCE POOL'
-    vsphere.template_name = 'YOUR VM TEMPLATE'
+    vsphere.template_name = '/PATH/TO/YOUR VM TEMPLATE'
     vsphere.name = 'NEW VM NAME'
     vsphere.user = 'YOUR VMWARE USER'
     vsphere.password = 'YOUR VMWARE PASSWORD'
@@ -115,7 +115,7 @@ This provider has the following settings, all are required unless noted:
   cloning from a template, uses the root resource pool
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as
   the source for the cloning operation
-* `template_name` - the VM or VM template to clone
+* `template_name` - the VM or VM template to clone (including the full folder path)
 * `vm_base_path` - _Optional_ path to folder where new VM should be created, if
   not specified template's parent folder will be used
 * `name` - _Optional_ name of the new VM, if missing the name will be auto
