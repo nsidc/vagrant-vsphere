@@ -55,7 +55,9 @@ RSpec.configure do |config|
         vlan: nil,
         memory_mb: nil,
         cpu_count: nil,
-        mac: nil)
+        mac: nil,
+        cpu_reservation: nil,
+        mem_reservation: nil)
     vm_config = double(
       vm: double('config_vm',
                  box: nil,
