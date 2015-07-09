@@ -224,7 +224,6 @@ module VagrantPlugins
         def add_custom_mem_reservation(spec, mem_reservation)
           spec[:config][:memoryAllocation] = RbVmomi::VIM.ResourceAllocationInfo(reservation: mem_reservation)
         end
-
       end
     end
   end
