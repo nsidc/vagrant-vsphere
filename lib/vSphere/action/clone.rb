@@ -40,6 +40,8 @@ module VagrantPlugins
             add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
             add_custom_cpu(spec, config.cpu_count) unless config.cpu_count.nil?
+            add_custom_cpu_reservation(spec, config.cpu_reservation) unless config.cpu_reservation.nil?
+            add_custom_mem_reservation(spec, config.mem_reservation) unless config.mem_reservation.nil?
 
             if !config.clone_from_vm && ds.is_a?(RbVmomi::VIM::StoragePod)
 
@@ -213,6 +215,14 @@ module VagrantPlugins
 
         def add_custom_cpu(spec, cpu_count)
           spec[:config][:numCPUs] = Integer(cpu_count)
+        end
+
+        def add_custom_cpu_reservation(spec, cpu_reservation)
+          spec[:config][:cpuAllocation] = RbVmomi::VIM.ResourceAllocationInfo(reservation: cpu_reservation)
+        end
+
+        def add_custom_mem_reservation(spec, mem_reservation)
+          spec[:config][:memoryAllocation] = RbVmomi::VIM.ResourceAllocationInfo(reservation: mem_reservation)
         end
       end
     end

@@ -23,6 +23,8 @@ module VagrantPlugins
       attr_accessor :mac
       attr_accessor :memory_mb
       attr_accessor :cpu_count
+      attr_accessor :cpu_reservation
+      attr_accessor :mem_reservation
 
       def validate(machine)
         errors = _detected_errors
