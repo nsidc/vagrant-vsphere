@@ -1,3 +1,8 @@
+## [1.3.0 (unreleased)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.3.0)
+
+  - Add ability to configure CPU and memory reservations
+    ([edmcman:resource_limit](https://github.com/nsidc/vagrant-vsphere/pull/137))
+
 ## [1.2.0 (2015-07-09)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.2.0)
 
   - Add `public_address` provider capability
