@@ -11,14 +11,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectVSphere
-
-          b.use Call, IsRunning do |env, b2|
-            if env[:result]
-              b2.use Call, GracefulHalt, :poweroff, :running do |env2, b3|
-                b3.use PowerOff unless env2[:result]
-              end
-            end
-          end
+          b.use PowerOff
           b.use Destroy
         end
       end
