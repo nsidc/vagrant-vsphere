@@ -2,6 +2,7 @@
 
   - Add ability to configure CPU and memory reservations
     ([edmcman:resource_limit](https://github.com/nsidc/vagrant-vsphere/pull/137))
+  - Bypass "graceful" shut down attempts with `vagrant destroy --force`
 
 ## [1.2.0 (2015-07-09)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.2.0)
 

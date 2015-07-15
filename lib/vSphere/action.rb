@@ -14,6 +14,11 @@ module VagrantPlugins
 
           b.use Call, IsRunning do |env, b2|
             if env[:result]
+              if env[:force_confirm_destroy]
+                b2.use PowerOff
+                next
+              end
+
               b2.use Call, GracefulHalt, :poweroff, :running do |env2, b3|
                 b3.use PowerOff unless env2[:result]
               end
