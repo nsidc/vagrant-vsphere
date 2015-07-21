@@ -193,9 +193,9 @@ module VagrantPlugins
         def add_custom_address_type(template, spec, addressType)
           spec[:config][:deviceChange] = []
           config = template.config
-          card = config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first or fail Errors::VSphereError, :missing_network_card
+          card = config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first || fail(Errors::VSphereError, :missing_network_card)
           card.addressType = addressType
-          card_spec = { :deviceChange => [ { :operation => :edit, :device => card } ] }
+          card_spec = { :deviceChange => [{ :operation => :edit, :device => card }] }
           template.ReconfigVM_Task(:spec => card_spec).wait_for_completion
         end
 
