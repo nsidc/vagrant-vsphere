@@ -1,4 +1,4 @@
-## [1.3.0 (unreleased)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.3.0)
+## [1.3.0 (2015-07-21)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.3.0)
 
   - Add ability to configure CPU and memory reservations
     ([edmcman:resource_limit](https://github.com/nsidc/vagrant-vsphere/pull/137))
