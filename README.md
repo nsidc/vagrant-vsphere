@@ -133,6 +133,8 @@ This provider has the following settings, all are required unless noted:
 * `mac` - _Optional_ Used to set the mac address of the new VM
 * `cpu_reservation` - _Optional_ Configure the CPU time (in MHz) to reserve for this VM
 * `mem_reservation` - _Optional_ Configure the memory (in MB) to reserve for this VM
+* `addressType` - _Optional_ Configure the address type of the
+  [vSphere Virtual Ethernet Card](https://www.vmware.com/support/developer/vc-sdk/visdk2xpubs/ReferenceGuide/vim.vm.device.VirtualEthernetCard.html)
 
 ### Cloning from a VM rather than a template
 
