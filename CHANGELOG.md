@@ -1,3 +1,10 @@
+## [1.4.0 (2015-07-29)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.4.0)
+
+  - Add ability to configure the address type (originally submitted in
+    [mreuvers:master](https://github.com/nsidc/vagrant-vsphere/pull/121), but
+    merged
+    [nsidc:address-type](https://github.com/nsidc/vagrant-vsphere/pull/142))
+
 ## [1.3.0 (2015-07-21)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.3.0)
 
   - Add ability to configure CPU and memory reservations
