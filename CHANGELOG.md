@@ -1,3 +1,10 @@
+## [1.4.1 (2015-09-01)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.4.1)
+
+  - Update dependency on [rbvmomi](https://github.com/vmware/rbvmomi) to 1.8.2
+    in order to resolve errors with parallelization
+    ([#139]((https://github.com/nsidc/vagrant-vsphere/issues/139)),
+    [edmcman:master](https://github.com/nsidc/vagrant-vsphere/pull/147)).
+
 ## [1.4.0 (2015-07-29)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.4.0)
 
   - Add ability to configure the address type (originally submitted in
