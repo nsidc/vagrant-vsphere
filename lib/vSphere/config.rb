@@ -27,6 +27,16 @@ module VagrantPlugins
       attr_accessor :cpu_reservation
       attr_accessor :mem_reservation
 
+      attr_reader :custom_attributes
+
+      def initialize
+        @custom_attributes = {}
+      end
+
+      def custom_attribute(key, value)
+        @custom_attributes[key.to_sym] = value
+      end
+
       def validate(machine)
         errors = _detected_errors
 

@@ -77,6 +77,10 @@ module VagrantPlugins
               env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
 
               new_vm = template.CloneVM_Task(folder: vm_base_folder, name: name, spec: spec).wait_for_completion
+
+              config.custom_attributes.each do |k, v|
+                new_vm.setCustomValue(key: k, value: v)
+              end
             end
           rescue Errors::VSphereError
             raise

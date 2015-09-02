@@ -135,6 +135,11 @@ This provider has the following settings, all are required unless noted:
 * `mem_reservation` - _Optional_ Configure the memory (in MB) to reserve for this VM
 * `addressType` - _Optional_ Configure the address type of the
   [vSphere Virtual Ethernet Card](https://www.vmware.com/support/developer/vc-sdk/visdk2xpubs/ReferenceGuide/vim.vm.device.VirtualEthernetCard.html)
+* `custom_attribute` - _Optional_ Add a
+  [custom attribute](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0CB4QFjAAahUKEwiWwbWX59jHAhVBC5IKHa3HAEU&url=http%3A%2F%2Fpubs.vmware.com%2Fvsphere-51%2Ftopic%2Fcom.vmware.vsphere.vcenterhost.doc%2FGUID-25244732-D473-4857-A471-579257B6D95F.html&usg=AFQjCNGTSl4cauFrflUJpBeTBb0Yv7R13g&sig2=a9he6W2qVvBSZ5lCiXnENA)
+  to the VM upon creation. This method takes a key/value pair,
+  e.g. `vsphere.custom_attribute('timestamp', Time.now.to_s)`, and may be called
+  multiple times to set different attributes.
 
 ### Cloning from a VM rather than a template
 
@@ -180,9 +185,9 @@ config.vm.network 'private_network', ip: '192.168.50.4'
 ```
 
 The IP address will only be set if a customization spec name is given. The
-customization spec must have network adapter settings configured with a static 
-IP address(just an unused address NOT the address you want the VM to be). The 
-config.vm.network line will overwrite the ip in the customization spec with the one you set. 
+customization spec must have network adapter settings configured with a static
+IP address(just an unused address NOT the address you want the VM to be). The
+config.vm.network line will overwrite the ip in the customization spec with the one you set.
 For each private network specified, there needs to be a corresponding network adapter in
 the customization spec. An error will be thrown if there are more networks than
 adapters.
@@ -212,7 +217,7 @@ vsphere.addressType = 'Manual'
 ### Setting the MAC address
 
 To set a static MAC address, add a `vsphere.mac` to your `Vagrantfile`.
-In some cases you must also set `vsphere.addressType` (see above) 
+In some cases you must also set `vsphere.addressType` (see above)
 to make this work:
 
 ```ruby
@@ -230,7 +235,7 @@ ESXi is not supported. Make sure to connect to a vCenter server and not directly
 ### Permissions
 If you have permission issues:
 
-1. give the connecting user read only access to everything, and full permission to a specific data center.  Narrow the permissions down after a VM is created. 
+1. give the connecting user read only access to everything, and full permission to a specific data center.  Narrow the permissions down after a VM is created.
 2. Be sure the path to the VM is correct. see  the "Template_Name" screenshots above for more information.
 
 ## Example Usage
@@ -259,6 +264,8 @@ Vagrant.configure("2") do |config|
     vsphere.user     = 'vagrant-user@vsphere'
     vsphere.password = '***************'
     vsphere.insecure = true
+
+    vsphere.custom_attribute('timestamp', Time.now.to_s)
   end
 end
 ```
