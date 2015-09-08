@@ -1,3 +1,8 @@
+## [1.5.0 (2015-09-08)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.5.0)
+
+  - Add support for custom attributes
+    ([michaeljb:custom-attributes](https://github.com/nsidc/vagrant-vsphere/pull/149)).
+
 ## [1.4.1 (2015-09-01)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.4.1)
 
   - Update dependency on [rbvmomi](https://github.com/vmware/rbvmomi) to 1.8.2
