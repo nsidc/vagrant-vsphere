@@ -31,6 +31,7 @@ module VagrantPlugins
       def self.action_provision
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ConnectVSphere
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated
@@ -108,7 +109,6 @@ module VagrantPlugins
           b.use Call, IsRunning do |env, b2|
             b2.use PowerOn unless env[:result]
           end
-          b.use CloseVSphere
           b.use Provision
           b.use SyncedFolders
           b.use SetHostname
@@ -189,6 +189,7 @@ module VagrantPlugins
       autoload :MessageNotRunning, action_root.join('message_not_running')
       autoload :PowerOff, action_root.join('power_off')
       autoload :PowerOn, action_root.join('power_on')
+      autoload :Provision, action_root.join('provision')
     end
   end
 end

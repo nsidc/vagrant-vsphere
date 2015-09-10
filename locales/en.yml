@@ -1,5 +1,7 @@
 en:
   vsphere:
+    set_cust_attrs: |-
+      Setting vSphere custom attributes...
     creating_cloned_vm: |-
       Calling vSphere CloneVM with the following settings:
     creating_cloned_vm_sdrs: |-
