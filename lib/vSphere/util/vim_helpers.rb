@@ -23,9 +23,9 @@ module VagrantPlugins
             elsif rp.is_a? RbVmomi::VIM::ClusterComputeResource
               rp = rp.resourcePool.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
             elsif rp.is_a? RbVmomi::VIM::ResourcePool
-              rp = rp.resourcePool.find { |f| f.name == entity_array_item } || (fail Errors::VSphereError, :missing_resource_pool)
+              rp = rp.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
             else
-              fail Errors::VSphereError, :missing_resource_pool
+              fail(Errors::VSphereError, :missing_resource_pool)
             end
           end
           rp = rp.resourcePool if !rp.is_a?(RbVmomi::VIM::ResourcePool) && rp.respond_to?(:resourcePool)
