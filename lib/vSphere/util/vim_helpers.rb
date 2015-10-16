@@ -16,16 +16,16 @@ module VagrantPlugins
           rp = get_compute_resource(datacenter, machine)
           entity_array = machine.provider_config.resource_pool_name.split('/')
           entity_array.each do |entity_array_item|
-            if entity_array_item != ''
-              if rp.is_a? RbVmomi::VIM::Folder
-                rp = rp.childEntity.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
-              elsif rp.is_a? RbVmomi::VIM::ClusterComputeResource
-                rp = rp.resourcePool.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
-              elsif rp.is_a? RbVmomi::VIM::ResourcePool
-                rp = rp.resourcePool.find { |f| f.name == entity_array_item } || (fail Errors::VSphereError, :missing_resource_pool)
-              else
-                fail Errors::VSphereError, :missing_resource_pool
-              end
+            puts entity_array_item
+            next if entity_array_item == ''
+            if rp.is_a? RbVmomi::VIM::Folder
+              rp = rp.childEntity.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
+            elsif rp.is_a? RbVmomi::VIM::ClusterComputeResource
+              rp = rp.resourcePool.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
+            elsif rp.is_a? RbVmomi::VIM::ResourcePool
+              rp = rp.resourcePool.find { |f| f.name == entity_array_item } || (fail Errors::VSphereError, :missing_resource_pool)
+            else
+              fail Errors::VSphereError, :missing_resource_pool
             end
           end
           rp = rp.resourcePool if !rp.is_a?(RbVmomi::VIM::ResourcePool) && rp.respond_to?(:resourcePool)
