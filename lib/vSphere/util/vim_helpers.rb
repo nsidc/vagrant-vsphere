@@ -13,23 +13,23 @@ module VagrantPlugins
         end
 
         def get_resource_pool(datacenter, machine)
-          baseEntity = get_compute_resource(datacenter, machine)
-          entityArray = machine.provider_config.resource_pool_name.split('/')
-          entityArray.each do |entityArrItem|
-            if entityArrItem != ''
-              if baseEntity.is_a? RbVmomi::VIM::Folder
-                baseEntity = baseEntity.childEntity.find { |f| f.name == entityArrItem } or fail Errors::VSphereError, :missing_resource_pool
-              elsif baseEntity.is_a? RbVmomi::VIM::ClusterComputeResource
-                 baseEntity = baseEntity.resourcePool.resourcePool.find { |f| f.name == entityArrItem } or fail Errors::VSphereError, :missing_resource_pool
-              elsif baseEntity.is_a? RbVmomi::VIM::ResourcePool
-                 baseEntity = baseEntity.resourcePool.find { |f| f.name == entityArrItem } or fail Errors::VSphereError, :missing_resource_pool
+          rp = get_compute_resource(datacenter, machine)
+          entity_array = machine.provider_config.resource_pool_name.split('/')
+          entity_array.each do |entity_array_item|
+            if entity_array_item != ''
+              if rp.is_a? RbVmomi::VIM::Folder
+                rp = rp.childEntity.find { |f| f.name == entity_array_item } or fail Errors::VSphereError, :missing_resource_pool
+              elsif rp.is_a? RbVmomi::VIM::ClusterComputeResource
+                rp = rp.resourcePool.resourcePool.find { |f| f.name == entity_array_item } or fail Errors::VSphereError, :missing_resource_pool
+              elsif rp.is_a? RbVmomi::VIM::ResourcePool
+                rp = rp.resourcePool.find { |f| f.name == entity_array_item } or fail Errors::VSphereError, :missing_resource_pool
               else
                 fail Errors::VSphereError, :missing_resource_pool
               end
             end
           end
-          baseEntity = baseEntity.resourcePool if not baseEntity.is_a?(RbVmomi::VIM::ResourcePool) and baseEntity.respond_to?(:resourcePool)
-          baseEntity
+          rp = rp.resourcePool if not rp.is_a?(RbVmomi::VIM::ResourcePool) and rp.respond_to?(:resourcePool)
+          rp
         end
 
         def get_compute_resource(datacenter, machine)
