@@ -7,7 +7,7 @@ en:
     requesting_sdrs_recommendation: |-
       Calling vSphere RecommendDatastores with StoragePlacementSpec of the following settings:
     vm_clone_success: |-
-      New virtual machine successfully cloned and started
+      New virtual machine successfully cloned
     destroy_vm: |-
       Calling vSphere Destroy
     power_off_vm: |-
@@ -20,10 +20,6 @@ en:
       The VM has not been created
     vm_not_running: |-
       The VM is not running
-    waiting_for_ssh: |-
-      Waiting for SSH to become available...
-    waiting_for_winrm: |-
-      Waiting for WinRM to become available...
 
     errors:
       missing_template: |-
