@@ -1,3 +1,9 @@
+## [1.6.0 (2016-01-21)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.6.0)
+
+  - Use Vagrant core API instead of waiting for SSH communicator, which should
+    resolve some WinRM connection issues
+    ([mkuzmin:wait-winrm](https://github.com/nsidc/vagrant-vsphere/pull/162)).
+
 ## [1.5.0 (2015-09-08)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.5.0)
 
   - Add support for custom attributes
