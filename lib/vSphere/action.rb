@@ -109,6 +109,7 @@ module VagrantPlugins
             b2.use PowerOn unless env[:result]
           end
           b.use CloseVSphere
+          b.use WaitForCommunicator
           b.use Provision
           b.use SyncedFolders
           b.use SetHostname

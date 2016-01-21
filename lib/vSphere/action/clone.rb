@@ -1,14 +1,12 @@
 require 'rbvmomi'
 require 'i18n'
 require 'vSphere/util/vim_helpers'
-require 'vSphere/util/machine_helpers'
 
 module VagrantPlugins
   module VSphere
     module Action
       class Clone
         include Util::VimHelpers
-        include Util::MachineHelpers
 
         def initialize(app, _env)
           @app = app
@@ -91,9 +89,6 @@ module VagrantPlugins
           # TODO: handle interrupted status in the environment, should the vm be destroyed?
 
           machine.id = new_vm.config.uuid
-
-          # wait for SSH to be available
-          wait_for_ssh env
 
           env[:ui].info I18n.t('vsphere.vm_clone_success')
 
