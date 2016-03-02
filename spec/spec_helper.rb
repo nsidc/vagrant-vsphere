@@ -59,6 +59,7 @@ RSpec.configure do |config|
         addressType: nil,
         cpu_reservation: nil,
         mem_reservation: nil,
+        notes: nil,
         custom_attributes: {})
     vm_config = double(
       vm: double('config_vm',

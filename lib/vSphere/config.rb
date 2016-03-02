@@ -26,6 +26,7 @@ module VagrantPlugins
       attr_accessor :cpu_count
       attr_accessor :cpu_reservation
       attr_accessor :mem_reservation
+      attr_accessor :notes
 
       attr_reader :custom_attributes
 

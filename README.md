@@ -140,6 +140,7 @@ This provider has the following settings, all are required unless noted:
   to the VM upon creation. This method takes a key/value pair,
   e.g. `vsphere.custom_attribute('timestamp', Time.now.to_s)`, and may be called
   multiple times to set different attributes.
+* `notes` - _Optional_ Add arbitrary notes to the VM
 
 ### Cloning from a VM rather than a template
 

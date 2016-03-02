@@ -99,4 +99,15 @@ describe VagrantPlugins::VSphere::Action::Clone do
               config: RbVmomi::VIM.VirtualMachineConfigSpec }
     )
   end
+
+  it 'should set custom notes when they are specified' do
+    @machine.provider_config.stub(:notes).and_return('custom_notes')
+    call
+    expect(@template).to have_received(:CloneVM_Task).with(
+      folder: @data_center,
+      name: NAME,
+      spec: { location: { pool: @child_resource_pool },
+              config: RbVmomi::VIM.VirtualMachineConfigSpec(annotation: 'custom_notes') }
+    )
+  end
 end
