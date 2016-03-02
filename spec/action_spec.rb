@@ -135,7 +135,7 @@ describe VagrantPlugins::VSphere::Action do
       @machine.state.stub(:id).and_return(:running)
       # Vagrant has some pretty buggy multi threading and their conditions
       # check can fail if the wait_for_ready method returns right away
-      @machine.communicate.stub(:wait_for_ready) {sleep(1); true}
+      @machine.communicate.stub(:wait_for_ready) { sleep(1) }
 
       VagrantPlugins::VSphere::Action::GracefulHalt.any_instance.should_receive(:call)
     end
