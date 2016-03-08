@@ -41,6 +41,7 @@ module VagrantPlugins
             add_custom_cpu(spec, config.cpu_count) unless config.cpu_count.nil?
             add_custom_cpu_reservation(spec, config.cpu_reservation) unless config.cpu_reservation.nil?
             add_custom_mem_reservation(spec, config.mem_reservation) unless config.mem_reservation.nil?
+            add_custom_extra_config(spec, config.extra_config) unless config.extra_config.empty?
             add_custom_notes(spec, config.notes) unless config.notes.nil?
 
             if !config.clone_from_vm && ds.is_a?(RbVmomi::VIM::StoragePod)
@@ -233,6 +234,14 @@ module VagrantPlugins
 
         def add_custom_mem_reservation(spec, mem_reservation)
           spec[:config][:memoryAllocation] = RbVmomi::VIM.ResourceAllocationInfo(reservation: mem_reservation)
+        end
+
+        def add_custom_extra_config(spec, extra_config = {})
+          return if extra_config.empty?
+
+          # extraConfig must be an array of hashes with `key` and `value`
+          # entries.
+          spec[:config][:extraConfig] = extra_config.map { |k, v| { 'key' => k, 'value' => v } }
         end
 
         def add_custom_notes(spec, notes)

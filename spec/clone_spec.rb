@@ -100,6 +100,22 @@ describe VagrantPlugins::VSphere::Action::Clone do
     )
   end
 
+  it 'should set extraConfig if specified' do
+    @machine.provider_config.stub(:extra_config).and_return(
+      'guestinfo.hostname' => 'somehost.testvm')
+    expected_config = RbVmomi::VIM.VirtualMachineConfigSpec(extraConfig: [
+      { 'key' => 'guestinfo.hostname', 'value' => 'somehost.testvm' }
+    ])
+
+    call
+    expect(@template).to have_received(:CloneVM_Task).with(
+      folder: @data_center,
+      name: NAME,
+      spec: { location: { pool: @child_resource_pool },
+              config: expected_config }
+    )
+  end
+
   it 'should set custom notes when they are specified' do
     @machine.provider_config.stub(:notes).and_return('custom_notes')
     call
