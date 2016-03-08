@@ -110,7 +110,7 @@ This provider has the following settings, all are required unless noted:
   the template and where the new VM will be created, if not specified the first
   datacenter found will be used
 * `compute_resource_name` - _Required if cloning from template_ the name of the
-  host containing the resource pool for the new VM
+  host or cluster containing the resource pool for the new VM
 * `resource_pool_name` - the resource pool for the new VM. If not supplied, and
   cloning from a template, uses the root resource pool
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as
