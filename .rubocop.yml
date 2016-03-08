@@ -11,3 +11,24 @@ Lint/RescueException:
     # lib/vSphere/util/vim_helpers.rb to continue rescuing Exception in that
     # method
     - 'lib/vSphere/util/vim_helpers.rb'
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
