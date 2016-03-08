@@ -11,35 +11,35 @@ Lint/NonLocalExitFromIterator:
 
 # Offense count: 11
 Metrics/AbcSize:
-  Max: 120
+  Enabled: false  # Max: 120
 
 # Offense count: 1
 # Configuration parameters: CountComments.
 Metrics/ClassLength:
-  Max: 169
+  Enabled: false  # Max: 169
 
 # Offense count: 3
 Metrics/CyclomaticComplexity:
-  Max: 18
+  Enabled: false  # Max: 18
 
 # Offense count: 108
 # Configuration parameters: AllowURI, URISchemes.
 Metrics/LineLength:
-  Max: 177
+  Enabled: false  # Max: 177
 
 # Offense count: 12
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
-  Max: 60
+  Enabled: false  # Max: 60
 
 # Offense count: 1
 # Configuration parameters: CountComments.
 Metrics/ModuleLength:
-  Max: 162
+  Enabled: false  # Max: 162
 
 # Offense count: 3
 Metrics/PerceivedComplexity:
-  Max: 19
+  Enabled: false  # Max: 19
 
 # Offense count: 25
 Style/Documentation:
