@@ -26,11 +26,13 @@ module VagrantPlugins
       attr_accessor :cpu_count
       attr_accessor :cpu_reservation
       attr_accessor :mem_reservation
+      attr_accessor :extra_config
 
       attr_reader :custom_attributes
 
       def initialize
         @custom_attributes = {}
+        @extra_config = {}
       end
 
       def custom_attribute(key, value)
