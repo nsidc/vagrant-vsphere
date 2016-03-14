@@ -1,3 +1,12 @@
+## [1.7.0 (2016-03-14)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.7.0)
+
+  - Add support for setting guestinfo variables
+    ([Sharpie:add-guestinfo-support](https://github.com/nsidc/vagrant-vsphere/pull/174)).
+  - Run provisioner cleanup when destroying VMs
+    ([Sharpie:enable-provisioner-cleanup](https://github.com/nsidc/vagrant-vsphere/pull/176)).
+  - Add the ability to configure the notes on the newly cloned VM
+    ([rylarson:feature/rylarson-add-notes](https://github.com/nsidc/vagrant-vsphere/pull/178)).
+
 ## [1.6.0 (2016-01-21)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.6.0)
 
   - Use Vagrant core API instead of waiting for SSH communicator, which should
