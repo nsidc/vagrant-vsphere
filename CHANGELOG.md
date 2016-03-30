@@ -1,3 +1,8 @@
+## [1.7.1 (2016-03-30)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.7.1)
+
+  - Allow `vagrant status` and `vagrant ssh` to run without a lock
+    ([Sharpie:dont-lock-for-ssh](https://github.com/nsidc/vagrant-vsphere/pull/184)).
+
 ## [1.7.0 (2016-03-14)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.7.0)
 
   - Add support for setting guestinfo variables
