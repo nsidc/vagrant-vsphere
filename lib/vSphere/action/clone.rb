@@ -213,8 +213,7 @@ module VagrantPlugins
             begin
               switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(switchUuid: network.config.distributedVirtualSwitch.uuid, portgroupKey: network.key)
               card.backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(port: switch_port)
-            rescue Exception => e
-              puts e
+            rescue
               # not connected to a distibuted switch?
               card.backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(network: network, deviceName: network.name)
             end
