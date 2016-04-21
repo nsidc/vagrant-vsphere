@@ -11,6 +11,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectVSphere
+          b.use(ProvisionerCleanup, :before)
 
           b.use Call, IsRunning do |env, b2|
             if env[:result]
@@ -109,6 +110,7 @@ module VagrantPlugins
             b2.use PowerOn unless env[:result]
           end
           b.use CloseVSphere
+          b.use WaitForCommunicator
           b.use Provision
           b.use SyncedFolders
           b.use SetHostname

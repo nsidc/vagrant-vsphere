@@ -8,6 +8,9 @@ describe VagrantPlugins::VSphere::Action do
 
   before :each do
     @machine.stub(:id).and_return(EXISTING_UUID)
+    # Vagrant has some pretty buggy multi threading and their conditions
+    # check can fail if the wait_for_ready method returns right away
+    @machine.communicate.stub(:wait_for_ready) { sleep(1) }
   end
 
   describe 'up' do

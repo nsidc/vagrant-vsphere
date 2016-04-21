@@ -6,7 +6,7 @@ This is a [Vagrant](http://www.vagrantup.com) 1.6.4+ plugin that adds a
 [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
 provider to Vagrant, allowing Vagrant to control and provision machines using
 VMware. New machines are created from virtual machines or templates which must
-be configured prior to using using this provider.
+be configured prior to using this provider.
 
 This provider is built on top of the
 [RbVmomi](https://github.com/vmware/rbvmomi) Ruby interface to the vSphere API.
@@ -19,9 +19,9 @@ This provider is built on top of the
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**version: 1.5.0**
+**version: 1.7.1**
 
-vagrant-vsphere (**version: 1.5.0**) is available from
+vagrant-vsphere (**version: 1.7.1**) is available from
 [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
@@ -110,7 +110,7 @@ This provider has the following settings, all are required unless noted:
   the template and where the new VM will be created, if not specified the first
   datacenter found will be used
 * `compute_resource_name` - _Required if cloning from template_ the name of the
-  host containing the resource pool for the new VM
+  host or cluster containing the resource pool for the new VM
 * `resource_pool_name` - the resource pool for the new VM. If not supplied, and
   cloning from a template, uses the root resource pool
 * `clone_from_vm` - _Optional_ use a virtual machine instead of a template as
@@ -140,6 +140,11 @@ This provider has the following settings, all are required unless noted:
   to the VM upon creation. This method takes a key/value pair,
   e.g. `vsphere.custom_attribute('timestamp', Time.now.to_s)`, and may be called
   multiple times to set different attributes.
+* `extra_config` - _Optional_ A hash of extra configuration values to add to
+  the VM during creation. These are of the form `{'guestinfo.some.variable' => 'somevalue'}`,
+  where the key must start with `guestinfo.`. VMs with VWware Tools installed can
+  retrieve the value of these variables using the `vmtoolsd` command: `vmtoolsd --cmd 'info-get guestinfo.some.variable'`.
+* `notes` - _Optional_ Add arbitrary notes to the VM
 
 ### Cloning from a VM rather than a template
 
@@ -201,7 +206,7 @@ executions.
 This is useful if running Vagrant from multiple directories or if multiple
 machines are defined in the Vagrantfile.
 
-### Setting addresType for network adapter
+### Setting addressType for network adapter
 
 This sets the addressType of the network adapter, for example 'Manual' to
 be able to set a manual mac address.

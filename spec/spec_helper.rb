@@ -59,7 +59,9 @@ RSpec.configure do |config|
         addressType: nil,
         cpu_reservation: nil,
         mem_reservation: nil,
-        custom_attributes: {})
+        custom_attributes: {},
+        notes: nil,
+        extra_config: {})
     vm_config = double(
       vm: double('config_vm',
                  box: nil,
@@ -68,6 +70,7 @@ RSpec.configure do |config|
                  hostname: nil,
                  communicator: nil,
                  networks: [[:private_network, { ip: '0.0.0.0' }]],
+                 boot_timeout: 1,
                  graceful_halt_timeout: 0.1),
       validate: []
     )
@@ -76,7 +79,7 @@ RSpec.configure do |config|
                       :provider_config => provider_config,
                       :config => vm_config,
                       :state => double('state', id: nil),
-                      :communicate => double('communicator', :ready? => true),
+                      :communicate => double('communicator', :wait_for_ready => true, :ready? => true),
                       :ssh_info => {},
                       :data_dir => Pathname.new(''),
                       :id => nil,

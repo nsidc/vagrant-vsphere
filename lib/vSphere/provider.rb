@@ -14,12 +14,12 @@ module VagrantPlugins
       end
 
       def ssh_info
-        env = @machine.action('get_ssh_info')
+        env = @machine.action('get_ssh_info', lock: false)
         env[:machine_ssh_info]
       end
 
       def state
-        env = @machine.action('get_state')
+        env = @machine.action('get_state', lock: false)
 
         state_id = env[:machine_state_id]
 
