@@ -14,7 +14,10 @@ module VagrantPlugins
 
         def get_resource_pool(datacenter, machine)
           rp = get_compute_resource(datacenter, machine)
-          entity_array = machine.provider_config.resource_pool_name.split('/')
+
+          resource_pool_name = machine.provider_config.resource_pool_name || ''
+
+          entity_array = resource_pool_name.split('/')
           entity_array.each do |entity_array_item|
             next if entity_array_item.empty?
             if rp.is_a? RbVmomi::VIM::Folder
@@ -23,6 +26,8 @@ module VagrantPlugins
               rp = rp.resourcePool.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
             elsif rp.is_a? RbVmomi::VIM::ResourcePool
               rp = rp.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
+            elsif rp.is_a? RbVmomi::VIM::ComputeResource
+              rp = rp.resourcePool.find(resource_pool_name) || fail(Errors::VSphereError, :missing_resource_pool)
             else
               fail Errors::VSphereError, :missing_resource_pool
             end
