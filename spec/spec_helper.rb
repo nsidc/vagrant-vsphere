@@ -12,6 +12,7 @@ require 'vSphere/action/message_already_created'
 require 'vSphere/action/message_not_created'
 require 'vSphere/action/destroy'
 require 'vSphere/action/power_off'
+require 'vagrant-vsphere'
 
 VIM = RbVmomi::VIM
 
@@ -23,6 +24,8 @@ NAME = 'vm'
 IP_ADDRESS = '127.0.0.1'
 
 RSpec.configure do |config|
+  VagrantPlugins::VSphere::Plugin.setup_i18n
+
   # removes deprecation warnings.
   # http://stackoverflow.com/questions/20275510/how-to-avoid-deprecation-warning-for-stub-chain-in-rspec-3-0/20296359#20296359
   config.mock_with :rspec do |c|
