@@ -19,9 +19,9 @@ This provider is built on top of the
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**version: 1.7.1**
+**version: 1.8.0**
 
-vagrant-vsphere (**version: 1.7.1**) is available from
+vagrant-vsphere (**version: 1.8.0**) is available from
 [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation

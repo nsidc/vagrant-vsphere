@@ -1,3 +1,13 @@
+## [1.8.0 (2016-04-21)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.8.0)
+
+  - Allow VLANs on virtual switches to work correctly
+    ([adampointer:master](https://github.com/nsidc/vagrant-vsphere/pull/188)).
+  - Make compatible with `i18n` v0.7.0 (resolving
+    [#163](https://github.com/nsidc/vagrant-vsphere/pull/163)).
+  - Add support for specifying a full resource pool name
+    ([davidhrbac:master](https://github.com/nsidc/vagrant-vsphere/pull/152) and
+    [#189](https://github.com/nsidc/vagrant-vsphere/pull/189)).
+
 ## [1.7.1 (2016-03-30)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.7.1)
 
   - Allow `vagrant status` and `vagrant ssh` to run without a lock
