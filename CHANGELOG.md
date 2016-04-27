@@ -1,3 +1,9 @@
+## [1.8.1 (2016-04-27)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.8.1)
+
+  - Fix error for initial VLAN/virtual switch support
+    ([adampointer:master](https://github.com/nsidc/vagrant-vsphere/pull/190)).
+
+
 ## [1.8.0 (2016-04-21)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.8.0)
 
   - Allow VLANs on virtual switches to work correctly
