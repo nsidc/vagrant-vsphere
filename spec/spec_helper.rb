@@ -64,7 +64,8 @@ RSpec.configure do |config|
         mem_reservation: nil,
         custom_attributes: {},
         notes: nil,
-        extra_config: {})
+        extra_config: {},
+        real_nic_ip: false)
     vm_config = double(
       vm: double('config_vm',
                  box: nil,
