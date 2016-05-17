@@ -19,9 +19,9 @@ This provider is built on top of the
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
 ## Current Version
-**version: 1.8.1**
+**version: 1.9.0**
 
-vagrant-vsphere (**version: 1.8.1**) is available from
+vagrant-vsphere (**version: 1.9.0**) is available from
 [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
@@ -145,6 +145,10 @@ This provider has the following settings, all are required unless noted:
   where the key must start with `guestinfo.`. VMs with VWware Tools installed can
   retrieve the value of these variables using the `vmtoolsd` command: `vmtoolsd --cmd 'info-get guestinfo.some.variable'`.
 * `notes` - _Optional_ Add arbitrary notes to the VM
+* `real_nic_ip` - _Optional_ true/false - Enable logic that forces the acquisition of the ssh IP address
+  for a target VM to be retrieved from the list of vm adapters on the host and filtered for a single legitimate
+  adapter with a defined interface.   An error will be raised if this filter is enabled and multiple valid
+  adapters exist on a host. 
 
 ### Cloning from a VM rather than a template
 
