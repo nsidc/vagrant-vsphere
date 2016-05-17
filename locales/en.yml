@@ -46,6 +46,8 @@ en:
         Cannot find network card to customize
       invalid_configuration_linked_clone_with_sdrs: |-
         Cannot use Linked Clone with Storage DRS
+      multiple_interface_with_real_nic_ip_set: |-
+        real_nic_ip filtering set with multiple valid VM interfaces available
 
     config:
       host: |-
