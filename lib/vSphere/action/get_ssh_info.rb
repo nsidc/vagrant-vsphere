@@ -18,7 +18,8 @@ module VagrantPlugins
 
         private
 
-        def filter_guest_nic(vm)
+        def filter_guest_nic(vm, machine)
+          return vm.guest.ipAddress unless machine.provider_config.real_nic_ip
           adapters = vm.guest.net.select { |g| g.deviceConfigId > 0 }.map { |g| g.ipAddress[0] }
           fail Errors::VSphereError.new, 'real_nic_ip filtering set with multiple valid VM interfaces available' if adapters.size > 1
           adapters.first
@@ -29,9 +30,7 @@ module VagrantPlugins
 
           vm = get_vm_by_uuid connection, machine
           return nil if vm.nil?
-
-          ip_address = vm.guest.ipAddress
-          ip_address = filter_guest_nic(vm) if machine.provider_config.real_nic_ip
+          ip_address = filter_guest_nic(vm, machine)
           return nil if ip_address.nil? || ip_address.empty?
           {
             host: ip_address,
