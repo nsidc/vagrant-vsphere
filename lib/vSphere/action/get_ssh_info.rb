@@ -20,7 +20,7 @@ module VagrantPlugins
 
         def filter_guest_nic(vm)
           adapters = vm.guest.net.select { |g| g.deviceConfigId > 0 }.map { |g| g.ipAddress[0] }
-          fail Errors::VSphereError.new, 'real_nic_ip set to true with multiple valid VM network adapters' if adapters.size > 1
+          fail Errors::VSphereError.new, 'real_nic_ip filtering set with multiple valid VM interfaces available' if adapters.size > 1
           adapters.first
         end
 

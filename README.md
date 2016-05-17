@@ -145,12 +145,10 @@ This provider has the following settings, all are required unless noted:
   where the key must start with `guestinfo.`. VMs with VWware Tools installed can
   retrieve the value of these variables using the `vmtoolsd` command: `vmtoolsd --cmd 'info-get guestinfo.some.variable'`.
 * `notes` - _Optional_ Add arbitrary notes to the VM
-* `real_nic_ip` - _Optional_ true/false - Enable ssh logic to validate the VM's IP address.  Vsphere pulls
-  all network cards on the host after provisioning may add new ones, in the case of container solutions (e.g.
-  Docker) it assigns a primary network card/IP to a virtual adapter, resulting in inability to ssh to the
-  machine via the plugin - enabling this option forces ssh to attempt to utilize the 'real' adapter
-  associated with the VM.   Multiple real adapters on the VM will result in a failure.
-
+* `real_nic_ip` - _Optional_ true/false - Enable logic that forces the acquisition of the ssh IP address
+  for a target VM to be retrieved from the list of vm adapters on the host and filtered for a single legitimate
+  adapter with a defined interface.   An error will be raised if this filter is enabled and multiple valid
+  adapters exist on a host. 
 
 ### Cloning from a VM rather than a template
 
