@@ -1,3 +1,8 @@
+## [1.8.2 (2016-05-17)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.8.2)
+
+  - Add real_nic_ip option/logic to support VMs with multiple bridge adapters
+    ([vagrant-vsphere:invalid_ip_address_fix](https://github.com/nsidc/vagrant-vsphere/pull/193)).
+
 ## [1.8.1 (2016-04-27)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.8.1)
 
   - Fix error for initial VLAN/virtual switch support
