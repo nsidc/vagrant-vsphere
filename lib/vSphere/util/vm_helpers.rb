@@ -33,6 +33,42 @@ module VagrantPlugins
         def suspended?(vm)
           get_vm_state(vm).eql?(VmState::SUSPENDED)
         end
+
+        # Enumerate VM snapshot tree
+        #
+        # This method returns an enumerator that performs a depth-first walk
+        # of the VM snapshot grap and yields each VirtualMachineSnapshotTree
+        # node.
+        #
+        # @param vm [RbVmomi::VIM::VirtualMachine]
+        #
+        # @return [Enumerator<RbVmomi::VIM::VirtualMachineSnapshotTree>]
+        def enumerate_snapshots(vm)
+          snapshot_info = vm.snapshot
+
+          if snapshot_info.nil?
+            snapshot_root = []
+          else
+            snapshot_root = snapshot_info.rootSnapshotList
+          end
+
+          recursor = lambda do |snapshot_list|
+            Enumerator.new do |yielder|
+              snapshot_list.each do |s|
+                # Yield the current VirtualMachineSnapshotTree object
+                yielder.yield s
+
+                # Recurse into child VirtualMachineSnapshotTree objects
+                children = recursor.call(s.childSnapshotList)
+                loop do
+                  yielder.yield children.next
+                end
+              end
+            end
+          end
+
+          recursor.call(snapshot_root)
+        end
       end
     end
   end
