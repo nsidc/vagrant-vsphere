@@ -193,6 +193,21 @@ module VagrantPlugins
           b.use CloseVSphere
         end
       end
+
+      def self.action_snapshot_save
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use ConnectVSphere
+          b.use Call, IsCreated do |env, b2|
+            if env[:result]
+              b2.use SnapshotSave
+            else
+              b2.use MessageNotCreated
+            end
+          end
+          b.use CloseVSphere
+        end
+      end
       end # Vagrant > 1.8.0 guard
       # rubocop:enable IndentationWidth
 
@@ -216,6 +231,7 @@ module VagrantPlugins
       # rubocop:disable IndentationWidth
       if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
       autoload :SnapshotList, action_root.join('snapshot_list')
+      autoload :SnapshotSave, action_root.join('snapshot_save')
       end
       # rubocop:enable IndentationWidth
     end

@@ -69,6 +69,33 @@ module VagrantPlugins
 
           recursor.call(snapshot_root)
         end
+
+        # Create a named snapshot on a given VM
+        #
+        # This method creates a named snapshot on the given VM. This method
+        # blocks until the snapshot creation task is complete. An optional
+        # block can be passed which is used to report progress.
+        #
+        # @param vm [RbVmomi::VIM::VirtualMachine]
+        # @param name [String]
+        # @yield [Integer] Percentage complete as an integer. Called multiple
+        #   times.
+        #
+        # @return [void]
+        def create_snapshot(vm, name)
+          task = vm.CreateSnapshot_Task(
+            name: name,
+            memory: false,
+            quiesce: false)
+
+          if block_given?
+            task.wait_for_progress do |progress|
+              yield progress unless progress.nil?
+            end
+          else
+            task.wait_for_completion
+          end
+        end
       end
     end
   end
