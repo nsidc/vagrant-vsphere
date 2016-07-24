@@ -96,6 +96,35 @@ module VagrantPlugins
             task.wait_for_completion
           end
         end
+
+        # Delete a named snapshot on a given VM
+        #
+        # This method deletes a named snapshot on the given VM. This method
+        # blocks until the snapshot deletion task is complete. An optional
+        # block can be passed which is used to report progress.
+        #
+        # @param vm [RbVmomi::VIM::VirtualMachine]
+        # @param name [String]
+        # @yield [Integer] Percentage complete as an integer. Called multiple
+        #   times.
+        #
+        # @return [void]
+        def delete_snapshot(vm, name)
+          snapshot = enumerate_snapshots(vm).find { |s| s.name == name }
+
+          # No snapshot matching "name"
+          return nil if snapshot.nil?
+
+          task = snapshot.snapshot.RemoveSnapshot_Task(removeChildren: false)
+
+          if block_given?
+            task.wait_for_progress do |progress|
+              yield progress unless progress.nil?
+            end
+          else
+            task.wait_for_completion
+          end
+        end
       end
     end
   end
