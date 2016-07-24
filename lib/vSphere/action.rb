@@ -176,6 +176,26 @@ module VagrantPlugins
         end
       end
 
+      # TODO: Remove the if guard when Vagrant 1.8.0 is the minimum version.
+      # rubocop:disable IndentationWidth
+      if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
+      def self.action_snapshot_list
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use ConnectVSphere
+          b.use Call, IsCreated do |env, b2|
+            if env[:result]
+              b2.use SnapshotList
+            else
+              b2.use MessageNotCreated
+            end
+          end
+          b.use CloseVSphere
+        end
+      end
+      end # Vagrant > 1.8.0 guard
+      # rubocop:enable IndentationWidth
+
       # autoload
       action_root = Pathname.new(File.expand_path('../action', __FILE__))
       autoload :Clone, action_root.join('clone')
@@ -191,6 +211,13 @@ module VagrantPlugins
       autoload :MessageNotRunning, action_root.join('message_not_running')
       autoload :PowerOff, action_root.join('power_off')
       autoload :PowerOn, action_root.join('power_on')
+
+      # TODO: Remove the if guard when Vagrant 1.8.0 is the minimum version.
+      # rubocop:disable IndentationWidth
+      if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
+      autoload :SnapshotList, action_root.join('snapshot_list')
+      end
+      # rubocop:enable IndentationWidth
     end
   end
 end
