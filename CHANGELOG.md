@@ -1,3 +1,8 @@
+## [1.10.0 (2016-05-17)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.10.0)
+
+  - Add support for `vagrant snapshot` and its subcommands
+    ([vagrant-vsphere:add-snapshot-support](https://github.com/nsidc/vagrant-vsphere/pull/198)).
+
 ## [1.9.0 (2016-05-17)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.9.0)
 
   - Add real_nic_ip option/logic to support VMs with multiple bridge adapters
