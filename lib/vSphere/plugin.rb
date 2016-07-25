@@ -35,6 +35,16 @@ module VagrantPlugins
         Cap::PublicAddress
       end
 
+      # TODO: Remove the if guard when Vagrant 1.8.0 is the minimum version.
+      # rubocop:disable IndentationWidth
+      if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
+      provider_capability('vsphere', 'snapshot_list') do
+        require_relative 'cap/snapshot_list'
+        Cap::SnapshotList
+      end
+      end
+      # rubocop:enable IndentationWidth
+
       def self.setup_i18n
         I18n.load_path << File.expand_path('locales/en.yml', VSphere.source_root)
         I18n.reload!
