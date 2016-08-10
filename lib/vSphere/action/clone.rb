@@ -92,12 +92,45 @@ module VagrantPlugins
 
           machine.id = new_vm.config.uuid
 
+          wait_for_sysprep(env, new_vm, connection, 600, 10) if machine.config.vm.guest.eql?(:windows)
+
           env[:ui].info I18n.t('vsphere.vm_clone_success')
 
           @app.call env
         end
 
         private
+
+        def wait_for_sysprep(env, vm, vim_connection, timeout, sleep_time)
+          vem = vim_connection.serviceContent.eventManager
+
+          wait = true
+          waited_seconds = 0
+
+          env[:ui].info I18n.t('vsphere.wait_sysprep')
+          while wait
+            events = query_customization_succeeded(vm, vem)
+
+            if events.size > 0
+              events.each do |e|
+                env[:ui].info e.fullFormattedMessage
+              end
+              wait = false
+            elsif waited_seconds >= timeout
+              fail Errors::VSphereError, :'sysprep_timeout'
+            else
+              sleep(sleep_time)
+              waited_seconds += sleep_time
+            end
+          end
+        end
+
+        def query_customization_succeeded(vm, vem)
+          vem.QueryEvents(filter:
+              RbVmomi::VIM::EventFilterSpec(entity:
+              RbVmomi::VIM::EventFilterSpecByEntity(entity: vm, recursion:
+              RbVmomi::VIM::EventFilterSpecRecursionOption(:self)), eventTypeId: ['CustomizationSucceeded']))
+        end
 
         def get_customization_spec(machine, spec_info)
           customization_spec = spec_info.spec.clone
