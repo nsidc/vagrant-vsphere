@@ -1,3 +1,10 @@
+## [1.10.1 (2016-10-17)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.10.1)
+
+  - Update dependency on [rbvmomi](https://github.com/vmware/rbvmomi) to allow
+    versions greater than `1.8.2`, but still less than `2.0.0`. The previous
+    version constraint was intended to get at least `1.8.2`, but was also
+    restricting it to less than `1.9.0`.
+
 ## [1.10.0 (2016-05-17)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.10.0)
 
   - Add support for `vagrant snapshot` and its subcommands
