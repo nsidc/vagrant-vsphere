@@ -1,13 +1,10 @@
 require 'rbvmomi'
 require 'i18n'
-require 'vSphere/util/vim_helpers'
 
 module VagrantPlugins
   module VSphere
     module Action
       class Destroy
-        include Util::VimHelpers
-
         def initialize(app, _env)
           @app = app
         end
@@ -22,13 +19,13 @@ module VagrantPlugins
         private
 
         def destroy_vm(env)
-          return if env[:machine].state.id == :not_created
-          vm = get_vm_by_uuid env[:vSphere_connection], env[:machine]
-          return if vm.nil?
-
           begin
             env[:ui].info I18n.t('vsphere.destroy_vm')
-            vm.Destroy_Task.wait_for_completion
+
+            env[:machine].provider.driver.destroy do |progress|
+              env[:ui].clear_line
+              env[:ui].report_progress(progress, 100, false)
+            end
           rescue Errors::VSphereError
             raise
           rescue StandardError => e
