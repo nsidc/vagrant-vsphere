@@ -50,7 +50,7 @@ module VagrantPlugins
 
           @app.call(env)
         rescue Timeout::Error
-          fail Errors::VSphereError, :wait_for_ip_address_timeout
+          raise Errors::VSphereError, :wait_for_ip_address_timeout
         end
       end
     end
