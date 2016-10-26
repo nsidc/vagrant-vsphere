@@ -65,6 +65,7 @@ RSpec.configure do |config|
         custom_attributes: {},
         notes: nil,
         extra_config: {},
+        ip_address_timeout: 1,
         real_nic_ip: false)
     vm_config = double(
       vm: double('config_vm',
@@ -85,7 +86,7 @@ RSpec.configure do |config|
                       :config => vm_config,
                       :state => double('state', id: nil),
                       :communicate => double('communicator', :wait_for_ready => true, :ready? => true),
-                      :ssh_info => {},
+                      :ssh_info => { :host => IP_ADDRESS },
                       :data_dir => Pathname.new(''),
                       :id => nil,
                       :id= => nil,
@@ -93,7 +94,7 @@ RSpec.configure do |config|
 
     @env = {
       machine: @machine,
-      ui: double('ui', info: nil, output: nil)
+      ui: double('ui', info: nil, output: nil, detail: nil)
     }
 
     @vm = double('vm',

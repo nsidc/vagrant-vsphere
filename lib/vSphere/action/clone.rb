@@ -34,12 +34,26 @@ module VagrantPlugins
             customization_info = get_customization_spec_info_by_name connection, machine
 
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
+
+            env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil?
             add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil?
+
+            env[:ui].info "Setting custom mac: #{config.mac}" unless config.mac.nil?
             add_custom_mac(template, spec, config.mac) unless config.mac.nil?
+
+            env[:ui].info "Setting custom vlan: #{config.vlan}" unless config.vlan.nil?
             add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
+
+            env[:ui].info "Setting custom memory: #{config.memory_mb}" unless config.memory_mb.nil?
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
+
+            env[:ui].info "Setting custom cpu count: #{config.cpu_count}" unless config.cpu_count.nil?
             add_custom_cpu(spec, config.cpu_count) unless config.cpu_count.nil?
+
+            env[:ui].info "Setting custom cpu reservation: #{config.cpu_reservation}" unless config.cpu_reservation.nil?
             add_custom_cpu_reservation(spec, config.cpu_reservation) unless config.cpu_reservation.nil?
+
+            env[:ui].info "Setting custom memmory reservation: #{config.mem_reservation}" unless config.mem_reservation.nil?
             add_custom_mem_reservation(spec, config.mem_reservation) unless config.mem_reservation.nil?
             add_custom_extra_config(spec, config.extra_config) unless config.extra_config.empty?
             add_custom_notes(spec, config.notes) unless config.notes.nil?
@@ -71,7 +85,6 @@ module VagrantPlugins
               new_vm = apply_sr_result.vm
 
             else
-
               env[:ui].info I18n.t('vsphere.creating_cloned_vm')
               env[:ui].info " -- #{config.clone_from_vm ? 'Source' : 'Template'} VM: #{template.pretty_path}"
               env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
@@ -79,6 +92,7 @@ module VagrantPlugins
               new_vm = template.CloneVM_Task(folder: vm_base_folder, name: name, spec: spec).wait_for_completion
 
               config.custom_attributes.each do |k, v|
+                env[:ui].info "Setting custom attribute: #{k}=#{v}"
                 new_vm.setCustomValue(key: k, value: v)
               end
             end
