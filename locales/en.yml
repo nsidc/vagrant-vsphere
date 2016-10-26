@@ -20,6 +20,8 @@ en:
       The VM has not been created
     vm_not_running: |-
       The VM is not running
+    wait_sysprep: |-
+      Waiting for sysprep
 
     errors:
       missing_template: |-
@@ -48,6 +50,8 @@ en:
         Cannot use Linked Clone with Storage DRS
       multiple_interface_with_real_nic_ip_set: |-
         real_nic_ip filtering set with multiple valid VM interfaces available
+      sysprep_timeout: |-
+        Customization of VM not succeeded within timeout.
 
     config:
       host: |-

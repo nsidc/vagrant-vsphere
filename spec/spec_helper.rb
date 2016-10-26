@@ -75,7 +75,8 @@ RSpec.configure do |config|
                  communicator: nil,
                  networks: [[:private_network, { ip: '0.0.0.0' }]],
                  boot_timeout: 1,
-                 graceful_halt_timeout: 0.1),
+                 graceful_halt_timeout: 0.1,
+                 guest: nil),
       validate: []
     )
     @app = double 'app', call: true
