@@ -25,6 +25,8 @@ describe VagrantPlugins::VSphere::Action do
     end
 
     it 'should check if the VM exits' do
+      @machine.state.stub(:id).and_return(:running)
+
       VagrantPlugins::VSphere::Action::IsCreated.any_instance.should_receive(:call)
 
       run_up
