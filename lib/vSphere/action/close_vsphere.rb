@@ -9,7 +9,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:vSphere_connection].close
+          env[:vSphere_connection].close if env && env[:vSphere_connection]
           @app.call env
         rescue Errors::VSphereError
           raise

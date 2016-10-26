@@ -3,6 +3,7 @@ require 'vagrant'
 module VagrantPlugins
   module VSphere
     class Config < Vagrant.plugin('2', :config)
+      attr_accessor :ip_address_timeout # Time to wait for an IP address when booting, in seconds @return [Integer]
       attr_accessor :host
       attr_accessor :insecure
       attr_accessor :user
@@ -33,8 +34,13 @@ module VagrantPlugins
       attr_reader :custom_attributes
 
       def initialize
+        @ip_address_timeout = UNSET_VALUE
         @custom_attributes = {}
         @extra_config = {}
+      end
+
+      def finalize!
+        @ip_address_timeout = 240 if @ip_address_timeout == UNSET_VALUE
       end
 
       def custom_attribute(key, value)

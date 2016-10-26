@@ -52,6 +52,8 @@ en:
         real_nic_ip filtering set with multiple valid VM interfaces available
       sysprep_timeout: |-
         Customization of VM not succeeded within timeout.
+      wait_for_ip_address_timeout: |-
+        Timeout while waiting for ip address
 
     config:
       host: |-
