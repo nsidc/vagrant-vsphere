@@ -83,6 +83,7 @@ module VagrantPlugins
 
               apply_sr_result = storage_mgr.ApplyStorageDrsRecommendation_Task(key: [key]).wait_for_completion
               new_vm = apply_sr_result.vm
+
             else
               env[:ui].info I18n.t('vsphere.creating_cloned_vm')
               env[:ui].info " -- #{config.clone_from_vm ? 'Source' : 'Template'} VM: #{template.pretty_path}"
