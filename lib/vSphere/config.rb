@@ -20,34 +20,45 @@ module VagrantPlugins
       attr_accessor :linked_clone
       attr_accessor :proxy_host
       attr_accessor :proxy_port
-      attr_accessor :vlan
-      attr_accessor :addressType
-      attr_accessor :mac
       attr_accessor :memory_mb
       attr_accessor :cpu_count
       attr_accessor :cpu_reservation
       attr_accessor :mem_reservation
       attr_accessor :extra_config
-      attr_accessor :real_nic_ip
       attr_accessor :notes
-      attr_accessor :wait_for_sysprep
 
-      attr_reader :custom_attributes
+      attr_accessor :real_nic_ip
+
+      attr_accessor :destroy_unused_network_interfaces
+      attr_reader   :network_adapters
+      attr_reader   :custom_attributes
 
       def initialize
         @ip_address_timeout = UNSET_VALUE
-        @wait_for_sysprep = UNSET_VALUE
+        @destroy_unused_network_interfaces = UNSET_VALUE
+        @network_adapters  = {}
         @custom_attributes = {}
         @extra_config = {}
       end
 
-      def finalize!
-        @ip_address_timeout = 240 if @ip_address_timeout == UNSET_VALUE
-        @wait_for_sysprep = false if @wait_for_sysprep == UNSET_VALUE
-      end
-
       def custom_attribute(key, value)
         @custom_attributes[key.to_sym] = value
+      end
+
+      #attr_accessor :allowGuestControl
+      #attr_accessor :connected
+      #attr_accessor :startConnected
+
+      #attr_accessor :vlan
+      #attr_accessor :addressType
+      #attr_accessor :macAddress
+      #attr_accessor :wakeOnLanEnabled
+      def network_adapter(slot, **opts)
+        @network_adapters[slot] = opts
+      end
+
+      def finalize!
+        @ip_address_timeout = 240 if @ip_address_timeout == UNSET_VALUE
       end
 
       def validate(machine)
