@@ -585,6 +585,8 @@ module VagrantPlugins
 
 			def configure_network_cards(spec, dc, template, config)
 				#Enumerate lan cards
+				spec[:config][:deviceChange] ||= []
+				
 				current_adapters = Hash.new
 
 				template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).each_with_index { |item, index|
