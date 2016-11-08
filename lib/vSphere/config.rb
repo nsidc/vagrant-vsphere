@@ -15,6 +15,15 @@ module VagrantPlugins
         attr_accessor :wakeOnLanEnabled
 
         def initialize(network_config)
+          @allowGuestControl = false
+          @connected = true
+          @startConnected = true
+
+          @vlan = nil
+          @addressType = 'generated'
+          @macAddress = nil
+          @wakeOnLanEnabled = false
+
           @allowGuestControl = network_config[:allowGuestControl] if network_config.key?(:allowGuestControl)
           @connected = network_config[:connected] if network_config.key?(:connected)
           @startConnected = network_config[:startConnected] if network_config.key?(:startConnected)
