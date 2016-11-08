@@ -665,9 +665,6 @@ module VagrantPlugins
 			end
 
 			def configure_network_card(adapter_configuration, adapter, label, summary)
-				adapter_configuration = config.network_adapters[index]
-				adapter = current_adapters[index]
-
 				if !adapter_configuration.vlan.nil?
 					network = get_network_by_name(dc, adapter_configuration.vlan)
 
