@@ -607,7 +607,7 @@ module VagrantPlugins
 				end
 
 				#add extra network interfaces
-				for index in (current_adapters.length-1).to(config.network_adapters.length-1)
+				for index in (current_adapters.length-1).upto(config.network_adapters.length-1)
 					adapter_configuration = config.network_adapters[index]
 					adapter = RbVmomi::VIM::VirtualVmxnet3(
 						:key => index, 
@@ -642,7 +642,7 @@ module VagrantPlugins
 				end
 
 				#edit existing network interfaces
-				for index in (0).to(number_of_existing_adapters)
+				for index in (0).upto(number_of_existing_adapters)
 					adapter_configuration = config.network_adapters[index]
 					adapter = current_adapters[index]
 
