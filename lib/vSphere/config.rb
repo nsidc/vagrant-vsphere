@@ -14,14 +14,14 @@ module VagrantPlugins
         attr_accessor :macAddress
         attr_accessor :wakeOnLanEnabled
 
-        def initialize(config)
-          @allowGuestControl = config[:allowGuestControl] if config.key?(:allowGuestControl)
-          @connected = config[:connected] if config.key?(:connected)
-          @startConnected = config[:startConnected] if config.key?(:startConnected)
-          @vlan = config[:vlan] if config.key?(:vlan)
-          @addressType = config[:addressType] if config.key?(:addressType)
-          @macAddress = config[:macAddress] if config.key?(:macAddress)
-          @wakeOnLanEnabled = config[:wakeOnLanEnabled] if config.key?(:wakeOnLanEnabled)
+        def initialize(network_config)
+          @allowGuestControl = network_config[:allowGuestControl] if network_config.key?(:allowGuestControl)
+          @connected = network_config[:connected] if network_config.key?(:connected)
+          @startConnected = network_config[:startConnected] if network_config.key?(:startConnected)
+          @vlan = network_config[:vlan] if network_config.key?(:vlan)
+          @addressType = network_config[:addressType] if network_config.key?(:addressType)
+          @macAddress = network_config[:macAddress] if network_config.key?(:macAddress)
+          @wakeOnLanEnabled = network_config[:wakeOnLanEnabled] if network_config.key?(:wakeOnLanEnabled)
         end
       end
 
