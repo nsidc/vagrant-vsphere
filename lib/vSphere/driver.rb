@@ -216,8 +216,8 @@ module VagrantPlugins
 						end
 					rescue Errors::VSphereError
 						raise
-					rescue StandardError => e
-						raise Errors::VSphereError.new, e.message
+					#rescue StandardError => e
+					#	raise Errors::VSphereError.new, e.message
 					end
 
 					# TODO: handle interrupted status in the environment, should the vm be destroyed?
