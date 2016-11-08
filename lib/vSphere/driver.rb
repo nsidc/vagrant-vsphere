@@ -586,7 +586,7 @@ module VagrantPlugins
 			def configure_network_cards(spec, dc, template, config)
 				#Enumerate lan cards
 				spec[:config][:deviceChange] ||= []
-				
+
 				current_adapters = Hash.new
 
 				template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).each_with_index { |item, index|
@@ -606,30 +606,6 @@ module VagrantPlugins
 						spec[:config][:deviceChange].push remove_adaptor
 						spec[:config][:deviceChange].uniq!
 					end
-				end
-
-				#add extra network interfaces
-				for index in (current_adapters.length-1).upto(config.network_adapters.length-1)
-					adapter_configuration = config.network_adapters[index]
-					adapter = RbVmomi::VIM::VirtualVmxnet3(
-						:key => index, 
-						:deviceInfo => RbVmomi::VIM::Description(),
-						:connectable => RbVmomi::VIM::VirtualDeviceConnectInfo()
-					)
-
-					label = "Ethernet #{index+1}"
-					summary = nil
-					summary = adapter_configuration.vlan.split('/').last unless adapter_configuration.vlan.nil?
-
-					adapter = configure_network_card(dc, adapter_configuration, adapter, label, summary)
-
-					add_adaptor = {
-						:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('add'),
-						:device => adapter
-					}
-
-					spec[:config][:deviceChange].push add_adaptor
-					spec[:config][:deviceChange].uniq!
 				end
 
 				#we have 5 cards but want 8 cards
@@ -662,6 +638,32 @@ module VagrantPlugins
 					spec[:config][:deviceChange].push edit_adaptor
 					spec[:config][:deviceChange].uniq!								
 				end
+
+				#add extra network interfaces
+				for index in (current_adapters.length-1).upto(config.network_adapters.length-1)
+					adapter_configuration = config.network_adapters[index]
+					adapter = RbVmomi::VIM::VirtualVmxnet3(
+						:key => index, 
+						:deviceInfo => RbVmomi::VIM::Description(),
+						:connectable => RbVmomi::VIM::VirtualDeviceConnectInfo()
+					)
+
+					label = "Ethernet #{index+1}"
+					summary = nil
+					summary = adapter_configuration.vlan.split('/').last unless adapter_configuration.vlan.nil?
+
+					adapter = configure_network_card(dc, adapter_configuration, adapter, label, summary)
+
+					add_adaptor = {
+						:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('add'),
+						:device => adapter
+					}
+
+					spec[:config][:deviceChange].push add_adaptor
+					spec[:config][:deviceChange].uniq!
+				end
+
+				puts "spec[:config] = #{spec[:config].inspect}"
 
 				spec
 			end
