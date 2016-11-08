@@ -147,7 +147,7 @@ module VagrantPlugins
 						customization_info = get_customization_spec_info_by_name conn, @machine
 						spec[:customization] = get_customization_spec(@machine, customization_info) unless customization_info.nil?
 						
-						spec = configure_network_cards(spec, config, template)
+						spec = configure_network_cards(spec, dc, template, config)
 
 						add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
 						add_custom_cpu(spec, config.cpu_count) unless config.cpu_count.nil?
@@ -583,7 +583,7 @@ module VagrantPlugins
 				end
 			end
 
-			def configure_network_cards(spec, config, template)
+			def configure_network_cards(spec, dc, template, config)
 				#Enumerate lan cards
 				current_adapters = Hash.new
 
@@ -619,7 +619,7 @@ module VagrantPlugins
 					summary = nil
 					summary = adapter_configuration.vlan.split('/').last unless adapter_configuration.vlan.nil?
 
-					adapter = configure_network_card(adapter_configuration, adapter, label, summary)
+					adapter = configure_network_card(dc, adapter_configuration, adapter, label, summary)
 
 					add_adaptor = {
 						:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('add'),
@@ -650,7 +650,7 @@ module VagrantPlugins
 					summary = nil
 					summary = adapter_configuration.vlan.split('/').last unless adapter_configuration.vlan.nil?
 
-					adapter = configure_network_card(adapter_configuration, adapter, label, summary)								
+					adapter = configure_network_card(dc, adapter_configuration, adapter, label, summary)								
 
 					edit_adaptor = {
 						:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('edit'),
@@ -664,7 +664,7 @@ module VagrantPlugins
 				spec
 			end
 
-			def configure_network_card(adapter_configuration, adapter, label, summary)
+			def configure_network_card(dc, adapter_configuration, adapter, label, summary)
 				if !adapter_configuration.vlan.nil?
 					network = get_network_by_name(dc, adapter_configuration.vlan)
 
