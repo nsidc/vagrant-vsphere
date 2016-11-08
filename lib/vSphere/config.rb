@@ -3,6 +3,28 @@ require 'vagrant'
 module VagrantPlugins
   module VSphere
     class Config < Vagrant.plugin('2', :config)
+
+      class NetworkConfiguration
+        attr_accessor :allowGuestControl
+        attr_accessor :connected
+        attr_accessor :startConnected
+
+        attr_accessor :vlan
+        attr_accessor :addressType
+        attr_accessor :macAddress
+        attr_accessor :wakeOnLanEnabled
+
+        def initialize(config)
+          @allowGuestControl = config[:allowGuestControl] if config.key?(:allowGuestControl)
+          @connected = config[:connected] if config.key?(:connected)
+          @startConnected = config[:startConnected] if config.key?(:startConnected)
+          @vlan = config[:vlan] if config.key?(:vlan)
+          @addressType = config[:addressType] if config.key?(:addressType)
+          @macAddress = config[:macAddress] if config.key?(:macAddress)
+          @wakeOnLanEnabled = config[:wakeOnLanEnabled] if config.key?(:wakeOnLanEnabled)
+        end
+      end
+
       attr_accessor :ip_address_timeout # Time to wait for an IP address when booting, in seconds @return [Integer]
       attr_accessor :host
       attr_accessor :insecure
@@ -45,16 +67,9 @@ module VagrantPlugins
         @custom_attributes[key.to_sym] = value
       end
 
-      #attr_accessor :allowGuestControl
-      #attr_accessor :connected
-      #attr_accessor :startConnected
 
-      #attr_accessor :vlan
-      #attr_accessor :addressType
-      #attr_accessor :macAddress
-      #attr_accessor :wakeOnLanEnabled
       def network_adapter(slot, **opts)
-        @network_adapters[slot] = opts
+        @network_adapters[slot] = NetworkConfiguration.new opts
       end
 
       def finalize!
