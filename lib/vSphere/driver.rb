@@ -682,13 +682,13 @@ module VagrantPlugins
 				adapter.deviceInfo.label = label unless label.nil?
 				adapter.deviceInfo.summary = summary unless summary.nil?
 
-				adapter.connectable.allowGuestControl = adapter_configuration.startConnected unless adapter_configuration.allowGuestControl.nil?
-				adapter.connectable.connected = adapter_configuration.startConnected unless adapter_configuration.connected.nil?
+				adapter.connectable.allowGuestControl = adapter_configuration.allowGuestControl unless adapter_configuration.allowGuestControl.nil?
+				adapter.connectable.connected = adapter_configuration.connected unless adapter_configuration.connected.nil?
 				adapter.connectable.startConnected = adapter_configuration.startConnected unless adapter_configuration.startConnected.nil?
 
 				adapter.addressType = adapter_configuration.addressType unless adapter_configuration.addressType.nil?
-				adapter.macAddress = adapter_configuration.addressType unless adapter_configuration.macAddress.nil?
-				adapter.wakeOnLanEnabled = adapter_configuration.addressType unless adapter_configuration.wakeOnLanEnabled.nil?
+				adapter.macAddress = adapter_configuration.macAddress unless adapter_configuration.macAddress.nil?
+				adapter.wakeOnLanEnabled = adapter_configuration.wakeOnLanEnabled unless adapter_configuration.wakeOnLanEnabled.nil?
 
 				adapter	
 			end
