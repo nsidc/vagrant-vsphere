@@ -595,10 +595,24 @@ module VagrantPlugins
 
 				puts "config.network_adapters=#{config.network_adapters.inspect}"
 
+				current_adapters_length = current_adapters.length
+				
+				# configuration may have gaps in it, so configuration may look like this:
+				# vsphere.network_adapter 0, vlan: "vlan0"
+		        # vsphere.network_adapter 1, vlan: "vlan1"
+		        # vsphere.network_adapter 9, vlan: "vlan9"
+				config_network_adapters_length = -1
+				config.network_adapters.each_with_index { |item, index|
+					if index > config_network_adapters_length
+						config_network_adapters_length = index
+					end
+				}
+				config_network_adapters_length += 1
+
 				#remove unused network interfaces
 				if config.destroy_unused_network_interfaces
-					if current_adapters.length-1 > config.network_adapters.length-1
-						for index in (current_adapters.length-1).downto(config.network_adapters.length-1+1)
+					if current_adapters_length-1 > network_adapters_length-1
+						for index in (current_adapters_length-1).downto(network_adapters_length-1+1)
 							adapter = current_adapters[index]
 
 							remove_adaptor = {
@@ -615,36 +629,38 @@ module VagrantPlugins
 				#we have 5 cards but want 8 cards
 				#add 3 cards
 				#edit first 5 cards
-				number_of_existing_adapters = current_adapters.length
-				if current_adapters.length > config.network_adapters.length
+				number_of_existing_adapters = current_adapters_length
+				if current_adapters_length > network_adapters_length
 					#we have 5 cards but want 3 cards
 					#remove 2 cards
 					#edit first 3 cards
-					number_of_existing_adapters = config.network_adapters.length
+					number_of_existing_adapters = network_adapters_length
 				end
 
 				#edit existing network interfaces
 				if (number_of_existing_adapters > 0)
 					for index in (0).upto(number_of_existing_adapters)
 						adapter_configuration = config.network_adapters[index]
+						puts "adapter_configuration[#{index}]=#{adapter_configuration.inspect}"
 
-						puts "adapter_configuration=#{adapter_configuration.inspect}"
+						#there may be no configuration for this card so dont change it, if this is the case
+						if !adapter_configuration.nil?
+							adapter = current_adapters[index]
 
-						adapter = current_adapters[index]
+							label = "Ethernet #{index+1}"
+							summary = nil
+							summary = adapter_configuration.vlan.split('/').last unless adapter_configuration.vlan.nil?
 
-						label = "Ethernet #{index+1}"
-						summary = nil
-						summary = adapter_configuration.vlan.split('/').last unless adapter_configuration.vlan.nil?
+							adapter = configure_network_card(dc, adapter_configuration, adapter, label, summary)								
 
-						adapter = configure_network_card(dc, adapter_configuration, adapter, label, summary)								
+							edit_adaptor = {
+								:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('edit'),
+								:device => adapter
+							}
 
-						edit_adaptor = {
-							:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('edit'),
-							:device => adapter
-						}
-
-						spec[:config][:deviceChange].push edit_adaptor
-						spec[:config][:deviceChange].uniq!								
+							spec[:config][:deviceChange].push edit_adaptor
+							spec[:config][:deviceChange].uniq!								
+						end
 					end
 				end
 
