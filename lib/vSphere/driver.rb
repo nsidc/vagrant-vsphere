@@ -611,8 +611,8 @@ module VagrantPlugins
 
 				#remove unused network interfaces
 				if config.destroy_unused_network_interfaces
-					if current_adapters_length-1 > network_adapters_length-1
-						for index in (current_adapters_length-1).downto(network_adapters_length-1+1)
+					if current_adapters_length-1 > config_network_adapters_length-1
+						for index in (current_adapters_length-1).downto(config_network_adapters_length-1+1)
 							adapter = current_adapters[index]
 
 							remove_adaptor = {
@@ -630,11 +630,11 @@ module VagrantPlugins
 				#add 3 cards
 				#edit first 5 cards
 				number_of_existing_adapters = current_adapters_length
-				if current_adapters_length > network_adapters_length
+				if current_adapters_length > config_network_adapters_length
 					#we have 5 cards but want 3 cards
 					#remove 2 cards
 					#edit first 3 cards
-					number_of_existing_adapters = network_adapters_length
+					number_of_existing_adapters = config_network_adapters_length
 				end
 
 				#edit existing network interfaces
