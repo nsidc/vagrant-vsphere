@@ -593,6 +593,8 @@ module VagrantPlugins
 					current_adapters[index] = item
 				}
 
+				puts "config.network_adapters=#{config.network_adapters.inspect}"
+
 				#remove unused network interfaces
 				if config.destroy_unused_network_interfaces
 					if current_adapters.length-1 > config.network_adapters.length-1
@@ -625,6 +627,9 @@ module VagrantPlugins
 				if (number_of_existing_adapters > 0)
 					for index in (0).upto(number_of_existing_adapters)
 						adapter_configuration = config.network_adapters[index]
+
+						puts "adapter_configuration=#{adapter_configuration.inspect}"
+
 						adapter = current_adapters[index]
 
 						label = "Ethernet #{index+1}"
