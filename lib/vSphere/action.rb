@@ -107,7 +107,6 @@ module VagrantPlugins
           b.use Call, IsRunning do |env, b2|
             b2.use PowerOn unless env[:result]
           end
-          b.use WaitForIPAddress
           b.use WaitForCommunicator, [:running]
           b.use Provision
           b.use SyncedFolders
@@ -214,7 +213,6 @@ module VagrantPlugins
       autoload :MessageNotRunning, action_root.join('message_not_running')
       autoload :PowerOff, action_root.join('power_off')
       autoload :PowerOn, action_root.join('power_on')
-      autoload :WaitForIPAddress, action_root.join('wait_for_ip_address')
 
       # TODO: Remove the if guard when Vagrant 1.8.0 is the minimum version.
       # rubocop:disable IndentationWidth
