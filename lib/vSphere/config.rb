@@ -34,6 +34,70 @@ module VagrantPlugins
         end
       end
 
+      class SerialPortConfiguration
+          attr_accessor :yieldOnPoll
+          attr_accessor :connected
+          attr_accessor :startConnected          
+          attr_accessor :backing
+
+          attr_accessor :direction
+          attr_accessor :proxyURI
+          attr_accessor :serviceURI
+
+          attr_accessor :endpoint
+          attr_accessor :noRxLoss
+
+          attr_accessor :fileName
+
+          attr_accessor :deviceName
+          attr_accessor :useAutoDetect          
+
+          def initialize(serial_port_config)
+            @yieldOnPoll = true
+            @connected = true
+            @startConnected = true            
+            @backing = ''
+
+            @direction = ''
+            @proxyURI = ''
+            @serviceURI = ''
+
+            @endpoint = ''
+            @noRxLoss = true            
+
+            @fileName = ''
+
+            @deviceName = ''
+            @useAutoDetect = false            
+
+            @yieldOnPoll = serial_port_config[:yieldOnPoll] if serial_port_config.key?(:yieldOnPoll)
+            @connected = network_config[:connected] if network_config.key?(:connected)
+            @startConnected = network_config[:startConnected] if network_config.key?(:startConnected)            
+            @backing = serial_port_config[:backing] if serial_port_config.key?(:backing)
+            if !(@backing == 'uri' || @backing == 'pipe' || @backing == 'file' || @backing == 'device')
+              raise "The only valid values allowed for backing are 'uri', 'pipe', 'file', 'device'"
+            end
+
+            @direction = serial_port_config[:direction] if serial_port_config.key?(:direction)
+            if @backing == 'uri' && !(@direction == 'client' || @direction == 'server')
+              raise "The only valid values allowed for direction are 'client', 'server'"
+            end
+            @proxyURI = serial_port_config[:proxyURI] if serial_port_config.key?(:proxyURI)
+            @serviceURI = serial_port_config[:serviceURI] if serial_port_config.key?(:serviceURI)
+
+            @endpoint = serial_port_config[:endpoint] if serial_port_config.key?(:endpoint)
+            if @backing == 'pipe' && !(@endpoint == 'client' || @endpoint == 'server')
+              raise "The only valid values allowed for endpoint are 'client', 'server'"
+            end            
+            @noRxLoss = serial_port_config[:noRxLoss] if serial_port_config.key?(:noRxLoss)
+
+            @fileName = serial_port_config[:fileName] if serial_port_config.key?(:fileName)
+
+            @deviceName = serial_port_config[:deviceName] if serial_port_config.key?(:deviceName)
+            @useAutoDetect = serial_port_config[:useAutoDetect] if serial_port_config.key?(:useAutoDetect)
+          end
+      end
+
       attr_accessor :host
       attr_accessor :insecure
       attr_accessor :user
@@ -60,13 +124,17 @@ module VagrantPlugins
       attr_accessor :real_nic_ip
 
       attr_accessor :destroy_unused_network_interfaces
+      attr_accessor :destroy_unused_serial_ports
       attr_reader   :network_adapters
+      attr_reader   :serial_ports
       attr_reader   :custom_attributes
 
       def initialize
         @destroy_unused_network_interfaces = UNSET_VALUE
+        @destroy_unused_serial_ports = UNSET_VALUE
         @network_adapters  = {}
         @custom_attributes = {}
+        @serial_ports = {}
         @extra_config = {}
       end
 
@@ -74,9 +142,12 @@ module VagrantPlugins
         @custom_attributes[key.to_sym] = value
       end
 
-
       def network_adapter(slot, **opts)
         @network_adapters[slot] = NetworkConfiguration.new opts
+      end
+
+      def serial_port(slot, **opts)
+        @serial_ports[slot] = SerialPortConfiguration.new opts
       end
 
       def finalize!

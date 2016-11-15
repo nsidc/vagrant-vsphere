@@ -584,6 +584,129 @@ module VagrantPlugins
 				end
 			end
 
+			def configure_serial_ports(spec, dc, template, config)
+				#Enumerate serial ports
+				spec[:config][:deviceChange] ||= []
+
+				current_ports = Hash.new
+
+				template.config.hardware.device.grep(RbVmomi::VIM::VirtualSerialPort).each_with_index { |item, index|
+					current_ports[index] = item
+				}
+
+				puts "config.serial_ports=#{config.serial_ports.inspect}"
+
+				current_ports_length = current_ports.length
+				
+				config_serial_ports_length = -1
+				config.serial_ports.each_with_index { |item, index|
+					if index > config_serial_ports_length
+						config_serial_ports_length = index
+					end
+				}
+				config_serial_ports_length += 1
+
+				#remove unused serial ports
+				if config.destroy_unused_serial_ports
+					if current_ports_length-1 > config_serial_ports_length-1
+						for index in (current_ports_length-1).downto(config_serial_ports_length-1+1)
+							port = current_ports[index]
+
+							remove_port = {
+								:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('remove'),
+								:device => port
+							}
+
+							spec[:config][:deviceChange].push remove_port
+							spec[:config][:deviceChange].uniq!
+						end
+					end
+				end
+
+				#we have 5 ports but want 8 ports
+				#add 3 ports
+				#edit first 5 ports
+				number_of_existing_ports = current_ports_length
+				if current_ports_length > config_serial_ports_length
+					#we have 5 ports but want 3 ports
+					#remove 2 ports
+					#edit first 3 ports
+					number_of_existing_ports = config_serial_ports_length
+				end
+
+				#edit existing network interfaces
+				if (number_of_existing_ports > 0)
+					for index in (0).upto(number_of_existing_ports)
+						port_configuration = config.serial_ports[index]
+						puts "port_configuration[#{index}]=#{port_configuration.inspect}"
+
+						#there may be no configuration for this port so dont change it, if this is the case
+						if !port_configuration.nil?
+							port = current_ports[index]
+							port = configure_serial_port(dc, port_configuration, port)
+
+							edit_port = {
+								:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('edit'),
+								:device => port
+							}
+
+							spec[:config][:deviceChange].push edit_port
+							spec[:config][:deviceChange].uniq!
+						end
+					end
+				end
+
+				#add extra network interfaces
+				for index in (number_of_existing_ports).upto(config_serial_ports_length-1)
+					port_configuration = config.serial_ports[index]
+					adapter = RbVmomi::VIM::VirtualSerialPort(
+						:key => index,
+						:connectable => RbVmomi::VIM::VirtualDeviceConnectInfo()
+					)
+
+					adapter = configure_serial_port(dc, port_configuration, adapter)
+
+					add_port = {
+						:operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('add'),
+						:device => adapter
+					}
+
+					spec[:config][:deviceChange].push add_port
+					spec[:config][:deviceChange].uniq!
+				end
+
+				puts "spec[:config] = #{spec[:config].inspect}"
+
+				spec				
+			end
+
+			def configure_serial_port(dc, port_configuration, port)
+				port.yieldOnPoll = port_configuration.yieldOnPoll unless port_configuration.yieldOnPoll.nil?
+				port.connectable.connected = port_configuration.connected unless port_configuration.connected.nil?
+				port.connectable.startConnected = port_configuration.startConnected unless port_configuration.startConnected.nil?
+
+				case port_configuration.backing
+				when 'uri'
+					port.backing = RbVmomi::VIM::VirtualSerialPortURIBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortURIBackingInfo)
+					port.backing.direction = port_configuration.direction unless port_configuration.direction.nil?
+					port.backing.proxyURI = port_configuration.proxyURI unless port_configuration.proxyURI.nil?
+					port.backing.serviceURI = port_configuration.serviceURI unless port_configuration.serviceURI.nil?
+				when 'pipe'
+					port.backing = RbVmomi::VIM::VirtualSerialPortPipeBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortPipeBackingInfo)
+					port.backing.endpoint = port_configuration.endpoint unless port_configuration.endpoint.nil?
+					port.backing.noRxLoss = port_configuration.noRxLoss unless port_configuration.noRxLoss.nil?
+				when 'file'
+					port.backing = RbVmomi::VIM::VirtualSerialPortFileBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortFileBackingInfo)
+					port.backing.fileName = port_configuration.fileName unless port_configuration.fileName.nil?
+				when 'device'
+					port.backing = RbVmomi::VIM::VirtualSerialPortDeviceBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortDeviceBackingInfo)
+					port.backing.deviceName = port_configuration.deviceName unless port_configuration.deviceName.nil?
+					port.backing.useAutoDetect = port_configuration.useAutoDetect unless port_configuration.useAutoDetect.nil?
+				end
+
+				port
+			end
+
 			def configure_network_cards(spec, dc, template, config)
 				#Enumerate lan cards
 				spec[:config][:deviceChange] ||= []
