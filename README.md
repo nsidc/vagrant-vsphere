@@ -148,8 +148,9 @@ This provider has the following settings, all are required unless noted:
 * `destroy_unused_network_interfaces` - _Optional_ boolean - should network cards that have not been configured 
   explicitly, be deleted. If set to false then existing network cards are left alone.
 * `network_adapter` - Array of network card configuration
+* `serial_port` - Array of serial port configuration
 
-Network card configuration:
+## Network card configuration
 * `slot` - integer - zero based array of the card index
 * `allowGuestControl` - _Optional_ boolean - Configure the address type of the
 * `connected` - _Optional_ boolean - is the vm network card connected to the network
@@ -159,6 +160,47 @@ Network card configuration:
   [vSphere Virtual Ethernet Card](https://www.vmware.com/support/developer/vc-sdk/visdk2xpubs/ReferenceGuide/vim.vm.device.VirtualEthernetCard.html)
 * `macAddress` - _Optional_ string - Used to set the mac address of the new VM
 * `wakeOnLanEnabled` - _Optional_ boolean - should vm turn on when magic packet is received on network card
+
+## Serial port configuration
+* `yieldOnPoll` - _Optional_ boolean - Enables CPU yield behavior. If you set yieldOnPoll to true, the virtual machine will 
+  periodically relinquish the processor if its sole task is polling the virtual serial port. The amount of time it takes to 
+  regain the processor will depend on the degree of other virtual machine activity on the host.
+* `connected` - _Optional_ boolean - is the vm serial port connected
+* `startConnected` - _Optional_ boolean - When VM is turned on should the vm serial port be connected
+* `backing` - _Optional_ string - The type of serial port backing to use. Possible values are 'uri', 'pipe', 'file', 'device'.
+  
+  `uri` supports a connection between the virtual machine and a resource on the network. The virtual machine can initiate a connection 
+  with the network resource, or it can listen for connections originating from the network. 
+
+  `pipe` supports I/O through a named pipe. The pipe connects the virtual machine to a host application or a virtual machine on the same host. 
+
+  `file` supports output through the virtual serial port to a file on the same host.
+
+  `device` supports a connection between the virtual machine and a device that is connected to a physical serial port on the host.
+
+### uri
+* `direction` - _Optional_ string - The direction of the connection. Possible values are 'client' and 'server'
+* `proxyURI` - _Optional_ string - Identifies a proxy service that provides network access to the serviceURI. If you specify 
+  a proxy URI, the virtual machine initiates a connection with the proxy service and forwards the serviceURI and direction to the proxy. 
+* `serviceURI` - _Optional_ string - Identifies the local host or a system on the network, depending on the value of 
+  direction. If you use the virtual machine as a server, the URI identifies the host on which the virtual machine 
+  runs. In this case, the host name part of the URI should be empty, or it should specify the address of the local host. 
+  If you use the virtual machine as a client, the URI identifies the remote system on the network.
+
+### pipe
+* `endpoint` - _Optional_ string - Indicates the role the virtual machine assumes as an endpoint for the pipe. 
+  Possible values are 'client' and 'server'
+* `noRxLoss` - _Optional_ boolean - Enables optimized data transfer over the pipe. When you use this feature, 
+  the ESX server buffers data to prevent data overrun. This allows the virtual machine to read all of the data 
+  transferred over the pipe with no data loss. To use optimized data transfer, set noRxLoss to true. To disable 
+  this feature, set the property to false.
+
+### file
+* `fileName` - _Optional_ string - Filename for the host file used in this backing. 
+
+### device
+* `deviceName` - _Optional_ string - The name of the device on the host system.  
+* `useAutoDetect` - _Optional_ boolean - Indicates whether the device should be auto detected instead of directly specified. If this value is set to TRUE, deviceName is ignored. 
 
 ### Cloning from a VM rather than a template
 
