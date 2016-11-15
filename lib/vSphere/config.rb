@@ -34,7 +34,6 @@ module VagrantPlugins
         end
       end
 
-      attr_accessor :ip_address_timeout # Time to wait for an IP address when booting, in seconds @return [Integer]
       attr_accessor :host
       attr_accessor :insecure
       attr_accessor :user
@@ -65,7 +64,6 @@ module VagrantPlugins
       attr_reader   :custom_attributes
 
       def initialize
-        @ip_address_timeout = UNSET_VALUE
         @destroy_unused_network_interfaces = UNSET_VALUE
         @network_adapters  = {}
         @custom_attributes = {}
@@ -82,7 +80,6 @@ module VagrantPlugins
       end
 
       def finalize!
-        @ip_address_timeout = 240 if @ip_address_timeout == UNSET_VALUE
       end
 
       def validate(machine)

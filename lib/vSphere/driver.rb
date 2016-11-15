@@ -43,6 +43,7 @@ module VagrantPlugins
 				connection do |conn|
 					vm = get_vm_by_uuid conn, @machine
 					return nil if vm.nil?
+					return nil unless vm.runtime.powerState.eql?(VmState::POWERED_ON)
 
 					ip_address = filter_guest_nic(vm, @machine)
 					return nil if ip_address.nil? || ip_address.empty?
