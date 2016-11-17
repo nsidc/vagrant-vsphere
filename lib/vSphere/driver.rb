@@ -1,5 +1,6 @@
 require 'log4r'
 require 'rbvmomi'
+require 'ipaddr'
 
 module VagrantPlugins
 	module VSphere
@@ -44,7 +45,6 @@ module VagrantPlugins
 					vm = get_vm_by_uuid conn, @machine
 					return nil if vm.nil?
 					return nil unless vm.runtime.powerState.eql?(VmState::POWERED_ON)
-
 					ip_address = filter_guest_nic(vm, @machine)
 					return nil if ip_address.nil? || ip_address.empty?
 					{
@@ -388,10 +388,28 @@ module VagrantPlugins
 			end
 
 			def filter_guest_nic(vm, machine)
-				return vm.guest.ipAddress unless machine.provider_config.real_nic_ip
-				ip_addresses = vm.guest.net.select { |g| g.deviceConfigId > 0 }.map { |g| g.ipAddress[0] }
-				fail Errors::VSphereError.new, :'multiple_interface_with_real_nic_ip_set' if ip_addresses.size > 1
-				ip_addresses.first
+				config = machine.provider_config
+
+				if config.management_network_adapter_slot.nil? 
+					return vm.guest.ipAddress
+				elsif config.network_adapters[config.management_network_adapter_slot].nil? || config.network_adapters[config.management_network_adapter_slot].ip_address.nil?
+					fail Errors::VSphereError.new, :'specified_mangement_interface_does_not_exist' unless config.management_network_adapter_slot < vm.guest.net.length
+
+					ipAddress = nil
+					case config.management_network_adapter_address_family
+					when 'ipv4'
+						ipAddress = vm.guest.net[config.management_network_adapter_slot].ipConfig.ipAddress.detect { |addr| IPAddr.new(addr.ipAddress).ipv4? && addr.origin != 'linklayer' }
+					when 'ipv6'
+						ipAddress = vm.guest.net[config.management_network_adapter_slot].ipConfig.ipAddress.detect { |addr| IPAddr.new(addr.ipAddress).ipv6? && addr.origin != 'linklayer' }
+					else
+						ipAddress = vm.guest.net[config.management_network_adapter_slot].ipConfig.ipAddress.detect { |addr| addr.origin != 'linklayer' }
+					end
+
+					return nil if ipAddress.nil?
+ 					return ipAddress.ipAddress
+				else
+					config.network_adapters[config.management_network_adapter_slot].ip_address
+				end
 			end
 
 			def get_datacenter(connection, machine)
@@ -681,27 +699,27 @@ module VagrantPlugins
 			end
 
 			def configure_serial_port(dc, port_configuration, port)
-				port.yieldOnPoll = port_configuration.yieldOnPoll unless port_configuration.yieldOnPoll.nil?
+				port.yieldOnPoll = port_configuration.yield_on_poll unless port_configuration.yield_on_poll.nil?
 				port.connectable.connected = port_configuration.connected unless port_configuration.connected.nil?
-				port.connectable.startConnected = port_configuration.startConnected unless port_configuration.startConnected.nil?
+				port.connectable.startConnected = port_configuration.start_connected unless port_configuration.start_connected.nil?
 
 				case port_configuration.backing
 				when 'uri'
 					port.backing = RbVmomi::VIM::VirtualSerialPortURIBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortURIBackingInfo)
 					port.backing.direction = port_configuration.direction unless port_configuration.direction.nil?
-					port.backing.proxyURI = port_configuration.proxyURI unless port_configuration.proxyURI.nil?
-					port.backing.serviceURI = port_configuration.serviceURI unless port_configuration.serviceURI.nil?
+					port.backing.proxyURI = port_configuration.proxy_uri unless port_configuration.proxy_uri.nil?
+					port.backing.serviceURI = port_configuration.service_uri unless port_configuration.service_uri.nil?
 				when 'pipe'
 					port.backing = RbVmomi::VIM::VirtualSerialPortPipeBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortPipeBackingInfo)
 					port.backing.endpoint = port_configuration.endpoint unless port_configuration.endpoint.nil?
-					port.backing.noRxLoss = port_configuration.noRxLoss unless port_configuration.noRxLoss.nil?
+					port.backing.noRxLoss = port_configuration.no_rx_loss unless port_configuration.no_rx_loss.nil?
 				when 'file'
 					port.backing = RbVmomi::VIM::VirtualSerialPortFileBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortFileBackingInfo)
-					port.backing.fileName = port_configuration.fileName unless port_configuration.fileName.nil?
+					port.backing.fileName = port_configuration.file_name unless port_configuration.file_name.nil?
 				when 'device'
 					port.backing = RbVmomi::VIM::VirtualSerialPortDeviceBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortDeviceBackingInfo)
-					port.backing.deviceName = port_configuration.deviceName unless port_configuration.deviceName.nil?
-					port.backing.useAutoDetect = port_configuration.useAutoDetect unless port_configuration.useAutoDetect.nil?
+					port.backing.deviceName = port_configuration.device_name unless port_configuration.device_name.nil?
+					port.backing.useAutoDetect = port_configuration.use_auto_detect unless port_configuration.use_auto_detect.nil?
 				end
 
 				port
@@ -833,13 +851,13 @@ module VagrantPlugins
 				adapter.deviceInfo.label = label unless label.nil?
 				adapter.deviceInfo.summary = summary unless summary.nil?
 
-				adapter.connectable.allowGuestControl = adapter_configuration.allowGuestControl unless adapter_configuration.allowGuestControl.nil?
+				adapter.connectable.allowGuestControl = adapter_configuration.allow_guest_control unless adapter_configuration.allow_guest_control.nil?
 				adapter.connectable.connected = adapter_configuration.connected unless adapter_configuration.connected.nil?
-				adapter.connectable.startConnected = adapter_configuration.startConnected unless adapter_configuration.startConnected.nil?
+				adapter.connectable.startConnected = adapter_configuration.start_connected unless adapter_configuration.start_connected.nil?
 
-				adapter.addressType = adapter_configuration.addressType unless adapter_configuration.addressType.nil?
-				adapter.macAddress = adapter_configuration.macAddress unless adapter_configuration.macAddress.nil?
-				adapter.wakeOnLanEnabled = adapter_configuration.wakeOnLanEnabled unless adapter_configuration.wakeOnLanEnabled.nil?
+				adapter.addressType = adapter_configuration.address_type unless adapter_configuration.address_type.nil?
+				adapter.macAddress = adapter_configuration.mac_address unless adapter_configuration.mac_address.nil?
+				adapter.wakeOnLanEnabled = adapter_configuration.wake_on_lan_enabled unless adapter_configuration.wake_on_lan_enabled.nil?
 
 				adapter	
 			end
