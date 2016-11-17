@@ -141,32 +141,39 @@ This provider has the following settings, all are required unless noted:
   where the key must start with `guestinfo.`. VMs with VWware Tools installed can
   retrieve the value of these variables using the `vmtoolsd` command: `vmtoolsd --cmd 'info-get guestinfo.some.variable'`.
 * `notes` - _Optional_ string - Add arbitrary notes to the VM
-* `real_nic_ip` - _Optional_ boolean - Enable logic that forces the acquisition of the ssh IP address
-  for a target VM to be retrieved from the list of vm adapters on the host and filtered for a single legitimate
-  adapter with a defined interface.   An error will be raised if this filter is enabled and multiple valid
-  adapters exist on a host.
+* `management_network_adapter_slot` - _Optional_ integer - zero based array of the card index.
+  This will be the network card to get the ip address from to use for communication between
+  Vagrant and the vm. If this is not set we will use the one detected by VSphere.
+* `management_network_adapter_address_family` - _Optional_ string - When auto detecting ip address to use for 
+  communication only detect specified ip address family. Possible values are 'ipv4' and 'ipv6'. If this value
+  is not set it will use the first ip address detected.
 * `destroy_unused_network_interfaces` - _Optional_ boolean - should network cards that have not been configured 
   explicitly, be deleted. If set to false then existing network cards are left alone.
 * `network_adapter` - Array of network card configuration
+* `destroy_unused_serial_ports` - _Optional_ boolean - should serial ports that have not been configured 
+  explicitly, be deleted. If set to false then existing serial ports are left alone.
 * `serial_port` - Array of serial port configuration
 
 ## Network card configuration
 * `slot` - integer - zero based array of the card index
-* `allowGuestControl` - _Optional_ boolean - Configure the address type of the
+* `allow_guest_control` - _Optional_ boolean - Configure the address type of the
 * `connected` - _Optional_ boolean - is the vm network card connected to the network
-* `startConnected` - _Optional_ boolean - When VM is turned on should the vm network card be connected to the network
+* `start_connected` - _Optional_ boolean - When VM is turned on should the vm network card be connected to the network
 * `vlan` - _Optional_ string - vlan to connect the network card to
-* `addressType` - _Optional_ - Configure the address type of the
+* `address_type` - _Optional_ - Configure the address type of the
   [vSphere Virtual Ethernet Card](https://www.vmware.com/support/developer/vc-sdk/visdk2xpubs/ReferenceGuide/vim.vm.device.VirtualEthernetCard.html)
-* `macAddress` - _Optional_ string - Used to set the mac address of the new VM
-* `wakeOnLanEnabled` - _Optional_ boolean - should vm turn on when magic packet is received on network card
+* `mac_address` - _Optional_ string - Used to set the mac address of the network card
+* `ip_address` - _Optional_ string - Do not auto detect the ip address for this network card, assume it is the ip
+  address specified. Use this when guest tools cannot be installed on the vm. One approach is to specify static mac address 
+  for vm and reserve ip address on DHCP server for mac address.
+* `wake_on_lan_enabled` - _Optional_ boolean - should vm turn on when magic packet is received on network card
 
 ## Serial port configuration
-* `yieldOnPoll` - _Optional_ boolean - Enables CPU yield behavior. If you set yieldOnPoll to true, the virtual machine will 
+* `yield_on_poll` - _Optional_ boolean - Enables CPU yield behavior. If you set yieldOnPoll to true, the virtual machine will 
   periodically relinquish the processor if its sole task is polling the virtual serial port. The amount of time it takes to 
   regain the processor will depend on the degree of other virtual machine activity on the host.
 * `connected` - _Optional_ boolean - is the vm serial port connected
-* `startConnected` - _Optional_ boolean - When VM is turned on should the vm serial port be connected
+* `start_connected` - _Optional_ boolean - When VM is turned on should the vm serial port be connected
 * `backing` - _Optional_ string - The type of serial port backing to use. Possible values are 'uri', 'pipe', 'file', 'device'.
   
   `uri` supports a connection between the virtual machine and a resource on the network. The virtual machine can initiate a connection 
@@ -180,9 +187,9 @@ This provider has the following settings, all are required unless noted:
 
 ### uri
 * `direction` - _Optional_ string - The direction of the connection. Possible values are 'client' and 'server'
-* `proxyURI` - _Optional_ string - Identifies a proxy service that provides network access to the serviceURI. If you specify 
+* `proxy_uri` - _Optional_ string - Identifies a proxy service that provides network access to the serviceURI. If you specify 
   a proxy URI, the virtual machine initiates a connection with the proxy service and forwards the serviceURI and direction to the proxy. 
-* `serviceURI` - _Optional_ string - Identifies the local host or a system on the network, depending on the value of 
+* `service_uri` - _Optional_ string - Identifies the local host or a system on the network, depending on the value of 
   direction. If you use the virtual machine as a server, the URI identifies the host on which the virtual machine 
   runs. In this case, the host name part of the URI should be empty, or it should specify the address of the local host. 
   If you use the virtual machine as a client, the URI identifies the remote system on the network.
@@ -190,17 +197,17 @@ This provider has the following settings, all are required unless noted:
 ### pipe
 * `endpoint` - _Optional_ string - Indicates the role the virtual machine assumes as an endpoint for the pipe. 
   Possible values are 'client' and 'server'
-* `noRxLoss` - _Optional_ boolean - Enables optimized data transfer over the pipe. When you use this feature, 
+* `no_rx_loss` - _Optional_ boolean - Enables optimized data transfer over the pipe. When you use this feature, 
   the ESX server buffers data to prevent data overrun. This allows the virtual machine to read all of the data 
   transferred over the pipe with no data loss. To use optimized data transfer, set noRxLoss to true. To disable 
   this feature, set the property to false.
 
 ### file
-* `fileName` - _Optional_ string - Filename for the host file used in this backing. 
+* `file_name` - _Optional_ string - Filename for the host file used in this backing. 
 
 ### device
-* `deviceName` - _Optional_ string - The name of the device on the host system.  
-* `useAutoDetect` - _Optional_ boolean - Indicates whether the device should be auto detected instead of directly specified. If this value is set to TRUE, deviceName is ignored. 
+* `device_name` - _Optional_ string - The name of the device on the host system.  
+* `use_auto_detect` - _Optional_ boolean - Indicates whether the device should be auto detected instead of directly specified. If this value is set to TRUE, deviceName is ignored. 
 
 ### Cloning from a VM rather than a template
 

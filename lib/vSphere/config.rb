@@ -5,74 +5,77 @@ module VagrantPlugins
     class Config < Vagrant.plugin('2', :config)
 
       class NetworkConfiguration
-        attr_accessor :allowGuestControl
+        attr_accessor :allow_guest_control
         attr_accessor :connected
-        attr_accessor :startConnected
+        attr_accessor :start_connected
 
         attr_accessor :vlan
-        attr_accessor :addressType
-        attr_accessor :macAddress
-        attr_accessor :wakeOnLanEnabled
+        attr_accessor :address_type
+        attr_accessor :mac_address
+        attr_accessor :ip_address
+        attr_accessor :wake_on_lan_enabled
 
         def initialize(network_config)
-          @allowGuestControl = false
+          @allow_guest_control = false
           @connected = true
-          @startConnected = true
+          @start_connected = true
 
           @vlan = nil
-          @addressType = 'generated'
-          @macAddress = nil
-          @wakeOnLanEnabled = false
+          @address_type = 'generated'
+          @mac_address = nil
+          @ip_address = nil
+          @wake_on_lan_enabled = false
 
-          @allowGuestControl = network_config[:allowGuestControl] if network_config.key?(:allowGuestControl)
+          @allow_guest_control = network_config[:allow_guest_control] if network_config.key?(:allow_guest_control)
           @connected = network_config[:connected] if network_config.key?(:connected)
-          @startConnected = network_config[:startConnected] if network_config.key?(:startConnected)
+          @start_connected = network_config[:start_connected] if network_config.key?(:start_connected)
           @vlan = network_config[:vlan] if network_config.key?(:vlan)
-          @addressType = network_config[:addressType] if network_config.key?(:addressType)
-          @macAddress = network_config[:macAddress] if network_config.key?(:macAddress)
-          @wakeOnLanEnabled = network_config[:wakeOnLanEnabled] if network_config.key?(:wakeOnLanEnabled)
+          @address_type = network_config[:address_type] if network_config.key?(:address_type)
+          @mac_address = network_config[:mac_address] if network_config.key?(:mac_address)
+          @ip_address = network_config[:ip_address] if network_config.key?(:ip_address)
+          @wake_on_lan_enabled = network_config[:wake_on_lan_enabled] if network_config.key?(:wake_on_lan_enabled)
         end
       end
 
       class SerialPortConfiguration
-          attr_accessor :yieldOnPoll
+          attr_accessor :yield_on_poll
           attr_accessor :connected
-          attr_accessor :startConnected          
+          attr_accessor :start_connected
           attr_accessor :backing
 
           attr_accessor :direction
-          attr_accessor :proxyURI
-          attr_accessor :serviceURI
+          attr_accessor :proxy_uri
+          attr_accessor :service_uri
 
           attr_accessor :endpoint
-          attr_accessor :noRxLoss
+          attr_accessor :no_rx_loss
 
-          attr_accessor :fileName
+          attr_accessor :file_name
 
-          attr_accessor :deviceName
-          attr_accessor :useAutoDetect          
+          attr_accessor :device_name
+          attr_accessor :use_auto_detect
 
           def initialize(serial_port_config)
-            @yieldOnPoll = true
+            @yield_on_poll = true
             @connected = true
-            @startConnected = true            
+            @start_connected = true
             @backing = ''
 
             @direction = ''
-            @proxyURI = ''
-            @serviceURI = ''
+            @proxy_uri = ''
+            @service_uri = ''
 
             @endpoint = ''
-            @noRxLoss = true            
+            @no_rx_loss = true
 
-            @fileName = ''
+            @file_name = ''
 
-            @deviceName = ''
-            @useAutoDetect = false            
+            @device_name = ''
+            @use_auto_detect = false
 
-            @yieldOnPoll = serial_port_config[:yieldOnPoll] if serial_port_config.key?(:yieldOnPoll)
+            @yield_on_poll = serial_port_config[:yield_on_poll] if serial_port_config.key?(:yield_on_poll)
             @connected = network_config[:connected] if network_config.key?(:connected)
-            @startConnected = network_config[:startConnected] if network_config.key?(:startConnected)            
+            @start_connected = network_config[:start_connected] if network_config.key?(:start_connected)
             @backing = serial_port_config[:backing] if serial_port_config.key?(:backing)
             if !(@backing == 'uri' || @backing == 'pipe' || @backing == 'file' || @backing == 'device')
               raise "The only valid values allowed for backing are 'uri', 'pipe', 'file', 'device'"
@@ -82,19 +85,19 @@ module VagrantPlugins
             if @backing == 'uri' && !(@direction == 'client' || @direction == 'server')
               raise "The only valid values allowed for direction are 'client', 'server'"
             end
-            @proxyURI = serial_port_config[:proxyURI] if serial_port_config.key?(:proxyURI)
-            @serviceURI = serial_port_config[:serviceURI] if serial_port_config.key?(:serviceURI)
+            @proxy_uri = serial_port_config[:proxy_uri] if serial_port_config.key?(:proxy_uri)
+            @service_uri = serial_port_config[:service_uri] if serial_port_config.key?(:service_uri)
 
             @endpoint = serial_port_config[:endpoint] if serial_port_config.key?(:endpoint)
             if @backing == 'pipe' && !(@endpoint == 'client' || @endpoint == 'server')
               raise "The only valid values allowed for endpoint are 'client', 'server'"
             end            
-            @noRxLoss = serial_port_config[:noRxLoss] if serial_port_config.key?(:noRxLoss)
+            @no_rx_loss = serial_port_config[:no_rx_loss] if serial_port_config.key?(:no_rx_loss)
 
-            @fileName = serial_port_config[:fileName] if serial_port_config.key?(:fileName)
+            @file_name = serial_port_config[:file_name] if serial_port_config.key?(:file_name)
 
-            @deviceName = serial_port_config[:deviceName] if serial_port_config.key?(:deviceName)
-            @useAutoDetect = serial_port_config[:useAutoDetect] if serial_port_config.key?(:useAutoDetect)
+            @device_name = serial_port_config[:device_name] if serial_port_config.key?(:device_name)
+            @use_auto_detect = serial_port_config[:use_auto_detect] if serial_port_config.key?(:use_auto_detect)
           end
       end
 
@@ -121,10 +124,10 @@ module VagrantPlugins
       attr_accessor :extra_config
       attr_accessor :notes
 
-      attr_accessor :real_nic_ip
-
       attr_accessor :destroy_unused_network_interfaces
       attr_accessor :destroy_unused_serial_ports
+      attr_accessor :management_network_adapter_slot
+      attr_accessor :management_network_adapter_address_family
       attr_reader   :network_adapters
       attr_reader   :serial_ports
       attr_reader   :custom_attributes

@@ -48,8 +48,8 @@ en:
         Cannot find network card to customize
       invalid_configuration_linked_clone_with_sdrs: |-
         Cannot use Linked Clone with Storage DRS
-      multiple_interface_with_real_nic_ip_set: |-
-        real_nic_ip filtering set with multiple valid VM interfaces available
+      specified_mangement_interface_does_not_exist: |-
+        specified management interface does not exist
       sysprep_timeout: |-
         Customization of VM not succeeded within timeout.
       wait_for_ip_address_timeout: |-
