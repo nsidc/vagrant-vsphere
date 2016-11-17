@@ -32,6 +32,7 @@ module VagrantPlugins
           @vlan = network_config[:vlan] if network_config.key?(:vlan)
           @address_type = network_config[:address_type] if network_config.key?(:address_type)
           @mac_address = network_config[:mac_address] if network_config.key?(:mac_address)
+          @address_type = 'manual' if network_config.key?(:mac_address)
           @ip_address = network_config[:ip_address] if network_config.key?(:ip_address)
           @wake_on_lan_enabled = network_config[:wake_on_lan_enabled] if network_config.key?(:wake_on_lan_enabled)
         end
