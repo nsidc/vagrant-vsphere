@@ -124,6 +124,8 @@ module VagrantPlugins
       attr_accessor :mem_reservation
       attr_accessor :extra_config
       attr_accessor :notes
+      attr_accessor :wait_for_customization
+      attr_accessor :wait_for_customization_timeout
 
       attr_accessor :destroy_unused_network_interfaces
       attr_accessor :destroy_unused_serial_ports
@@ -134,6 +136,7 @@ module VagrantPlugins
       attr_reader   :custom_attributes
 
       def initialize
+        wait_for_customization_timeout = 600
         @destroy_unused_network_interfaces = UNSET_VALUE
         @destroy_unused_serial_ports = UNSET_VALUE
         @network_adapters  = {}

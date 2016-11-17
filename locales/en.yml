@@ -20,8 +20,8 @@ en:
       The VM has not been created
     vm_not_running: |-
       The VM is not running
-    wait_sysprep: |-
-      Waiting for sysprep
+    wait_for_customization: |-
+      Waiting for customization
 
     errors:
       missing_template: |-
@@ -50,10 +50,8 @@ en:
         Cannot use Linked Clone with Storage DRS
       specified_mangement_interface_does_not_exist: |-
         specified management interface does not exist
-      sysprep_timeout: |-
+      customization_timeout: |-
         Customization of VM not succeeded within timeout.
-      wait_for_ip_address_timeout: |-
-        Timeout while waiting for ip address
 
     config:
       host: |-
