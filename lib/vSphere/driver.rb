@@ -210,11 +210,36 @@ module VagrantPlugins
 								new_vm = task.wait_for_completion
 							end
 							@logger.info("Finished cloning vm #{@machine.id}")
-
-							config.custom_attributes.each do |k, v|
-								new_vm.setCustomValue(key: k, value: v)
-							end
 						end
+
+						config.custom_attributes.each do |k, v|
+							new_vm.setCustomValue(key: k, value: v)
+						end
+
+						if config.wait_for_customization
+							@logger.info I18n.t('vsphere.wait_for_customization')
+							vem = connection.serviceContent.eventManager
+
+							wait = true
+							waited_seconds = 0
+							sleep_time = 5
+							
+							while wait
+								events = vem.QueryEvents(filter:RbVmomi::VIM::EventFilterSpec(entity:RbVmomi::VIM::EventFilterSpecByEntity(entity: new_vm, recursion:RbVmomi::VIM::EventFilterSpecRecursionOption(:self)), eventTypeId: ['CustomizationSucceeded']))
+
+								if events.size > 0
+									events.each do |e|
+										@logger.info e.fullFormattedMessage
+									end
+									wait = false
+								elsif waited_seconds >= config.wait_for_customization_timeout
+									fail Errors::VSphereError, :'customization_timeout'
+								else
+									sleep(sleep_time)
+									waited_seconds += sleep_time
+								end
+							end
+						end						
 					rescue Errors::VSphereError
 						raise
 					#rescue StandardError => e
@@ -540,7 +565,7 @@ module VagrantPlugins
 				end
 
 				customization_spec
-			end
+			end				
 
 			def get_location(datastore, dc, machine, template)
 				if machine.provider_config.linked_clone

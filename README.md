@@ -141,6 +141,10 @@ This provider has the following settings, all are required unless noted:
   where the key must start with `guestinfo.`. VMs with VWware Tools installed can
   retrieve the value of these variables using the `vmtoolsd` command: `vmtoolsd --cmd 'info-get guestinfo.some.variable'`.
 * `notes` - _Optional_ string - Add arbitrary notes to the VM
+* `wait_for_customization` - _Optional_ boolean - Wait for customization to complete before 
+  continuing. Set to false by default. 
+* `wait_for_customization_timeout` - _Optional_ integer - Timeout in seconds to wait for 
+  customization to complete before continuing. Set to 600 by default.   
 * `management_network_adapter_slot` - _Optional_ integer - zero based array of the card index.
   This will be the network card to get the ip address from to use for communication between
   Vagrant and the vm. If this is not set we will use the one detected by VSphere.
