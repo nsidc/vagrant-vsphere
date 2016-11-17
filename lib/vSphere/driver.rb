@@ -408,7 +408,7 @@ module VagrantPlugins
 					return nil if ipAddress.nil?
  					return ipAddress.ipAddress
 				else
-					return config.network_adapters[config.management_network_adapter_slot].ip_address.ipAddress if config.network_adapters[config.management_network_adapter_slot].ip_address.is_a?(IPAddr)
+					return config.network_adapters[config.management_network_adapter_slot].ip_address.to_s if config.network_adapters[config.management_network_adapter_slot].ip_address.is_a?(IPAddr)
 					return config.network_adapters[config.management_network_adapter_slot].ip_address
 				end
 			end
