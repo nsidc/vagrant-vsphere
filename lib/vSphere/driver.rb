@@ -20,15 +20,15 @@ module VagrantPlugins
       end
 
       def connection
-        raise "connection be called from a code block!" if !block_given?
+        fail "connection be called from a code block!" unless block_given?
 
         begin
           config = @machine.provider_config
 
           current_connection = RbVmomi::VIM.connect host: config.host,
-            user: config.user, password: config.password,
-            insecure: config.insecure, proxyHost: config.proxy_host,
-            proxyPort: config.proxy_port
+                                                    user: config.user, password: config.password,
+                                                    insecure: config.insecure, proxyHost: config.proxy_host,
+                                                    proxyPort: config.proxy_port
 
           yield current_connection
         rescue
@@ -48,8 +48,8 @@ module VagrantPlugins
           ip_address = filter_guest_nic(vm, @machine)
           return nil if ip_address.nil? || ip_address.empty?
           {
-              host: ip_address,
-              port: 22
+            host: ip_address,
+            port: 22
           }
         end
       end
@@ -225,7 +225,7 @@ module VagrantPlugins
               sleep_time = 5
 
               while wait
-                events = vem.QueryEvents(filter:RbVmomi::VIM::EventFilterSpec(entity:RbVmomi::VIM::EventFilterSpecByEntity(entity: new_vm, recursion:RbVmomi::VIM::EventFilterSpecRecursionOption(:self)), eventTypeId: ['CustomizationSucceeded']))
+                events = vem.QueryEvents(filter: RbVmomi::VIM::EventFilterSpec(entity: RbVmomi::VIM::EventFilterSpecByEntity(entity: new_vm, recursion: RbVmomi::VIM::EventFilterSpecRecursionOption(:self)), eventTypeId: ['CustomizationSucceeded']))
 
                 if events.size > 0
                   events.each do |e|
@@ -242,8 +242,8 @@ module VagrantPlugins
             end
           rescue Errors::VSphereError
             raise
-          #rescue StandardError => e
-          #  raise Errors::VSphereError.new, e.message
+            # rescue StandardError => e
+            #  raise Errors::VSphereError.new, e.message
           end
 
           # TODO: handle interrupted status in the environment, should the vm be destroyed?
@@ -431,7 +431,7 @@ module VagrantPlugins
           end
 
           return nil if ipAddress.nil?
-           return ipAddress.ipAddress
+          return ipAddress.ipAddress
         else
           return config.network_adapters[config.management_network_adapter_slot].ip_address.to_s if config.network_adapters[config.management_network_adapter_slot].ip_address.is_a?(IPAddr)
           return config.network_adapters[config.management_network_adapter_slot].ip_address
@@ -535,11 +535,11 @@ module VagrantPlugins
         entity_array = name.split('/').reject(&:empty?)
         entity_array.each do |item|
           case base
-            when RbVmomi::VIM::Folder
-              base = base.find(item)
-            when RbVmomi::VIM::VmwareDistributedVirtualSwitch
-              idx = base.summary.portgroupName.find_index(item)
-              base = idx.nil? ? nil : base.portgroup[idx]
+          when RbVmomi::VIM::Folder
+            base = base.find(item)
+          when RbVmomi::VIM::VmwareDistributedVirtualSwitch
+            idx = base.summary.portgroupName.find_index(item)
+            base = idx.nil? ? nil : base.portgroup[idx]
           end
         end
 
@@ -548,7 +548,7 @@ module VagrantPlugins
         base
       end
 
-      #Cloning
+      # Cloning
       def get_customization_spec(machine, spec_info)
         customization_spec = spec_info.spec.clone
 
@@ -629,28 +629,28 @@ module VagrantPlugins
       end
 
       def configure_serial_ports(spec, dc, template, config)
-        #Enumerate serial ports
+        # Enumerate serial ports
         spec[:config][:deviceChange] ||= []
 
         current_ports = Hash.new
 
-        template.config.hardware.device.grep(RbVmomi::VIM::VirtualSerialPort).each_with_index { |item, index|
+        template.config.hardware.device.grep(RbVmomi::VIM::VirtualSerialPort).each_with_index do |item, index|
           current_ports[index] = item
-        }
+        end
 
         puts "config.serial_ports=#{config.serial_ports.inspect}"
 
         current_ports_length = current_ports.length
 
         config_serial_ports_length = -1
-        config.serial_ports.each_with_index { |_item, index|
+        config.serial_ports.each_with_index do |_item, index|
           if index > config_serial_ports_length
             config_serial_ports_length = index
           end
-        }
+        end
         config_serial_ports_length += 1
 
-        #remove unused serial ports
+        # remove unused serial ports
         if config.destroy_unused_serial_ports
           if current_ports_length-1 > config_serial_ports_length-1
             for index in (current_ports_length-1).downto(config_serial_ports_length-1+1)
@@ -667,25 +667,25 @@ module VagrantPlugins
           end
         end
 
-        #we have 5 ports but want 8 ports
-        #add 3 ports
-        #edit first 5 ports
+        # we have 5 ports but want 8 ports
+        # add 3 ports
+        # edit first 5 ports
         number_of_existing_ports = current_ports_length
         if current_ports_length > config_serial_ports_length
-          #we have 5 ports but want 3 ports
-          #remove 2 ports
-          #edit first 3 ports
+          # we have 5 ports but want 3 ports
+          # remove 2 ports
+          # edit first 3 ports
           number_of_existing_ports = config_serial_ports_length
         end
 
-        #edit existing network interfaces
-        if (number_of_existing_ports > 0)
+        # edit existing network interfaces
+        if number_of_existing_ports > 0
           for index in (0).upto(number_of_existing_ports)
             port_configuration = config.serial_ports[index]
             puts "port_configuration[#{index}]=#{port_configuration.inspect}"
 
-            #there may be no configuration for this port so dont change it, if this is the case
-            if !port_configuration.nil?
+            # there may be no configuration for this port so dont change it, if this is the case
+            unless port_configuration.nil?
               port = current_ports[index]
               port = configure_serial_port(dc, port_configuration, port)
 
@@ -700,7 +700,7 @@ module VagrantPlugins
           end
         end
 
-        #add extra network interfaces
+        # add extra network interfaces
         for index in (number_of_existing_ports).upto(config_serial_ports_length-1)
           port_configuration = config.serial_ports[index]
           adapter = RbVmomi::VIM::VirtualSerialPort(
@@ -752,14 +752,14 @@ module VagrantPlugins
       end
 
       def configure_network_cards(spec, dc, template, config)
-        #Enumerate lan cards
+        # Enumerate lan cards
         spec[:config][:deviceChange] ||= []
 
         current_adapters = Hash.new
 
-        template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).each_with_index { |item, index|
+        template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).each_with_index do |item, index|
           current_adapters[index] = item
-        }
+        end
 
         puts "config.network_adapters=#{config.network_adapters.inspect}"
 
@@ -767,17 +767,17 @@ module VagrantPlugins
 
         # configuration may have gaps in it, so configuration may look like this:
         # vsphere.network_adapter 0, vlan: "vlan0"
-            # vsphere.network_adapter 1, vlan: "vlan1"
-            # vsphere.network_adapter 9, vlan: "vlan9"
+        # vsphere.network_adapter 1, vlan: "vlan1"
+        # vsphere.network_adapter 9, vlan: "vlan9"
         config_network_adapters_length = -1
-        config.network_adapters.each_with_index { |_item, index|
+        config.network_adapters.each_with_index do |_item, index|
           if index > config_network_adapters_length
             config_network_adapters_length = index
           end
-        }
+        end
         config_network_adapters_length += 1
 
-        #remove unused network interfaces
+        # remove unused network interfaces
         if config.destroy_unused_network_interfaces
           if current_adapters_length-1 > config_network_adapters_length-1
             for index in (current_adapters_length-1).downto(config_network_adapters_length-1+1)
@@ -794,25 +794,25 @@ module VagrantPlugins
           end
         end
 
-        #we have 5 cards but want 8 cards
-        #add 3 cards
-        #edit first 5 cards
+        # we have 5 cards but want 8 cards
+        # add 3 cards
+        # edit first 5 cards
         number_of_existing_adapters = current_adapters_length
         if current_adapters_length > config_network_adapters_length
-          #we have 5 cards but want 3 cards
-          #remove 2 cards
-          #edit first 3 cards
+          # we have 5 cards but want 3 cards
+          # remove 2 cards
+          # edit first 3 cards
           number_of_existing_adapters = config_network_adapters_length
         end
 
-        #edit existing network interfaces
-        if (number_of_existing_adapters > 0)
+        # edit existing network interfaces
+        if number_of_existing_adapters > 0
           for index in (0).upto(number_of_existing_adapters)
             adapter_configuration = config.network_adapters[index]
             puts "adapter_configuration[#{index}]=#{adapter_configuration.inspect}"
 
-            #there may be no configuration for this card so dont change it, if this is the case
-            if !adapter_configuration.nil?
+            # there may be no configuration for this card so dont change it, if this is the case
+            unless adapter_configuration.nil?
               adapter = current_adapters[index]
 
               label = "Ethernet #{index+1}"
@@ -832,7 +832,7 @@ module VagrantPlugins
           end
         end
 
-        #add extra network interfaces
+        # add extra network interfaces
         for index in (number_of_existing_adapters).upto(config_network_adapters_length-1)
           adapter_configuration = config.network_adapters[index]
           adapter = RbVmomi::VIM::VirtualVmxnet3(
@@ -862,7 +862,7 @@ module VagrantPlugins
       end
 
       def configure_network_card(dc, adapter_configuration, adapter, label, summary)
-        if !adapter_configuration.vlan.nil?
+        unless adapter_configuration.vlan.nil?
           network = get_network_by_name(dc, adapter_configuration.vlan)
 
           if network.is_a?(RbVmomi::VIM::DistributedVirtualPortgroup)

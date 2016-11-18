@@ -3,7 +3,6 @@ require 'vagrant'
 module VagrantPlugins
   module VSphere
     class Config < Vagrant.plugin('2', :config)
-
       class NetworkConfiguration
         attr_accessor :allow_guest_control
         attr_accessor :connected
@@ -39,67 +38,67 @@ module VagrantPlugins
       end
 
       class SerialPortConfiguration
-          attr_accessor :yield_on_poll
-          attr_accessor :connected
-          attr_accessor :start_connected
-          attr_accessor :backing
+        attr_accessor :yield_on_poll
+        attr_accessor :connected
+        attr_accessor :start_connected
+        attr_accessor :backing
 
-          attr_accessor :direction
-          attr_accessor :proxy_uri
-          attr_accessor :service_uri
+        attr_accessor :direction
+        attr_accessor :proxy_uri
+        attr_accessor :service_uri
 
-          attr_accessor :endpoint
-          attr_accessor :no_rx_loss
+        attr_accessor :endpoint
+        attr_accessor :no_rx_loss
 
-          attr_accessor :file_name
+        attr_accessor :file_name
 
-          attr_accessor :device_name
-          attr_accessor :use_auto_detect
+        attr_accessor :device_name
+        attr_accessor :use_auto_detect
 
-          def initialize(serial_port_config)
-            @yield_on_poll = true
-            @connected = true
-            @start_connected = true
-            @backing = ''
+        def initialize(serial_port_config)
+          @yield_on_poll = true
+          @connected = true
+          @start_connected = true
+          @backing = ''
 
-            @direction = ''
-            @proxy_uri = ''
-            @service_uri = ''
+          @direction = ''
+          @proxy_uri = ''
+          @service_uri = ''
 
-            @endpoint = ''
-            @no_rx_loss = true
+          @endpoint = ''
+          @no_rx_loss = true
 
-            @file_name = ''
+          @file_name = ''
 
-            @device_name = ''
-            @use_auto_detect = false
+          @device_name = ''
+          @use_auto_detect = false
 
-            @yield_on_poll = serial_port_config[:yield_on_poll] if serial_port_config.key?(:yield_on_poll)
-            @connected = network_config[:connected] if network_config.key?(:connected)
-            @start_connected = network_config[:start_connected] if network_config.key?(:start_connected)
-            @backing = serial_port_config[:backing] if serial_port_config.key?(:backing)
-            if !(@backing == 'uri' || @backing == 'pipe' || @backing == 'file' || @backing == 'device')
-              raise "The only valid values allowed for backing are 'uri', 'pipe', 'file', 'device'"
-            end
-
-            @direction = serial_port_config[:direction] if serial_port_config.key?(:direction)
-            if @backing == 'uri' && !(@direction == 'client' || @direction == 'server')
-              raise "The only valid values allowed for direction are 'client', 'server'"
-            end
-            @proxy_uri = serial_port_config[:proxy_uri] if serial_port_config.key?(:proxy_uri)
-            @service_uri = serial_port_config[:service_uri] if serial_port_config.key?(:service_uri)
-
-            @endpoint = serial_port_config[:endpoint] if serial_port_config.key?(:endpoint)
-            if @backing == 'pipe' && !(@endpoint == 'client' || @endpoint == 'server')
-              raise "The only valid values allowed for endpoint are 'client', 'server'"
-            end            
-            @no_rx_loss = serial_port_config[:no_rx_loss] if serial_port_config.key?(:no_rx_loss)
-
-            @file_name = serial_port_config[:file_name] if serial_port_config.key?(:file_name)
-
-            @device_name = serial_port_config[:device_name] if serial_port_config.key?(:device_name)
-            @use_auto_detect = serial_port_config[:use_auto_detect] if serial_port_config.key?(:use_auto_detect)
+          @yield_on_poll = serial_port_config[:yield_on_poll] if serial_port_config.key?(:yield_on_poll)
+          @connected = network_config[:connected] if network_config.key?(:connected)
+          @start_connected = network_config[:start_connected] if network_config.key?(:start_connected)
+          @backing = serial_port_config[:backing] if serial_port_config.key?(:backing)
+          unless @backing == 'uri' || @backing == 'pipe' || @backing == 'file' || @backing == 'device'
+            fail "The only valid values allowed for backing are 'uri', 'pipe', 'file', 'device'"
           end
+
+          @direction = serial_port_config[:direction] if serial_port_config.key?(:direction)
+          if @backing == 'uri' && !(@direction == 'client' || @direction == 'server')
+            fail "The only valid values allowed for direction are 'client', 'server'"
+          end
+          @proxy_uri = serial_port_config[:proxy_uri] if serial_port_config.key?(:proxy_uri)
+          @service_uri = serial_port_config[:service_uri] if serial_port_config.key?(:service_uri)
+
+          @endpoint = serial_port_config[:endpoint] if serial_port_config.key?(:endpoint)
+          if @backing == 'pipe' && !(@endpoint == 'client' || @endpoint == 'server')
+            fail "The only valid values allowed for endpoint are 'client', 'server'"
+          end
+          @no_rx_loss = serial_port_config[:no_rx_loss] if serial_port_config.key?(:no_rx_loss)
+
+          @file_name = serial_port_config[:file_name] if serial_port_config.key?(:file_name)
+
+          @device_name = serial_port_config[:device_name] if serial_port_config.key?(:device_name)
+          @use_auto_detect = serial_port_config[:use_auto_detect] if serial_port_config.key?(:use_auto_detect)
+        end
       end
 
       attr_accessor :host
@@ -131,9 +130,9 @@ module VagrantPlugins
       attr_accessor :destroy_unused_serial_ports
       attr_accessor :management_network_adapter_slot
       attr_accessor :management_network_adapter_address_family
-      attr_reader   :network_adapters
-      attr_reader   :serial_ports
-      attr_reader   :custom_attributes
+      attr_reader :network_adapters
+      attr_reader :serial_ports
+      attr_reader :custom_attributes
 
       def initialize
         @wait_for_customization_timeout = 600

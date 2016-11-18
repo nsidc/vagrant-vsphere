@@ -150,7 +150,6 @@ module VagrantPlugins
         end
       end
 
-
       # TODO: Remove the if guard when Vagrant 1.8.0 is the minimum version.
       # rubocop:disable IndentationWidth
       if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
