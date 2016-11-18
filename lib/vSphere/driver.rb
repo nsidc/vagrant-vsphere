@@ -643,7 +643,7 @@ module VagrantPlugins
         current_ports_length = current_ports.length
 
         config_serial_ports_length = -1
-        config.serial_ports.each_with_index { |item, index|
+        config.serial_ports.each_with_index { |_item, index|
           if index > config_serial_ports_length
             config_serial_ports_length = index
           end
@@ -724,7 +724,7 @@ module VagrantPlugins
         spec
       end
 
-      def configure_serial_port(dc, port_configuration, port)
+      def configure_serial_port(_dc, port_configuration, port)
         port.yieldOnPoll = port_configuration.yield_on_poll unless port_configuration.yield_on_poll.nil?
         port.connectable.connected = port_configuration.connected unless port_configuration.connected.nil?
         port.connectable.startConnected = port_configuration.start_connected unless port_configuration.start_connected.nil?
@@ -770,7 +770,7 @@ module VagrantPlugins
             # vsphere.network_adapter 1, vlan: "vlan1"
             # vsphere.network_adapter 9, vlan: "vlan9"
         config_network_adapters_length = -1
-        config.network_adapters.each_with_index { |item, index|
+        config.network_adapters.each_with_index { |_item, index|
           if index > config_network_adapters_length
             config_network_adapters_length = index
           end
