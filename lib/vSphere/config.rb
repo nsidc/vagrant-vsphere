@@ -136,7 +136,7 @@ module VagrantPlugins
       attr_reader   :custom_attributes
 
       def initialize
-        wait_for_customization_timeout = 600
+        @wait_for_customization_timeout = 600
         @destroy_unused_network_interfaces = UNSET_VALUE
         @destroy_unused_serial_ports = UNSET_VALUE
         @network_adapters  = {}
