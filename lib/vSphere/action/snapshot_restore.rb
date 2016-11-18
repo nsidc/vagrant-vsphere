@@ -17,7 +17,7 @@ module VagrantPlugins
           end
 
           env[:ui].clear_line
-          #env[:ui].success(I18n.t("vagrant.actions.vm.snapshot.restored", name: snapshot_name))
+          # env[:ui].success(I18n.t("vagrant.actions.vm.snapshot.restored", name: snapshot_name))
 
           @app.call env
         end

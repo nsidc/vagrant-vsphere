@@ -8,7 +8,7 @@ module VagrantPlugins
 
         def call(env)
           snapshot_name = env[:snapshot_name]
-          
+
           env[:ui].info(I18n.t("vagrant.actions.vm.snapshot.deleting", name: snapshot_name))
 
           env[:machine].provider.driver.delete_snapshot(snapshot_name) do |progress|
