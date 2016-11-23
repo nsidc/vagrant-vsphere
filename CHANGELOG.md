@@ -1,3 +1,10 @@
+## [1.11.0 (2016-11-23)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.11.0)
+
+  - Wait for Windows sysprep when cloning a Windows box
+    ([jcaugust:sysprep_wait](https://github.com/nsidc/vagrant-vsphere/pull/199)).
+  - Add a configurable timeout period for obtaining the VM's IP address
+    ([taliesins:wait-for-ip](https://github.com/nsidc/vagrant-vsphere/pull/204)).
+
 ## [1.10.1 (2016-10-17)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.10.1)
 
   - Update dependency on [rbvmomi](https://github.com/vmware/rbvmomi) to allow
