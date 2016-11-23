@@ -1,12 +1,10 @@
 require 'rbvmomi'
 require 'pathname'
+require 'vSphere/driver'
 require 'vSphere/errors'
 require 'vSphere/action'
-require 'vSphere/action/connect_vsphere'
 require 'vSphere/action/close_vsphere'
 require 'vSphere/action/is_created'
-require 'vSphere/action/get_state'
-require 'vSphere/action/get_ssh_info'
 require 'vSphere/action/clone'
 require 'vSphere/action/message_already_created'
 require 'vSphere/action/message_not_created'
@@ -90,7 +88,13 @@ RSpec.configure do |config|
                       :data_dir => Pathname.new(''),
                       :id => nil,
                       :id= => nil,
-                      :guest => double('guest', capability: nil)
+                      :guest => double('guest', capability: nil),
+                      :provider => double('provider', driver: double('driver',
+                                                                     :suspended? => nil,
+                                                                     :powered_off? => nil,
+                                                                     :power_on_vm => nil,
+                                                                     :power_off_vm => nil
+                                                                    ))
 
     @env = {
       machine: @machine,

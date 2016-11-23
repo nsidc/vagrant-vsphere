@@ -6,30 +6,28 @@ describe VagrantPlugins::VSphere::Action::PowerOff do
   end
 
   it 'should power off the VM if it is powered on' do
-    @machine.stub(:id).and_return(EXISTING_UUID)
-    @machine.state.stub(:id).and_return(VagrantPlugins::VSphere::Util::VmState::POWERED_ON)
+    @machine.provider.driver.stub(:powered_off?).and_return(false)
 
     call
 
-    expect(@vm).to have_received :PowerOffVM_Task
+    expect(@machine.provider.driver).to have_received :power_off_vm
   end
 
   it 'should not power off the VM if is powered off' do
-    @machine.stub(:id).and_return(EXISTING_UUID)
-    @vm.runtime.stub(:powerState).and_return(VagrantPlugins::VSphere::Util::VmState::POWERED_OFF)
+    @machine.provider.driver.stub(:powered_off?).and_return(true)
 
     call
 
-    expect(@vm).not_to have_received :PowerOffVM_Task
+    expect(@machine.provider.driver).not_to have_received :power_off_vm
   end
 
   it 'should power on and off the VM if is suspended' do
-    @machine.stub(:id).and_return(EXISTING_UUID)
-    @vm.runtime.stub(:powerState).and_return(VagrantPlugins::VSphere::Util::VmState::SUSPENDED)
+    @machine.provider.driver.stub(:suspended?).and_return(true)
+    @machine.provider.driver.stub(:powered_off?).and_return(false)
 
     call
 
-    expect(@vm).to have_received :PowerOnVM_Task
-    expect(@vm).to have_received :PowerOffVM_Task
+    expect(@machine.provider.driver).to have_received :power_on_vm
+    expect(@machine.provider.driver).to have_received :power_off_vm
   end
 end

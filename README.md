@@ -100,57 +100,118 @@ and `ssh`.
 
 This provider has the following settings, all are required unless noted:
 
-* `host` - IP or name for the vSphere API
-* `insecure` - _Optional_ verify SSL certificate from the host
-* `user` - user name for connecting to vSphere
-* `password` - password for connecting to vSphere. If no value is given, or the
+* `host` - string - IP or name for the vSphere API
+* `insecure` - _Optional_ boolean - verify SSL certificate from the host
+* `user` - string - user name for connecting to vSphere
+* `password` - string - password for connecting to vSphere. If no value is given, or the
   value is set to `:ask`, the user will be prompted to enter the password on
   each invocation.
-* `data_center_name` - _Optional_ datacenter containing the computed resource,
+* `data_center_name` - _Optional_ string - datacenter containing the computed resource,
   the template and where the new VM will be created, if not specified the first
   datacenter found will be used
-* `compute_resource_name` - _Required if cloning from template_ the name of the
+* `compute_resource_name` - string - _Required if cloning from template_ the name of the
   host or cluster containing the resource pool for the new VM
-* `resource_pool_name` - the resource pool for the new VM. If not supplied, and
+* `resource_pool_name` - string - the resource pool for the new VM. If not supplied, and
   cloning from a template, uses the root resource pool
-* `clone_from_vm` - _Optional_ use a virtual machine instead of a template as
+* `clone_from_vm` - _Optional_ string - use a virtual machine instead of a template as
   the source for the cloning operation
-* `template_name` - the VM or VM template to clone (including the full folder path)
-* `vm_base_path` - _Optional_ path to folder where new VM should be created, if
+* `template_name` - string - the VM or VM template to clone (including the full folder path)
+* `vm_base_path` - _Optional_ string - path to folder where new VM should be created, if
   not specified template's parent folder will be used
-* `name` - _Optional_ name of the new VM, if missing the name will be auto
+* `name` - _Optional_ string - name of the new VM, if missing the name will be auto
   generated
-* `customization_spec_name` - _Optional_ customization spec for the new VM
-* `data_store_name` - _Optional_ the datastore where the VM will be located
-* `linked_clone` - _Optional_ link the cloned VM to the parent to share virtual
+* `customization_spec_name` - _Optional_ string - customization spec for the new VM
+* `data_store_name` - _Optional_ string - the datastore where the VM will be located
+* `linked_clone` - _Optional_ string - link the cloned VM to the parent to share virtual
   disks
-* `proxy_host` - _Optional_ proxy host name for connecting to vSphere via proxy
-* `proxy_port` - _Optional_ proxy port number for connecting to vSphere via
+* `proxy_host` - _Optional_ string - proxy host name for connecting to vSphere via proxy
+* `proxy_port` - _Optional_ integer - proxy port number for connecting to vSphere via
   proxy
-* `vlan` - _Optional_ vlan to connect the first NIC to
-* `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
-* `cpu_count` - _Optional_ Configure the number of CPUs for the new VM
-* `mac` - _Optional_ Used to set the mac address of the new VM
-* `cpu_reservation` - _Optional_ Configure the CPU time (in MHz) to reserve for this VM
-* `mem_reservation` - _Optional_ Configure the memory (in MB) to reserve for this VM
-* `addressType` - _Optional_ Configure the address type of the
-  [vSphere Virtual Ethernet Card](https://www.vmware.com/support/developer/vc-sdk/visdk2xpubs/ReferenceGuide/vim.vm.device.VirtualEthernetCard.html)
-* `custom_attribute` - _Optional_ Add a
+* `memory_mb` - _Optional_ integer - Configure the amount of memory (in MB) for the new VM
+* `cpu_count` - _Optional_ integer - Configure the number of CPUs for the new VM
+* `cpu_reservation` - _Optional_ integer - Configure the CPU time (in MHz) to reserve for this VM
+* `mem_reservation` - _Optional_ integer - Configure the memory (in MB) to reserve for this VM
+* `custom_attribute` - _Optional_ hash - Add a
   [custom attribute](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0CB4QFjAAahUKEwiWwbWX59jHAhVBC5IKHa3HAEU&url=http%3A%2F%2Fpubs.vmware.com%2Fvsphere-51%2Ftopic%2Fcom.vmware.vsphere.vcenterhost.doc%2FGUID-25244732-D473-4857-A471-579257B6D95F.html&usg=AFQjCNGTSl4cauFrflUJpBeTBb0Yv7R13g&sig2=a9he6W2qVvBSZ5lCiXnENA)
   to the VM upon creation. This method takes a key/value pair,
   e.g. `vsphere.custom_attribute('timestamp', Time.now.to_s)`, and may be called
   multiple times to set different attributes.
-* `extra_config` - _Optional_ A hash of extra configuration values to add to
+* `extra_config` - _Optional_ hash - A hash of extra configuration values to add to
   the VM during creation. These are of the form `{'guestinfo.some.variable' => 'somevalue'}`,
   where the key must start with `guestinfo.`. VMs with VWware Tools installed can
   retrieve the value of these variables using the `vmtoolsd` command: `vmtoolsd --cmd 'info-get guestinfo.some.variable'`.
-* `notes` - _Optional_ Add arbitrary notes to the VM
-* `real_nic_ip` - _Optional_ true/false - Enable logic that forces the acquisition of the ssh IP address
-  for a target VM to be retrieved from the list of vm adapters on the host and filtered for a single legitimate
-  adapter with a defined interface.   An error will be raised if this filter is enabled and multiple valid
-  adapters exist on a host.
-* `ip_address_timeout` _ _Optional_ Maximum number of seconds to wait while an
-  IP address is obtained
+* `notes` - _Optional_ string - Add arbitrary notes to the VM
+* `wait_for_customization` - _Optional_ boolean - Wait for customization to complete before 
+  continuing. Set to false by default. 
+* `wait_for_customization_timeout` - _Optional_ integer - Timeout in seconds to wait for 
+  customization to complete before continuing. Set to 600 by default.   
+* `management_network_adapter_slot` - _Optional_ integer - zero based array of the card index.
+  This will be the network card to get the ip address from to use for communication between
+  Vagrant and the vm. If this is not set we will use the one detected by VSphere.
+* `management_network_adapter_address_family` - _Optional_ string - When auto detecting ip address to use for 
+  communication only detect specified ip address family. Possible values are 'ipv4' and 'ipv6'. If this value
+  is not set it will use the first ip address detected.
+* `destroy_unused_network_interfaces` - _Optional_ boolean - should network cards that have not been configured 
+  explicitly, be deleted. If set to false then existing network cards are left alone.
+* `network_adapter` - Array of network card configuration
+* `destroy_unused_serial_ports` - _Optional_ boolean - should serial ports that have not been configured 
+  explicitly, be deleted. If set to false then existing serial ports are left alone.
+* `serial_port` - Array of serial port configuration
+
+## Network card configuration
+* `slot` - integer - zero based array of the card index
+* `allow_guest_control` - _Optional_ boolean - Configure the address type of the
+* `connected` - _Optional_ boolean - is the vm network card connected to the network
+* `start_connected` - _Optional_ boolean - When VM is turned on should the vm network card be connected to the network
+* `vlan` - _Optional_ string - vlan to connect the network card to
+* `address_type` - _Optional_ - Configure the address type of the
+  [vSphere Virtual Ethernet Card](https://www.vmware.com/support/developer/vc-sdk/visdk2xpubs/ReferenceGuide/vim.vm.device.VirtualEthernetCard.html)
+* `mac_address` - _Optional_ string - Used to set the mac address of the network card
+* `ip_address` - _Optional_ string - Do not auto detect the ip address for this network card, assume it is the ip
+  address specified. Use this when guest tools cannot be installed on the vm. One approach is to specify static mac address 
+  for vm and reserve ip address on DHCP server for mac address.
+* `wake_on_lan_enabled` - _Optional_ boolean - should vm turn on when magic packet is received on network card
+
+## Serial port configuration
+* `yield_on_poll` - _Optional_ boolean - Enables CPU yield behavior. If you set yieldOnPoll to true, the virtual machine will 
+  periodically relinquish the processor if its sole task is polling the virtual serial port. The amount of time it takes to 
+  regain the processor will depend on the degree of other virtual machine activity on the host.
+* `connected` - _Optional_ boolean - is the vm serial port connected
+* `start_connected` - _Optional_ boolean - When VM is turned on should the vm serial port be connected
+* `backing` - _Optional_ string - The type of serial port backing to use. Possible values are 'uri', 'pipe', 'file', 'device'.
+  
+  `uri` supports a connection between the virtual machine and a resource on the network. The virtual machine can initiate a connection 
+  with the network resource, or it can listen for connections originating from the network. 
+
+  `pipe` supports I/O through a named pipe. The pipe connects the virtual machine to a host application or a virtual machine on the same host. 
+
+  `file` supports output through the virtual serial port to a file on the same host.
+
+  `device` supports a connection between the virtual machine and a device that is connected to a physical serial port on the host.
+
+### uri
+* `direction` - _Optional_ string - The direction of the connection. Possible values are 'client' and 'server'
+* `proxy_uri` - _Optional_ string - Identifies a proxy service that provides network access to the serviceURI. If you specify 
+  a proxy URI, the virtual machine initiates a connection with the proxy service and forwards the serviceURI and direction to the proxy. 
+* `service_uri` - _Optional_ string - Identifies the local host or a system on the network, depending on the value of 
+  direction. If you use the virtual machine as a server, the URI identifies the host on which the virtual machine 
+  runs. In this case, the host name part of the URI should be empty, or it should specify the address of the local host. 
+  If you use the virtual machine as a client, the URI identifies the remote system on the network.
+
+### pipe
+* `endpoint` - _Optional_ string - Indicates the role the virtual machine assumes as an endpoint for the pipe. 
+  Possible values are 'client' and 'server'
+* `no_rx_loss` - _Optional_ boolean - Enables optimized data transfer over the pipe. When you use this feature, 
+  the ESX server buffers data to prevent data overrun. This allows the virtual machine to read all of the data 
+  transferred over the pipe with no data loss. To use optimized data transfer, set noRxLoss to true. To disable 
+  this feature, set the property to false.
+
+### file
+* `file_name` - _Optional_ string - Filename for the host file used in this backing. 
+
+### device
+* `device_name` - _Optional_ string - The name of the device on the host system.  
+* `use_auto_detect` - _Optional_ boolean - Indicates whether the device should be auto detected instead of directly specified. If this value is set to TRUE, deviceName is ignored. 
 
 ### Cloning from a VM rather than a template
 
