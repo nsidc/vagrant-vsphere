@@ -1,5 +1,6 @@
 require 'rbvmomi'
 require 'pathname'
+require 'vSphere/driver'
 require 'vSphere/errors'
 require 'vSphere/action'
 require 'vSphere/action/close_vsphere'
@@ -87,7 +88,13 @@ RSpec.configure do |config|
                       :data_dir => Pathname.new(''),
                       :id => nil,
                       :id= => nil,
-                      :guest => double('guest', capability: nil)
+                      :guest => double('guest', capability: nil),
+                      :provider => double('provider', driver: double('driver',
+                                                                     :suspended? => nil,
+                                                                     :powered_off? => nil,
+                                                                     :power_on_vm => nil,
+                                                                     :power_off_vm => nil
+                                                                    ))
 
     @env = {
       machine: @machine,
