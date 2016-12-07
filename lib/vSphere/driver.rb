@@ -543,7 +543,9 @@ module VagrantPlugins
           end
         end
 
-        fail(Errors::VSphereError, :missing_vlan + ' - ' + name) if base.nil?
+        puts I18n.t( :missing_vlan + ' - ' + name)
+
+        fail(Errors::VSphereError, :missing_vlan) if base.nil?
 
         base
       end
