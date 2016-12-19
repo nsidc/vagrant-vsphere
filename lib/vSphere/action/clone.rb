@@ -35,14 +35,14 @@ module VagrantPlugins
 
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
 
-            # env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil?
-            # add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil?
+            env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil? || !config.networks.empty?
+            add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil? || !config.networks.empty?
 
-            # env[:ui].info "Setting custom mac: #{config.mac}" unless config.mac.nil?
-            # add_custom_mac(template, spec, config.mac) unless config.mac.nil?
+            env[:ui].info "Setting custom mac: #{config.mac}" unless config.mac.nil? || !config.networks.empty?
+            add_custom_mac(template, spec, config.mac) unless config.mac.nil? || !config.networks.empty?
 
-            # env[:ui].info "Setting custom vlan: #{config.vlan}" unless config.vlan.nil?
-            # add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
+            env[:ui].info "Setting custom vlan: #{config.vlan}" unless config.vlan.nil? || !config.networks.empty?
+            add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil? || !config.networks.empty?
 
             env[:ui].info "Setting custom networks: #{config.networks}" unless config.networks.empty?
             add_custom_networks(template, spec, config.networks) unless config.networks.empty?
@@ -283,7 +283,7 @@ module VagrantPlugins
             adaptertype = net[:adaptertype] || ''
             mac = net[:mac] || ''
             if mac == ''
-              addresstype = net[:addresstype] || 'generated'
+              addresstype = 'generated'
             else
               addresstype = 'manual'
             end
