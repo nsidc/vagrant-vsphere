@@ -35,14 +35,17 @@ module VagrantPlugins
 
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
 
-            env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil?
-            add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil?
+            # env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil?
+            # add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil?
 
-            env[:ui].info "Setting custom mac: #{config.mac}" unless config.mac.nil?
-            add_custom_mac(template, spec, config.mac) unless config.mac.nil?
+            # env[:ui].info "Setting custom mac: #{config.mac}" unless config.mac.nil?
+            # add_custom_mac(template, spec, config.mac) unless config.mac.nil?
 
-            env[:ui].info "Setting custom vlan: #{config.vlan}" unless config.vlan.nil?
-            add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
+            # env[:ui].info "Setting custom vlan: #{config.vlan}" unless config.vlan.nil?
+            # add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
+
+            env[:ui].info "Setting custom networks: #{config.networks}" unless config.networks.empty?
+            add_custom_networks(template, spec, config.networks) unless config.networks.empty?
 
             env[:ui].info "Setting custom memory: #{config.memory_mb}" unless config.memory_mb.nil?
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
@@ -264,6 +267,53 @@ module VagrantPlugins
               # not connected to a distibuted switch?
               card.backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(network: network, deviceName: network.name)
             end
+          end
+        end
+
+        def add_custom_networks(template, spec, networks)
+          spec[:config][:deviceChange] ||= []
+          cards = template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard)
+          cards.each do |card|
+            dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(device: card, operation: 'remove')
+            spec[:config][:deviceChange].push dev_spec
+          end
+
+          networks.each do |net|
+            network = net[:network] || ''
+            adaptertype = net[:adaptertype] || ''
+            mac = net[:mac] || ''
+            if mac == ''
+              addresstype = net[:addresstype] || 'generated'
+            else
+              addresstype = 'manual'
+            end
+            backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(
+              deviceName: network)
+            if adaptertype == 'e1000'
+              card_device = RbVmomi::VIM::VirtualE1000(
+                      key: -1,
+                      deviceInfo: {
+                        label: '',
+                        summary: network,
+                      },
+                      backing: backing,
+                      addressType: addresstype,
+                      macAddress: mac
+                    )
+            else
+              card_device = RbVmomi::VIM::VirtualVmxnet3(
+                      key: -1,
+                      deviceInfo: {
+                        label: '',
+                        summary: network,
+                      },
+                      backing: backing,
+                      addressType: addresstype,
+                      macAddress: mac
+                    )
+            end
+            dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(device: card_device, operation: 'add')
+            spec[:config][:deviceChange].push dev_spec
           end
         end
 
