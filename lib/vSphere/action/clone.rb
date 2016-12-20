@@ -35,8 +35,8 @@ module VagrantPlugins
 
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
 
-            env[:ui].info "Setting custom disks: #{config.disks}" unless config.disks.nil?
-            add_custom_disks(template, spec, config.disks) unless config.disks.nil?
+            env[:ui].info "Setting custom disks: #{config.disks}" unless config.disks.empty?
+            add_custom_disks(template, spec, config.disks) unless config.disks.empty?
 
             env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil? || !config.networks.empty?
             add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil? || !config.networks.empty?
