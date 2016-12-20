@@ -120,6 +120,9 @@ This provider has the following settings, all are required unless noted:
   not specified template's parent folder will be used
 * `name` - _Optional_ name of the new VM, if missing the name will be auto
   generated
+* `disks` - _Optional_ Additional disks to attach to VM.
+  * `size` - _Required_ disk size in GB
+  * `type` - _Optional_ disk type in `thin`, `lazy`, `eager_zeroed`. Default is `lazy`
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
 * `linked_clone` - _Optional_ link the cloned VM to the parent to share virtual

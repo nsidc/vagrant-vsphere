@@ -35,6 +35,9 @@ module VagrantPlugins
 
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
 
+            env[:ui].info "Setting custom disks: #{config.disks}" unless config.disks.nil?
+            add_custom_disks(template, spec, config.disks) unless config.disks.nil?
+
             env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil?
             add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil?
 
@@ -222,6 +225,53 @@ module VagrantPlugins
             template.parent
           else
             dc.vmFolder.traverse(config.vm_base_path, RbVmomi::VIM::Folder, true)
+          end
+        end
+
+        def add_custom_disks(template, spec, disks)
+          spec[:config][:deviceChange] ||= []
+          # Get necessary variables
+          unit_number = 0
+          controllerkey = 1000
+          datastore = ""
+          old_disks = template.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk)
+          old_disks.each do |d|
+            unit_number = d.unitNumber if d.unitNumber > unit_number
+            controllerkey = d.controllerKey
+            datastore = d.backing.datastore.name
+          end
+          # Generate spec
+          disks.each do |disk|
+            unit_number += 1
+            size = disk[:size]
+            disk_types = ['thin', 'eager_zeroed', 'lazy']
+            disk_type = disk[:type] || 'lazy'
+            fail Errors::VSphereError, :disk_type_error if !disk_types.include?(disk_type)
+
+            thinProvisioned = false
+            eagerlyScrub = false
+            if disk_type == 'thin'
+              thinProvisioned = true
+            elsif disk_type == 'eager_zeroed'
+              eagerlyScrub = true
+            end
+
+            backing = RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
+              diskMode: 'persistent',
+              thinProvisioned: thinProvisioned,
+              eagerlyScrub: eagerlyScrub,
+              fileName: "[#{datastore}]",
+            )
+            disk_device = RbVmomi::VIM::VirtualDisk(
+              key: -1,
+              backing: backing,
+              capacityInKB: 1024 * 1024 * Integer(size),
+              unitNumber: unit_number,
+              controllerKey: controllerkey,
+            )
+
+            dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(device: disk_device, operation: 'add', fileOperation: 'create')
+            spec[:config][:deviceChange].push dev_spec
           end
         end
 
