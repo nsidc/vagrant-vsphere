@@ -21,7 +21,6 @@ module VagrantPlugins
 
         def filter_guest_nic(vm, machine)
           ssh_cidr = machine.provider_config.ssh_cidr
-          puts vm.guest.net.to_yaml
           if ssh_cidr.nil?
             return vm.guest.ipAddress unless machine.provider_config.real_nic_ip
             ip_addresses = vm.guest.net.select { |g| g.deviceConfigId > 0 }.map { |g| g.ipAddress[0] }
