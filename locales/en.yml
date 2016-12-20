@@ -54,6 +54,8 @@ en:
         Customization of VM not succeeded within timeout.
       wait_for_ip_address_timeout: |-
         Timeout while waiting for ip address
+      disk_type_error: |-
+        Disk type is not correct
 
     config:
       host: |-
