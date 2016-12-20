@@ -48,7 +48,7 @@ module VagrantPlugins
             add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil? || !config.networks.empty?
 
             env[:ui].info "Setting custom networks: #{config.networks}" unless config.networks.empty?
-            add_custom_networks(template, spec, config.networks) unless config.networks.empty?
+            add_custom_networks(template, spec, dc, config.networks) unless config.networks.empty?
 
             env[:ui].info "Setting custom memory: #{config.memory_mb}" unless config.memory_mb.nil?
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
@@ -320,7 +320,7 @@ module VagrantPlugins
           end
         end
 
-        def add_custom_networks(template, spec, networks)
+        def add_custom_networks(template, spec, dc, networks)
           spec[:config][:deviceChange] ||= []
           cards = template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard)
           cards.each do |card|
@@ -329,7 +329,8 @@ module VagrantPlugins
           end
 
           networks.each do |net|
-            network = net[:network] || ''
+            network_label = net[:network] || ''
+            network = get_network_by_name(dc, network_label)
             adaptertype = net[:adaptertype] || ''
             mac = net[:mac] || ''
             if mac == ''
@@ -337,14 +338,20 @@ module VagrantPlugins
             else
               addresstype = 'manual'
             end
-            backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(
-              deviceName: network)
+
+            begin
+              switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(switchUuid: network.config.distributedVirtualSwitch.uuid, portgroupKey: network.key)
+              backing = RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo(port: switch_port)
+            rescue
+              # not connected to a distibuted switch?
+              backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(network: network, deviceName: network.name)
+            end
             if adaptertype == 'e1000'
               card_device = RbVmomi::VIM::VirtualE1000(
                       key: -1,
                       deviceInfo: {
                         label: '',
-                        summary: network,
+                        summary: network.name,
                       },
                       backing: backing,
                       addressType: addresstype,
@@ -355,7 +362,7 @@ module VagrantPlugins
                       key: -1,
                       deviceInfo: {
                         label: '',
-                        summary: network,
+                        summary: network.name,
                       },
                       backing: backing,
                       addressType: addresstype,
