@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   # https://github.com/nsidc/vagrant-vsphere/issues/139
   s.add_dependency 'rbvmomi', '>=1.8.2', '<2.0.0'
   s.add_dependency 'i18n', '>= 0.6.4', '< 0.8.0'
+  s.add_dependency 'netaddr', '>=1.5'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec-core'

@@ -1,5 +1,6 @@
 require 'rbvmomi'
 require 'vSphere/util/vim_helpers'
+require 'netaddr'
 
 module VagrantPlugins
   module VSphere
@@ -19,10 +20,21 @@ module VagrantPlugins
         private
 
         def filter_guest_nic(vm, machine)
-          return vm.guest.ipAddress unless machine.provider_config.real_nic_ip
-          ip_addresses = vm.guest.net.select { |g| g.deviceConfigId > 0 }.map { |g| g.ipAddress[0] }
-          fail Errors::VSphereError.new, :'multiple_interface_with_real_nic_ip_set' if ip_addresses.size > 1
-          ip_addresses.first
+          ssh_cidr = machine.provider_config.ssh_cidr
+          puts vm.guest.net.to_yaml
+          if ssh_cidr.nil?
+            return vm.guest.ipAddress unless machine.provider_config.real_nic_ip
+            ip_addresses = vm.guest.net.select { |g| g.deviceConfigId > 0 }.map { |g| g.ipAddress[0] }
+            fail Errors::VSphereError.new, :'multiple_interface_with_real_nic_ip_set' if ip_addresses.size > 1
+            ip_addresses.first
+          else
+            ssh_ips = NetAddr::CIDR.create(ssh_cidr).enumerate
+            vm.guest.net.each do |nic_info|
+              nic_info.ipAddress.each do |ip|
+                return ip if ssh_ips.include?(ip)
+              end
+            end
+          end
         end
 
         def get_ssh_info(connection, machine)

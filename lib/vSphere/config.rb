@@ -32,6 +32,7 @@ module VagrantPlugins
       attr_accessor :notes
       attr_accessor :networks
       attr_accessor :disks
+      attr_accessor :ssh_cidr
 
       attr_reader :custom_attributes
 

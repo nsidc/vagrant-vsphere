@@ -152,6 +152,7 @@ This provider has the following settings, all are required unless noted:
   for a target VM to be retrieved from the list of vm adapters on the host and filtered for a single legitimate
   adapter with a defined interface.   An error will be raised if this filter is enabled and multiple valid
   adapters exist on a host.
+* `ssh_cidr` - _Optional_ This is a filter that vagrant will only use the ip address in this cidr to connect
 * `ip_address_timeout` _ _Optional_ Maximum number of seconds to wait while an
   IP address is obtained
 * `networks` - _Optional_ List of networks attached to VM. This property will shadow `vlan`, `addressType`, `mac` properties
