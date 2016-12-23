@@ -67,6 +67,9 @@ module VagrantPlugins
             env[:ui].info "Setting custom cpu_mmu_type: #{config.cpu_mmu_type}" unless config.cpu_mmu_type.nil?
             add_custom_mmu(template, spec, config.cpu_mmu_type) unless config.cpu_mmu_type.nil?
 
+            env[:ui].info "Setting nested hardware virtualization to: #{config.nested_hv}" unless config.nested_hv.nil?
+            add_custom_nested_hv(template, spec, config.nested_hv) unless config.nested_hv.nil?
+
             if !config.clone_from_vm && ds.is_a?(RbVmomi::VIM::StoragePod)
 
               storage_mgr = connection.serviceContent.storageResourceManager
@@ -422,6 +425,15 @@ module VagrantPlugins
           end
           spec[:config][:flags] = flags
         end
+
+        def add_custom_nested_hv(template, spec, nested)
+          if nested == true
+            spec[:config][:nestedHVEnabled] = true
+          else
+            spec[:config][:nestedHVEnabled] = false
+          end
+        end
+
       end
     end
   end

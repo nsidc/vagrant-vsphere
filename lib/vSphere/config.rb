@@ -34,6 +34,7 @@ module VagrantPlugins
       attr_accessor :disks
       attr_accessor :ssh_cidr
       attr_accessor :cpu_mmu_type
+      attr_accessor :nested_hv
 
       attr_reader :custom_attributes
 

@@ -137,7 +137,8 @@ This provider has the following settings, all are required unless noted:
 * `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
 * `cpu_count` - _Optional_ Configure the number of CPUs for the new VM
 * `cpu_reservation` - _Optional_ Configure the CPU time (in MHz) to reserve for this VM
-* `cpu_mmu_type` - _Optional_ Configure CPU and MMU virtualization support type 
+* `cpu_mmu_type` - _Optional_ Configure CPU and MMU virtualization support type
+* `nested_hv` - _Optional_ Expose nested hardware virtualization to VM
 * `mem_reservation` - _Optional_ Configure the memory (in MB) to reserve for this VM
 * `custom_attribute` - _Optional_ Add a
   [custom attribute](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0CB4QFjAAahUKEwiWwbWX59jHAhVBC5IKHa3HAEU&url=http%3A%2F%2Fpubs.vmware.com%2Fvsphere-51%2Ftopic%2Fcom.vmware.vsphere.vcenterhost.doc%2FGUID-25244732-D473-4857-A471-579257B6D95F.html&usg=AFQjCNGTSl4cauFrflUJpBeTBb0Yv7R13g&sig2=a9he6W2qVvBSZ5lCiXnENA)
