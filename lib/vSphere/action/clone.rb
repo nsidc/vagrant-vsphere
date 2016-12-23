@@ -64,6 +64,9 @@ module VagrantPlugins
             add_custom_extra_config(spec, config.extra_config) unless config.extra_config.empty?
             add_custom_notes(spec, config.notes) unless config.notes.nil?
 
+            env[:ui].info "Setting custom cpu_mmu_type: #{config.cpu_mmu_type}" unless config.cpu_mmu_type.nil?
+            add_custom_mmu(template, spec, config.cpu_mmu_type) unless config.cpu_mmu_type.nil?
+
             if !config.clone_from_vm && ds.is_a?(RbVmomi::VIM::StoragePod)
 
               storage_mgr = connection.serviceContent.storageResourceManager
@@ -400,6 +403,24 @@ module VagrantPlugins
 
         def add_custom_notes(spec, notes)
           spec[:config][:annotation] = notes
+        end
+
+        def add_custom_mmu(template, spec, mmu)
+          flags = template.config.flags.dup
+          if mmu == 'software'
+            flags.virtualMmuUsage = 'off'
+            flags.virtualExecUsage = 'hvOff'
+          elsif mmu == 'hardware'
+            flags.virtualMmuUsage = 'on'
+            flags.virtualExecUsage = 'hvOn'
+          elsif mmu == 'half'
+            flags.virtualMmuUsage = 'off'
+            flags.virtualExecUsage = 'hvOn'
+          else
+            flags.virtualMmuUsage = 'automatic'
+            flags.virtualExecUsage = 'hvAuto'
+          end
+          spec[:config][:flags] = flags
         end
       end
     end

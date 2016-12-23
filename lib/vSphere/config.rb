@@ -33,6 +33,7 @@ module VagrantPlugins
       attr_accessor :networks
       attr_accessor :disks
       attr_accessor :ssh_cidr
+      attr_accessor :cpu_mmu_type
 
       attr_reader :custom_attributes
 
