@@ -29,14 +29,11 @@ module VagrantPlugins
             fail Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && ds.is_a?(RbVmomi::VIM::StoragePod)
 
             location = get_location ds, dc, machine, template
-            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: true, template: false
+            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: false, template: false
             spec[:config] = RbVmomi::VIM.VirtualMachineConfigSpec
             customization_info = get_customization_spec_info_by_name connection, machine
 
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
-
-            env[:ui].info "Setting custom disks: #{config.disks}" unless config.disks.empty?
-            add_custom_disks(template, spec, config.disks) unless config.disks.empty?
 
             env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil? || !config.networks.empty?
             add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil? || !config.networks.empty?
@@ -108,6 +105,14 @@ module VagrantPlugins
                 new_vm.setCustomValue(key: k, value: v)
               end
             end
+            machine.id = new_vm.config.uuid
+
+            env[:ui].info "Setting custom disks: #{config.disks}" unless config.disks.empty?
+            add_custom_disks(new_vm, config.disks) unless config.disks.empty?
+
+            env[:ui].info I18n.t('vsphere.power_on_vm')
+            new_vm.PowerOnVM_Task.wait_for_completion
+
           rescue Errors::VSphereError
             raise
           rescue StandardError => e
@@ -115,8 +120,6 @@ module VagrantPlugins
           end
 
           # TODO: handle interrupted status in the environment, should the vm be destroyed?
-
-          machine.id = new_vm.config.uuid
 
           wait_for_sysprep(env, new_vm, connection, 600, 10) if machine.config.vm.guest.eql?(:windows)
 
@@ -237,13 +240,12 @@ module VagrantPlugins
           end
         end
 
-        def add_custom_disks(template, spec, disks)
-          spec[:config][:deviceChange] ||= []
+        def add_custom_disks(vm, disks)
           # Get necessary variables
           unit_number = 0
           controllerkey = 1000
           datastore = ""
-          old_disks = template.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk)
+          old_disks = vm.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk)
           old_disks.each do |d|
             unit_number = d.unitNumber if d.unitNumber > unit_number
             controllerkey = d.controllerKey
@@ -278,9 +280,9 @@ module VagrantPlugins
               unitNumber: unit_number,
               controllerKey: controllerkey,
             )
-
             dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(device: disk_device, operation: 'add', fileOperation: 'create')
-            spec[:config][:deviceChange].push dev_spec
+            disk_spec = RbVmomi::VIM::VirtualMachineConfigSpec(deviceChange: [dev_spec])
+            vm.ReconfigVM_Task(spec: disk_spec).wait_for_completion
           end
         end
 
