@@ -22,6 +22,8 @@ en:
       The VM has not been created
     vm_not_running: |-
       The VM is not running
+    vm_not_suspended: |-
+      The VM is not in suspended state
     wait_sysprep: |-
       Waiting for sysprep
 

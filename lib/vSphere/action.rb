@@ -166,6 +166,29 @@ module VagrantPlugins
         end
       end
 
+      def self.action_resume
+        Vagrant::Action::Builder.new.tap do |b|
+          b.use ConfigValidate
+          b.use ConnectVSphere
+          b.use Call, IsCreated do |env, b2|
+            unless env[:result]
+              b2.use MessageNotCreated
+              next
+            end
+
+            b2.use Call, IsSuspended do |env2, b3|
+              unless env2[:result]
+                b3.use MessageNotSuspended
+                next
+              end
+
+              b3.use PowerOn
+            end
+          end
+          b.use CloseVSphere
+        end
+      end
+
       def self.action_reload
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConnectVSphere
@@ -282,9 +305,11 @@ module VagrantPlugins
       autoload :GetState, action_root.join('get_state')
       autoload :IsCreated, action_root.join('is_created')
       autoload :IsRunning, action_root.join('is_running')
+      autoload :IsSuspended, action_root.join('is_suspended')
       autoload :MessageAlreadyCreated, action_root.join('message_already_created')
       autoload :MessageNotCreated, action_root.join('message_not_created')
       autoload :MessageNotRunning, action_root.join('message_not_running')
+      autoload :MessageNotSuspended, action_root.join('message_not_suspended')
       autoload :PowerOff, action_root.join('power_off')
       autoload :PowerOn, action_root.join('power_on')
       autoload :Suspend, action_root.join('suspend')
