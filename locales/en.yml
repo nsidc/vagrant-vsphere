@@ -14,6 +14,8 @@ en:
       Calling vSphere PowerOff
     power_on_vm: |-
       Calling vSphere PowerOn
+    suspend_vm: |-
+      Calling vSphere Supsend
     vm_already_created: |-
       The VM is already created
     vm_not_created: |-

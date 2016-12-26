@@ -18,6 +18,10 @@ module VagrantPlugins
           vm.PowerOffVM_Task.wait_for_completion
         end
 
+        def suspend_vm(vm)
+          vm.SuspendVM_Task.wait_for_completion
+        end
+
         def get_vm_state(vm)
           vm.runtime.powerState
         end
