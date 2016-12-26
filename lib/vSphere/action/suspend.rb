@@ -20,7 +20,10 @@ module VagrantPlugins
           # Powering off is a no-op if we can't find the VM or if it is already off
           unless vm.nil? || powered_off?(vm) || suspended?(vm)
             env[:ui].info I18n.t('vsphere.suspend_vm')
-            suspend_vm(vm)
+            suspend_vm(vm) do |progress|
+              env[:ui].clear_line
+              env[:ui].report_progress(progress, 100, false)
+            end
           end
 
           @app.call env

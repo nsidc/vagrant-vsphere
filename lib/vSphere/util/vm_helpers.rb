@@ -19,7 +19,14 @@ module VagrantPlugins
         end
 
         def suspend_vm(vm)
-          vm.SuspendVM_Task.wait_for_completion
+          task = vm.SuspendVM_Task()
+          if block_given?
+            task.wait_for_progress do |progress|
+              yield progress unless progress.nil?
+            end
+          else
+            task.wait_for_completion
+          end
         end
 
         def get_vm_state(vm)
