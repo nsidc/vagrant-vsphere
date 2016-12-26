@@ -254,6 +254,9 @@ module VagrantPlugins
           # Generate spec
           disks.each do |disk|
             unit_number += 1
+            # unit_number 7 reserved for scsi controller
+            unit_number += 1 if unit_number == 7
+            fail Errors::VSphereError, :'too_many_disks' if unit_number >= 16
             size = disk[:size]
             disk_types = ['thin', 'eager_zeroed', 'lazy']
             disk_type = disk[:type] || 'lazy'
