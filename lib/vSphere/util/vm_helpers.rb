@@ -153,7 +153,8 @@ module VagrantPlugins
           snapshot = enumerate_snapshots(vm).find { |s| s.name == name }
 
           # No snapshot matching "name"
-          return nil if snapshot.nil?
+          # return nil if snapshot.nil?
+          fail Errors::VSphereError, :snapshot_not_found if snapshot.nil?
 
           task = snapshot.snapshot.RevertToSnapshot_Task(suppressPowerOn: true)
 

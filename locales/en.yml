@@ -62,6 +62,8 @@ en:
         Disk type is not correct
       too_many_disks: |-
         Too many disks attached too one SCSI Controller
+      snapshot_not_found: |-
+        Snapshot not found
 
     config:
       host: |-
