@@ -32,6 +32,12 @@ Install using standard Vagrant plugin method:
 vagrant plugin install vagrant-vsphere
 ```
 
+Install this **hacked** vagrant plugin:
+
+```bash
+./tools/reinstall.sh
+```
+
 This will install the plugin from RubyGems.org.
 
 Alternatively, you can clone this repository and build the source with `gem
