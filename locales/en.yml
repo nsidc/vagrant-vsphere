@@ -14,12 +14,16 @@ en:
       Calling vSphere PowerOff
     power_on_vm: |-
       Calling vSphere PowerOn
+    suspend_vm: |-
+      Calling vSphere Supsend
     vm_already_created: |-
       The VM is already created
     vm_not_created: |-
       The VM has not been created
     vm_not_running: |-
       The VM is not running
+    vm_not_suspended: |-
+      The VM is not in suspended state
     wait_sysprep: |-
       Waiting for sysprep
 
@@ -54,6 +58,12 @@ en:
         Customization of VM not succeeded within timeout.
       wait_for_ip_address_timeout: |-
         Timeout while waiting for ip address
+      disk_type_error: |-
+        Disk type is not correct
+      too_many_disks: |-
+        Too many disks attached too one SCSI Controller
+      snapshot_not_found: |-
+        Snapshot not found
 
     config:
       host: |-

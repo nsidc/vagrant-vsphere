@@ -29,20 +29,23 @@ module VagrantPlugins
             fail Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && ds.is_a?(RbVmomi::VIM::StoragePod)
 
             location = get_location ds, dc, machine, template
-            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: true, template: false
+            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: false, template: false
             spec[:config] = RbVmomi::VIM.VirtualMachineConfigSpec
             customization_info = get_customization_spec_info_by_name connection, machine
 
             spec[:customization] = get_customization_spec(machine, customization_info) unless customization_info.nil?
 
-            env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil?
-            add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil?
+            env[:ui].info "Setting custom address: #{config.addressType}" unless config.addressType.nil? || !config.networks.empty?
+            add_custom_address_type(template, spec, config.addressType) unless config.addressType.nil? || !config.networks.empty?
 
-            env[:ui].info "Setting custom mac: #{config.mac}" unless config.mac.nil?
-            add_custom_mac(template, spec, config.mac) unless config.mac.nil?
+            env[:ui].info "Setting custom mac: #{config.mac}" unless config.mac.nil? || !config.networks.empty?
+            add_custom_mac(template, spec, config.mac) unless config.mac.nil? || !config.networks.empty?
 
-            env[:ui].info "Setting custom vlan: #{config.vlan}" unless config.vlan.nil?
-            add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil?
+            env[:ui].info "Setting custom vlan: #{config.vlan}" unless config.vlan.nil? || !config.networks.empty?
+            add_custom_vlan(template, dc, spec, config.vlan) unless config.vlan.nil? || !config.networks.empty?
+
+            env[:ui].info "Setting custom networks: #{config.networks}" unless config.networks.empty?
+            add_custom_networks(template, spec, dc, config.networks) unless config.networks.empty?
 
             env[:ui].info "Setting custom memory: #{config.memory_mb}" unless config.memory_mb.nil?
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
@@ -57,6 +60,12 @@ module VagrantPlugins
             add_custom_mem_reservation(spec, config.mem_reservation) unless config.mem_reservation.nil?
             add_custom_extra_config(spec, config.extra_config) unless config.extra_config.empty?
             add_custom_notes(spec, config.notes) unless config.notes.nil?
+
+            env[:ui].info "Setting custom cpu_mmu_type: #{config.cpu_mmu_type}" unless config.cpu_mmu_type.nil?
+            add_custom_mmu(template, spec, config.cpu_mmu_type) unless config.cpu_mmu_type.nil?
+
+            env[:ui].info "Setting nested hardware virtualization to: #{config.nested_hv}" unless config.nested_hv.nil?
+            add_custom_nested_hv(template, spec, config.nested_hv) unless config.nested_hv.nil?
 
             if !config.clone_from_vm && ds.is_a?(RbVmomi::VIM::StoragePod)
 
@@ -96,6 +105,14 @@ module VagrantPlugins
                 new_vm.setCustomValue(key: k, value: v)
               end
             end
+            machine.id = new_vm.config.uuid
+
+            env[:ui].info "Setting custom disks: #{config.disks}" unless config.disks.empty?
+            add_custom_disks(new_vm, config.disks) unless config.disks.empty?
+
+            env[:ui].info I18n.t('vsphere.power_on_vm')
+            new_vm.PowerOnVM_Task.wait_for_completion
+
           rescue Errors::VSphereError
             raise
           rescue StandardError => e
@@ -103,8 +120,6 @@ module VagrantPlugins
           end
 
           # TODO: handle interrupted status in the environment, should the vm be destroyed?
-
-          machine.id = new_vm.config.uuid
 
           wait_for_sysprep(env, new_vm, connection, 600, 10) if machine.config.vm.guest.eql?(:windows)
 
@@ -225,6 +240,55 @@ module VagrantPlugins
           end
         end
 
+        def add_custom_disks(vm, disks)
+          # Get necessary variables
+          unit_number = 0
+          controllerkey = 1000
+          datastore = ""
+          old_disks = vm.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk)
+          old_disks.each do |d|
+            unit_number = d.unitNumber if d.unitNumber > unit_number
+            controllerkey = d.controllerKey
+            datastore = d.backing.datastore.name
+          end
+          # Generate spec
+          disks.each do |disk|
+            unit_number += 1
+            # unit_number 7 reserved for scsi controller
+            unit_number += 1 if unit_number == 7
+            fail Errors::VSphereError, :'too_many_disks' if unit_number >= 16
+            size = disk[:size]
+            disk_types = ['thin', 'eager_zeroed', 'lazy']
+            disk_type = disk[:type] || 'lazy'
+            fail Errors::VSphereError, :disk_type_error if !disk_types.include?(disk_type)
+
+            thinProvisioned = false
+            eagerlyScrub = false
+            if disk_type == 'thin'
+              thinProvisioned = true
+            elsif disk_type == 'eager_zeroed'
+              eagerlyScrub = true
+            end
+
+            backing = RbVmomi::VIM::VirtualDiskFlatVer2BackingInfo(
+              diskMode: 'persistent',
+              thinProvisioned: thinProvisioned,
+              eagerlyScrub: eagerlyScrub,
+              fileName: "[#{datastore}]",
+            )
+            disk_device = RbVmomi::VIM::VirtualDisk(
+              key: -1,
+              backing: backing,
+              capacityInKB: 1024 * 1024 * Integer(size),
+              unitNumber: unit_number,
+              controllerKey: controllerkey,
+            )
+            dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(device: disk_device, operation: 'add', fileOperation: 'create')
+            disk_spec = RbVmomi::VIM::VirtualMachineConfigSpec(deviceChange: [dev_spec])
+            vm.ReconfigVM_Task(spec: disk_spec).wait_for_completion
+          end
+        end
+
         def modify_network_card(template, spec)
           spec[:config][:deviceChange] ||= []
           @card ||= template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first
@@ -267,6 +331,60 @@ module VagrantPlugins
           end
         end
 
+        def add_custom_networks(template, spec, dc, networks)
+          spec[:config][:deviceChange] ||= []
+          cards = template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard)
+          cards.each do |card|
+            dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(device: card, operation: 'remove')
+            spec[:config][:deviceChange].push dev_spec
+          end
+
+          networks.each do |net|
+            network_label = net[:network] || ''
+            network = get_network_by_name(dc, network_label)
+            adaptertype = net[:adaptertype] || ''
+            mac = net[:mac] || ''
+            if mac == ''
+              addresstype = 'generated'
+            else
+              addresstype = 'manual'
+            end
+
+            begin
+              switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(switchUuid: network.config.distributedVirtualSwitch.uuid, portgroupKey: network.key)
+              backing = RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo(port: switch_port)
+            rescue
+              # not connected to a distibuted switch?
+              backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(network: network, deviceName: network.name)
+            end
+            if adaptertype == 'e1000'
+              card_device = RbVmomi::VIM::VirtualE1000(
+                      key: -1,
+                      deviceInfo: {
+                        label: '',
+                        summary: network.name,
+                      },
+                      backing: backing,
+                      addressType: addresstype,
+                      macAddress: mac
+                    )
+            else
+              card_device = RbVmomi::VIM::VirtualVmxnet3(
+                      key: -1,
+                      deviceInfo: {
+                        label: '',
+                        summary: network.name,
+                      },
+                      backing: backing,
+                      addressType: addresstype,
+                      macAddress: mac
+                    )
+            end
+            dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(device: card_device, operation: 'add')
+            spec[:config][:deviceChange].push dev_spec
+          end
+        end
+
         def add_custom_memory(spec, memory_mb)
           spec[:config][:memoryMB] = Integer(memory_mb)
         end
@@ -294,6 +412,33 @@ module VagrantPlugins
         def add_custom_notes(spec, notes)
           spec[:config][:annotation] = notes
         end
+
+        def add_custom_mmu(template, spec, mmu)
+          flags = template.config.flags.dup
+          if mmu == 'software'
+            flags.virtualMmuUsage = 'off'
+            flags.virtualExecUsage = 'hvOff'
+          elsif mmu == 'hardware'
+            flags.virtualMmuUsage = 'on'
+            flags.virtualExecUsage = 'hvOn'
+          elsif mmu == 'half'
+            flags.virtualMmuUsage = 'off'
+            flags.virtualExecUsage = 'hvOn'
+          else
+            flags.virtualMmuUsage = 'automatic'
+            flags.virtualExecUsage = 'hvAuto'
+          end
+          spec[:config][:flags] = flags
+        end
+
+        def add_custom_nested_hv(template, spec, nested)
+          if nested == true
+            spec[:config][:nestedHVEnabled] = true
+          else
+            spec[:config][:nestedHVEnabled] = false
+          end
+        end
+
       end
     end
   end

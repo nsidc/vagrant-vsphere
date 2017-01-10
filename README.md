@@ -32,6 +32,12 @@ Install using standard Vagrant plugin method:
 vagrant plugin install vagrant-vsphere
 ```
 
+Install this **hacked** vagrant plugin:
+
+```bash
+./tools/reinstall.sh
+```
+
 This will install the plugin from RubyGems.org.
 
 Alternatively, you can clone this repository and build the source with `gem
@@ -76,6 +82,10 @@ Vagrant.configure("2") do |config|
     vsphere.name = 'NEW VM NAME'
     vsphere.user = 'YOUR VMWARE USER'
     vsphere.password = 'YOUR VMWARE PASSWORD'
+    vsphere.networks = [
+      {'network': 'VM Network'},
+      {'network': 'VM Network 2'}
+    ]
   end
 end
 ```
@@ -120,6 +130,9 @@ This provider has the following settings, all are required unless noted:
   not specified template's parent folder will be used
 * `name` - _Optional_ name of the new VM, if missing the name will be auto
   generated
+* `disks` - _Optional_ Additional disks to attach to VM.
+  * `size` - _Required_ disk size in GB
+  * `type` - _Optional_ disk type in `thin`, `lazy`, `eager_zeroed`. Default is `lazy`
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
 * `linked_clone` - _Optional_ link the cloned VM to the parent to share virtual
@@ -127,14 +140,12 @@ This provider has the following settings, all are required unless noted:
 * `proxy_host` - _Optional_ proxy host name for connecting to vSphere via proxy
 * `proxy_port` - _Optional_ proxy port number for connecting to vSphere via
   proxy
-* `vlan` - _Optional_ vlan to connect the first NIC to
 * `memory_mb` - _Optional_ Configure the amount of memory (in MB) for the new VM
 * `cpu_count` - _Optional_ Configure the number of CPUs for the new VM
-* `mac` - _Optional_ Used to set the mac address of the new VM
 * `cpu_reservation` - _Optional_ Configure the CPU time (in MHz) to reserve for this VM
+* `cpu_mmu_type` - _Optional_ Configure CPU and MMU virtualization support type
+* `nested_hv` - _Optional_ Expose nested hardware virtualization to VM
 * `mem_reservation` - _Optional_ Configure the memory (in MB) to reserve for this VM
-* `addressType` - _Optional_ Configure the address type of the
-  [vSphere Virtual Ethernet Card](https://www.vmware.com/support/developer/vc-sdk/visdk2xpubs/ReferenceGuide/vim.vm.device.VirtualEthernetCard.html)
 * `custom_attribute` - _Optional_ Add a
   [custom attribute](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&cad=rja&uact=8&ved=0CB4QFjAAahUKEwiWwbWX59jHAhVBC5IKHa3HAEU&url=http%3A%2F%2Fpubs.vmware.com%2Fvsphere-51%2Ftopic%2Fcom.vmware.vsphere.vcenterhost.doc%2FGUID-25244732-D473-4857-A471-579257B6D95F.html&usg=AFQjCNGTSl4cauFrflUJpBeTBb0Yv7R13g&sig2=a9he6W2qVvBSZ5lCiXnENA)
   to the VM upon creation. This method takes a key/value pair,
@@ -149,8 +160,17 @@ This provider has the following settings, all are required unless noted:
   for a target VM to be retrieved from the list of vm adapters on the host and filtered for a single legitimate
   adapter with a defined interface.   An error will be raised if this filter is enabled and multiple valid
   adapters exist on a host.
+* `ssh_cidr` - _Optional_ This is a filter that vagrant will only use the ip address in this cidr to connect
 * `ip_address_timeout` _ _Optional_ Maximum number of seconds to wait while an
   IP address is obtained
+* `networks` - _Optional_ List of networks attached to VM. This property will shadow `vlan`, `addressType`, `mac` properties
+  * `network` - _Required_ Network name
+  * `adaptertype` - _Optional_ Either `e1000` or `vmxnet3`
+  * `mac` - _Optional_ Mac address of this adapter
+* `vlan` - (_Deprecated_ Please use `networks` instead)_Optional_ vlan to connect the first NIC to
+* `mac` - (_Deprecated_ Please use `networks` instead)_Optional_ Used to set the mac address of the new VM
+* `addressType` - (_Deprecated_ Please use `networks` instead)_Optional_ Configure the address type of the
+  [vSphere Virtual Ethernet Card](https://www.vmware.com/support/developer/vc-sdk/visdk2xpubs/ReferenceGuide/vim.vm.device.VirtualEthernetCard.html)
 
 ### Cloning from a VM rather than a template
 

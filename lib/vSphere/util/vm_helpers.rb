@@ -18,6 +18,17 @@ module VagrantPlugins
           vm.PowerOffVM_Task.wait_for_completion
         end
 
+        def suspend_vm(vm)
+          task = vm.SuspendVM_Task()
+          if block_given?
+            task.wait_for_progress do |progress|
+              yield progress unless progress.nil?
+            end
+          else
+            task.wait_for_completion
+          end
+        end
+
         def get_vm_state(vm)
           vm.runtime.powerState
         end
@@ -142,7 +153,8 @@ module VagrantPlugins
           snapshot = enumerate_snapshots(vm).find { |s| s.name == name }
 
           # No snapshot matching "name"
-          return nil if snapshot.nil?
+          # return nil if snapshot.nil?
+          fail Errors::VSphereError, :snapshot_not_found if snapshot.nil?
 
           task = snapshot.snapshot.RevertToSnapshot_Task(suppressPowerOn: true)
 

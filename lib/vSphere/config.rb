@@ -30,6 +30,11 @@ module VagrantPlugins
       attr_accessor :extra_config
       attr_accessor :real_nic_ip
       attr_accessor :notes
+      attr_accessor :networks
+      attr_accessor :disks
+      attr_accessor :ssh_cidr
+      attr_accessor :cpu_mmu_type
+      attr_accessor :nested_hv
 
       attr_reader :custom_attributes
 
@@ -37,6 +42,8 @@ module VagrantPlugins
         @ip_address_timeout = UNSET_VALUE
         @custom_attributes = {}
         @extra_config = {}
+        @networks = []
+        @disks = []
       end
 
       def finalize!
