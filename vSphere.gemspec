@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rbvmomi', '>=1.8.2', '<2.0.0'
   s.add_dependency 'i18n', '>= 0.6.4', '< 0.8.0'
 
-  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rake', '11.1.2' # pinned to accommodate rubocop 0.32.1
   s.add_development_dependency 'rspec-core'
   s.add_development_dependency 'rspec-expectations'
   s.add_development_dependency 'rspec-mocks'
