@@ -1,3 +1,7 @@
+## [1.11.1 (2017-02-27)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.11.1)
+  - Fix 'real_nic_ip' filter logic bug
+    ([vagrant-vsphere:fix_ssh_ip_selection](https://github.com/nsidc/vagrant-vsphere/pull/229))
+
 ## [1.11.0 (2016-11-23)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.11.0)
 
   - Wait for Windows sysprep when cloning a Windows box
