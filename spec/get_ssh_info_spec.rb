@@ -63,7 +63,7 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
                                              double('NetIpConfigInfoIpAddress',
                                                     ipAddress: '255.255.255.255', state: 'preferred')]
                                 )
-               ),
+               )
         ]
       }
     end
@@ -101,7 +101,7 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
                                                  double('NetIpConfigInfoIpAddress',
                                                         ipAddress: '255.255.255.255', state: 'preferred')]
                                     )
-                   ),
+                   )
             ]
           }
 
