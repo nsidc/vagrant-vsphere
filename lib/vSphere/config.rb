@@ -50,14 +50,13 @@ module VagrantPlugins
       def validate(machine)
         errors = _detected_errors
 
-        if password == :ask || password.nil?
+        if password == :ask
           self.password = machine.ui.ask('vSphere Password (will be hidden): ', echo: false)
         end
 
         # TODO: add blank?
         errors << I18n.t('vsphere.config.host') if host.nil?
-        errors <<  I18n.t('vsphere.config.user') if user.nil?
-        errors <<  I18n.t('vsphere.config.password') if password.nil?
+        errors <<  I18n.t('vsphere.config.user') if user.nil? && !password.nil?
         errors <<  I18n.t('vsphere.config.template') if template_name.nil?
 
         # Only required if we're cloning from an actual template

@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'nokogiri', '~>1.5'
   # force the use of at least rbvmomi 1.8.2 to work around concurrency errors:
   # https://github.com/nsidc/vagrant-vsphere/issues/139
-  s.add_dependency 'rbvmomi', '>=1.8.2', '<2.0.0'
+  s.add_dependency 'rbvmomi', '>=1.9.0', '<2.0.0'
   s.add_dependency 'i18n', '>= 0.6.4', '< 0.8.0'
 
   s.add_development_dependency 'rake', '11.1.2' # pinned to accommodate rubocop 0.32.1
