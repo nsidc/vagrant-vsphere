@@ -106,7 +106,7 @@ module VagrantPlugins
 
           machine.id = new_vm.config.uuid
 
-          wait_for_sysprep(env, new_vm, connection, 600, 10) if machine.config.vm.guest.eql?(:windows)
+          wait_for_sysprep(env, new_vm, connection, 600, 10) if config.wait_for_sysprep && machine.config.vm.guest.eql?(:windows)
 
           env[:ui].info I18n.t('vsphere.vm_clone_success')
 
