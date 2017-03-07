@@ -36,6 +36,7 @@ module VagrantPlugins
 
       def initialize
         @ip_address_timeout = UNSET_VALUE
+        @wait_for_sysprep = UNSET_VALUE
         @custom_attributes = {}
         @extra_config = {}
       end
