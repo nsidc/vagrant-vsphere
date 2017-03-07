@@ -66,7 +66,8 @@ RSpec.configure do |config|
         notes: nil,
         extra_config: {},
         ip_address_timeout: 1,
-        real_nic_ip: false)
+        real_nic_ip: false,
+        wait_for_sysprep: false)
     vm_config = double(
       vm: double('config_vm',
                  box: nil,
