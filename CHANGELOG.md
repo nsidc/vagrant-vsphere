@@ -1,3 +1,14 @@
+## [1.12.0 (2017-03-07)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.12.0)
+
+  - Make `wait_for_sysprep` functionality configurable (see README.md for
+    details). Defaults to `false` to resolve
+    #222. ([nsidc:make-sysprep-configurable](https://github.com/nsidc/vagrant-vsphere/pull/235))
+  - Fix issue (#231) where finding no adapters while waiting for the IP address
+    to be ready broke the `up`
+    process. ([nsidc:fix-filter-ssh](https://github.com/nsidc/vagrant-vsphere/pull/234))
+  - Fix installation of vagrant-vsphere under Vagrant
+    1.9.2. ([nsidc:fix-install-with-1.9.2](https://github.com/nsidc/vagrant-vsphere/pull/233))
+
 ## [1.11.1 (2017-02-27)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.11.1)
   - Fix 'real_nic_ip' filter logic bug
     ([vagrant-vsphere:fix_ssh_ip_selection](https://github.com/nsidc/vagrant-vsphere/pull/229))
