@@ -1,3 +1,10 @@
+## [1.12.1 (2017-03-07)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.12.1)
+
+  - If no valid adapters can be found on a host when using the `real_nic_ip`
+    option, fall back to the value of `vm.guest.ipAddress`. This resolves an
+    issue where the network changes made by Docker Swarm prevent vagrant-vsphere
+    from acquiring the VM's IP address.
+
 ## [1.12.0 (2017-03-07)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.12.0)
 
   - Make `wait_for_sysprep` functionality configurable (see README.md for
