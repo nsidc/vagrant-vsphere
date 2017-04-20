@@ -119,10 +119,11 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
       context 'when the VM networking is uninitialized' do
         before do
           allow(@vm.guest).to receive(:net) { [] }
+          allow(@vm.guest).to receive(:ipAddress) { '123.234.156.78' }
         end
-        it 'should set the ssh info to nil if no valid adapters are present' do
+        it 'should set the ssh info to the guest ipAddress and port 22 if no valid adapters are present' do
           call
-          expect(@env[:machine_ssh_info]).to eq nil
+          expect(@env[:machine_ssh_info]).to eq(host: '123.234.156.78', port: 22)
         end
       end
     end
