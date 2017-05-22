@@ -2,7 +2,7 @@
 
 # Vagrant vSphere Provider
 
-This is a [Vagrant](http://www.vagrantup.com) 1.6.4+ plugin that adds a
+This is a [Vagrant](http://www.vagrantup.com) 1.8.0+ plugin that adds a
 [vSphere](http://pubs.vmware.com/vsphere-50/index.jsp?topic=%2Fcom.vmware.wssdk.apiref.doc_50%2Fright-pane.html)
 provider to Vagrant, allowing Vagrant to control and provision machines using
 VMware. New machines are created from virtual machines or templates which must
@@ -13,7 +13,7 @@ This provider is built on top of the
 
 ## Requirements
 
-* Vagrant 1.6.4+
+* Vagrant 1.8.0+
 * VMware with vSphere API
 * Ruby 1.9+
 * libxml2, libxml2-dev, libxslt, libxslt-dev
