@@ -126,6 +126,34 @@ module VagrantPlugins
         end
       end
 
+      def resize_disk(index, new_capacity_in_kb)
+        return nil if @machine.id.nil?
+        config = machine.provider_config
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+
+          current_disks = Hash.new
+          vm.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk).each_with_index do |item, index|
+            current_disks[index] = item
+          end
+
+          if current_disks[index].capacityInKB != new_capacity_in_kb
+            @logger.info("Start resizing disk for vm #{@machine.id} for disk index #{index} to size of #{new_capacity_in_kb}")
+            current_disks[index].capacityInKB = new_capacity_in_kb
+            spec = {
+              deviceChange: [
+                {
+                  operation: :edit,
+                  device: current_disks[index]
+                }
+              ]
+            }
+            vm.ReconfigVM_Task(spec: spec).wait_for_completion
+            @logger.info("Finished resizing disk for vm #{@machine.id} for disk index #{index} to size of #{new_capacity_in_kb}")
+          end
+        end
+      end
+
       def clone(root_path)
         config = machine.provider_config
         connection do |conn|
@@ -149,6 +177,7 @@ module VagrantPlugins
             spec[:customization] = get_customization_spec(@machine, customization_info) unless customization_info.nil?
 
             spec = configure_network_cards(spec, dc, template, config)
+            spec = configure_disks(spec, dc, template, config)
 
             add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
             add_custom_cpu(spec, config.cpu_count) unless config.cpu_count.nil?
@@ -556,14 +585,14 @@ module VagrantPlugins
 
         # find all the configured private networks
         private_networks = machine.config.vm.networks.find_all { |n| n[0].eql? :private_network }
-        return customization_spec if private_networks.nil?
+        if !private_networks.nil?
+          # make sure we have enough NIC settings to override with the private network settings
+          fail Errors::VSphereError, :'too_many_private_networks' if private_networks.length > customization_spec.nicSettingMap.length
 
-        # make sure we have enough NIC settings to override with the private network settings
-        fail Errors::VSphereError, :'too_many_private_networks' if private_networks.length > customization_spec.nicSettingMap.length
-
-        # assign the private network IP to the NIC
-        private_networks.each_index do |idx|
-          customization_spec.nicSettingMap[idx].adapter.ip.ipAddress = private_networks[idx][1][:ip]
+          # assign the private network IP to the NIC
+          private_networks.each_index do |idx|
+            customization_spec.nicSettingMap[idx].adapter.ip.ipAddress = private_networks[idx][1][:ip]
+          end
         end
 
         customization_spec
@@ -889,6 +918,64 @@ module VagrantPlugins
 
         adapter
       end
+
+      def configure_disks(spec, dc, template, config)
+        # Enumerate lan cards
+        spec[:config][:deviceChange] ||= []
+
+        current_disks = Hash.new
+
+        template.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk).each_with_index do |item, index|
+          current_disks[index] = item
+        end
+
+        current_disks_length = current_disks.length
+
+        # configuration may have gaps in it, so configuration may look like this:
+        # vsphere.disk 0, size: 5000
+        # vsphere.disk 1, size: 10000
+        # vsphere.disk 9, size: 90000
+        config_disks_length = -1
+        config.disks.each_with_index do |_item, index|
+          if index > config_disks_length
+            config_disks_length = index
+          end
+        end
+        config_disks_length += 1
+
+        number_of_existing_disks = current_disks_length
+
+        # edit existing disks
+        if number_of_existing_disks > 0
+          for index in (0).upto(number_of_existing_disks)
+            disk_configuration = config.disks[index]
+            puts "disk_configuration[#{index}]=#{disk_configuration.inspect}"
+
+            # there may be no configuration for this disk so dont change it, if this is the case
+            unless disk_configuration.nil?
+              disk = current_disks[index]
+              disk = configure_disk(disk_configuration, disk)
+
+              edit_disk = {
+                :operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('edit'),
+                :device => disk
+              }
+
+              spec[:config][:deviceChange].push edit_disk
+              spec[:config][:deviceChange].uniq!
+            end
+          end
+        end
+
+        puts "spec[:config] = #{spec[:config].inspect}"
+
+        spec
+      end
+
+      def configure_disk(disk_configuration, disk)
+        disk.capacityInKB = disk_configuration.size
+        disk
+      end      
 
       def add_custom_memory(spec, memory_mb)
         spec[:config][:memoryMB] = Integer(memory_mb)

@@ -154,6 +154,7 @@ This provider has the following settings, all are required unless noted:
 * `destroy_unused_network_interfaces` - _Optional_ boolean - should network cards that have not been configured 
   explicitly, be deleted. If set to false then existing network cards are left alone.
 * `network_adapter` - Array of network card configuration
+* `disk` - Array of disk configuration
 * `destroy_unused_serial_ports` - _Optional_ boolean - should serial ports that have not been configured 
   explicitly, be deleted. If set to false then existing serial ports are left alone.
 * `serial_port` - Array of serial port configuration
@@ -171,6 +172,10 @@ This provider has the following settings, all are required unless noted:
   address specified. Use this when guest tools cannot be installed on the vm. One approach is to specify static mac address 
   for vm and reserve ip address on DHCP server for mac address.
 * `wake_on_lan_enabled` - _Optional_ boolean - should vm turn on when magic packet is received on network card
+
+## Disk configuration
+* `slot` - integer - zero based array of the disk index
+* `size` - integer - the size the disk should be resized to in kibibyte (1024 bytes)
 
 ## Serial port configuration
 * `yield_on_poll` - _Optional_ boolean - Enables CPU yield behavior. If you set yieldOnPoll to true, the virtual machine will 

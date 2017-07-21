@@ -37,6 +37,14 @@ module VagrantPlugins
         end
       end
 
+      class DiskConfiguration
+        attr_accessor :size
+
+        def initialize(disk_config)
+          @size = nil
+        end
+      end      
+
       class SerialPortConfiguration
         attr_accessor :yield_on_poll
         attr_accessor :connected
@@ -131,6 +139,7 @@ module VagrantPlugins
       attr_accessor :management_network_adapter_slot
       attr_accessor :management_network_adapter_address_family
       attr_reader :network_adapters
+      attr_reader :disks
       attr_reader :serial_ports
       attr_reader :custom_attributes
 
@@ -139,6 +148,7 @@ module VagrantPlugins
         @destroy_unused_network_interfaces = UNSET_VALUE
         @destroy_unused_serial_ports = UNSET_VALUE
         @network_adapters  = {}
+        @disks  = {}
         @custom_attributes = {}
         @serial_ports = {}
         @extra_config = {}
@@ -151,6 +161,10 @@ module VagrantPlugins
       def network_adapter(slot, **opts)
         @network_adapters[slot] = NetworkConfiguration.new opts
       end
+
+      def disk(slot, **opts)
+        @disks[slot] = DiskConfiguration.new opts
+      end      
 
       def serial_port(slot, **opts)
         @serial_ports[slot] = SerialPortConfiguration.new opts
