@@ -1,0 +1,1018 @@
+require 'log4r'
+require 'rbvmomi'
+require 'ipaddr'
+
+module VagrantPlugins
+  module VSphere
+    module VmState
+      POWERED_ON = 'poweredOn'
+      POWERED_OFF = 'poweredOff'
+      SUSPENDED = 'suspended'
+    end
+
+    class Driver
+      attr_reader :logger
+      attr_reader :machine
+
+      def initialize(machine)
+        @logger = Log4r::Logger.new("vagrant::provider::vsphere::driver")
+        @machine = machine
+      end
+
+      def connection
+        fail "connection be called from a code block!" unless block_given?
+
+        begin
+          config = @machine.provider_config
+
+          current_connection = RbVmomi::VIM.connect host: config.host,
+                                                    user: config.user, password: config.password,
+                                                    insecure: config.insecure, proxyHost: config.proxy_host,
+                                                    proxyPort: config.proxy_port
+
+          yield current_connection
+        rescue
+          raise
+        ensure
+          current_connection.close if current_connection
+        end
+      end
+
+      def ssh_info
+        return nil if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          return nil if vm.nil?
+          return nil unless vm.runtime.powerState.eql?(VmState::POWERED_ON)
+          ip_address = filter_guest_nic(vm, @machine)
+          return nil if ip_address.nil? || ip_address.empty?
+          {
+            host: ip_address,
+            port: 22
+          }
+        end
+      end
+
+      def state
+        return :not_created if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+
+          return :not_created if vm.nil?
+
+          if powered_on?
+            :running
+          else
+            # If the VM is powered off or suspended, we consider it to be powered off. A power on command will either turn on or resume the VM
+            :poweroff
+          end
+        end
+      end
+
+      def power_on_vm
+        return nil if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          @logger.info("Start powering on vm #{@machine.id}")
+          vm.PowerOnVM_Task.wait_for_completion
+          @logger.info("Finished powering on vm #{@machine.id}")
+        end
+      end
+
+      def power_off_vm
+        return nil if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          @logger.info("Start powering off vm #{@machine.id}")
+          vm.PowerOffVM_Task.wait_for_completion
+          @logger.info("Finished powering off vm #{@machine.id}")
+        end
+      end
+
+      def get_vm_state
+        return nil if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          vm.runtime.powerState
+        end
+      end
+
+      def powered_on?
+        return nil if @machine.id.nil?
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          vm.runtime.powerState.eql?(VmState::POWERED_ON)
+        end
+      end
+
+      def powered_off?
+        return nil if @machine.id.nil?
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          vm.runtime.powerState.eql?(VmState::POWERED_OFF)
+        end
+      end
+
+      def suspended?
+        return nil if @machine.id.nil?
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          vm.runtime.powerState.eql?(VmState::SUSPENDED)
+        end
+      end
+
+      def resize_disk(index, new_capacity_in_kb)
+        return nil if @machine.id.nil?
+        config = machine.provider_config
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+
+          current_disks = Hash.new
+          vm.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk).each_with_index do |item, index|
+            current_disks[index] = item
+          end
+
+          if current_disks[index].capacityInKB != new_capacity_in_kb
+            @logger.info("Start resizing disk for vm #{@machine.id} for disk index #{index} to size of #{new_capacity_in_kb}")
+            current_disks[index].capacityInKB = new_capacity_in_kb
+            spec = {
+              deviceChange: [
+                {
+                  operation: :edit,
+                  device: current_disks[index]
+                }
+              ]
+            }
+            vm.ReconfigVM_Task(spec: spec).wait_for_completion
+            @logger.info("Finished resizing disk for vm #{@machine.id} for disk index #{index} to size of #{new_capacity_in_kb}")
+          end
+        end
+      end
+
+      def clone(root_path)
+        config = machine.provider_config
+        connection do |conn|
+          name = get_name @machine, config, root_path
+          dc = get_datacenter conn, @machine
+          template = dc.find_vm config.template_name
+          fail Errors::VSphereError, :'missing_template' if template.nil?
+          vm_base_folder = get_vm_base_folder dc, template, config
+          fail Errors::VSphereError, :'invalid_base_path' if vm_base_folder.nil?
+
+          begin
+            # Storage DRS does not support vSphere linked clones. http://www.vmware.com/files/pdf/techpaper/vsphere-storage-drs-interoperability.pdf
+            ds = get_datastore dc, @machine
+            fail Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && ds.is_a?(RbVmomi::VIM::StoragePod)
+
+            location = get_location ds, dc, @machine, template
+
+            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: true, template: false
+            spec[:config] = RbVmomi::VIM.VirtualMachineConfigSpec
+            customization_info = get_customization_spec_info_by_name conn, @machine
+            spec[:customization] = get_customization_spec(@machine, customization_info) unless customization_info.nil?
+
+            spec = configure_network_cards(spec, dc, template, config)
+            spec = configure_disks(spec, dc, template, config)
+
+            add_custom_memory(spec, config.memory_mb) unless config.memory_mb.nil?
+            add_custom_cpu(spec, config.cpu_count) unless config.cpu_count.nil?
+            add_custom_cpu_reservation(spec, config.cpu_reservation) unless config.cpu_reservation.nil?
+            add_custom_mem_reservation(spec, config.mem_reservation) unless config.mem_reservation.nil?
+            add_custom_extra_config(spec, config.extra_config) unless config.extra_config.empty?
+            add_custom_notes(spec, config.notes) unless config.notes.nil?
+
+            if !config.clone_from_vm && ds.is_a?(RbVmomi::VIM::StoragePod)
+
+              storage_mgr = conn.serviceContent.storageResourceManager
+              pod_spec = RbVmomi::VIM.StorageDrsPodSelectionSpec(storagePod: ds)
+              # TODO: May want to add option on type?
+              storage_spec = RbVmomi::VIM.StoragePlacementSpec(type: 'clone', cloneName: name, folder: vm_base_folder, podSelectionSpec: pod_spec, vm: template, cloneSpec: spec)
+
+              @logger.info(I18n.t('vsphere.requesting_sdrs_recommendation'))
+              @logger.info(" -- DatastoreCluster: #{ds.name}")
+              @logger.info(" -- Template VM: #{template.pretty_path}")
+              @logger.info(" -- Target VM: #{vm_base_folder.pretty_path}/#{name}")
+
+              result = storage_mgr.RecommendDatastores(storageSpec: storage_spec)
+
+              recommendation = result.recommendations[0]
+              key = recommendation.key ||= ''
+              if key == ''
+                fail Errors::VSphereError, :missing_datastore_recommendation
+              end
+
+              @logger.info(I18n.t('vsphere.creating_cloned_vm_sdrs'))
+              @logger.info(" -- Storage DRS recommendation: #{recommendation.target.name} #{recommendation.reasonText}")
+
+              @logger.info("Start cloning vm #{@machine.id}")
+              task = storage_mgr.ApplyStorageDrsRecommendation_Task(key: [key])
+
+              apply_sr_result = nil
+              if block_given?
+                apply_sr_result = task.wait_for_progress do |progress|
+                  yield progress unless progress.nil?
+                end
+              else
+                apply_sr_result = task.wait_for_completion
+              end
+              @logger.info("Finished cloning vm #{@machine.id}")
+
+              new_vm = apply_sr_result.vm
+            else
+              @logger.info(I18n.t('vsphere.creating_cloned_vm'))
+              @logger.info(" -- #{config.clone_from_vm ? 'Source' : 'Template'} VM: #{template.pretty_path}")
+              @logger.info(" -- Target VM: #{vm_base_folder.pretty_path}/#{name}")
+
+              @logger.info("Start cloning vm #{@machine.id}")
+              task = template.CloneVM_Task(folder: vm_base_folder, name: name, spec: spec)
+              new_vm = nil
+              if block_given?
+                new_vm = task.wait_for_progress do |progress|
+                  yield progress unless progress.nil?
+                end
+              else
+                new_vm = task.wait_for_completion
+              end
+              @logger.info("Finished cloning vm #{@machine.id}")
+            end
+
+            config.custom_attributes.each do |k, v|
+              new_vm.setCustomValue(key: k, value: v)
+            end
+
+            if config.wait_for_customization
+              @logger.info I18n.t('vsphere.wait_for_customization')
+              vem = connection.serviceContent.eventManager
+
+              wait = true
+              waited_seconds = 0
+              sleep_time = 5
+
+              while wait
+                events = vem.QueryEvents(filter: RbVmomi::VIM::EventFilterSpec(entity: RbVmomi::VIM::EventFilterSpecByEntity(entity: new_vm, recursion: RbVmomi::VIM::EventFilterSpecRecursionOption(:self)), eventTypeId: ['CustomizationSucceeded']))
+
+                if events.size > 0
+                  events.each do |e|
+                    @logger.info e.fullFormattedMessage
+                  end
+                  wait = false
+                elsif waited_seconds >= config.wait_for_customization_timeout
+                  fail Errors::VSphereError, :'customization_timeout'
+                else
+                  sleep(sleep_time)
+                  waited_seconds += sleep_time
+                end
+              end
+            end
+          rescue Errors::VSphereError
+            raise
+            # rescue StandardError => e
+            #  raise Errors::VSphereError.new, e.message
+          end
+
+          # TODO: handle interrupted status in the environment, should the vm be destroyed?
+          @machine.id = new_vm.config.uuid
+        end
+      end
+
+      def destroy
+        return nil if @machine.id.nil?
+        return nil unless is_created
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          @logger.info("Start destroying vm #{@machine.id}")
+          task = vm.Destroy_Task
+          if block_given?
+            task.wait_for_progress do |progress|
+              yield progress unless progress.nil?
+            end
+          else
+            task.wait_for_completion
+          end
+          @logger.info("Finished destroying vm #{@machine.id}")
+        end
+
+        @machine.id = nil
+      end
+
+      def is_created
+        return false if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          return false if vm.nil?
+        end
+
+        true
+      end
+
+      def is_running
+        state == :running
+      end
+
+      def snapshot_list
+        return nil if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+          @logger.info("Start destroying vm #{@machine.id}")
+          snapshots = enumerate_snapshots(vm).map(&:name)
+          @logger.info("Finished destroying vm #{@machine.id}")
+          return snapshots
+        end
+      end
+
+      def delete_snapshot(snapshot_name)
+        return nil if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+
+          snapshot = enumerate_snapshots(vm).find { |s| s.name == snapshot_name }
+
+          # No snapshot matching "name"
+          return nil if snapshot.nil?
+
+          task = snapshot.snapshot.RemoveSnapshot_Task(removeChildren: false)
+
+          @logger.info("Start deleting snapshot #{snapshot_name} on vm #{@machine.id}")
+          if block_given?
+            task.wait_for_progress do |progress|
+              yield progress unless progress.nil?
+            end
+          else
+            task.wait_for_completion
+          end
+          @logger.info("Finished deleting snapshot #{snapshot_name} on vm #{@machine.id}")
+        end
+      end
+
+      def restore_snapshot(snapshot_name)
+        return nil if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+
+          snapshot = enumerate_snapshots(vm).find { |s| s.name == snapshot_name }
+
+          # No snapshot matching "name"
+          return nil if snapshot.nil?
+
+          task = snapshot.snapshot.RevertToSnapshot_Task(suppressPowerOn: true)
+
+          @logger.info("Start restoring snapshot #{snapshot_name} on vm #{@machine.id}")
+          if block_given?
+            task.wait_for_progress do |progress|
+              yield progress unless progress.nil?
+            end
+          else
+            task.wait_for_completion
+          end
+          @logger.info("Finished restoring snapshot #{snapshot_name} on vm #{@machine.id}")
+        end
+      end
+
+      def create_snapshot(snapshot_name)
+        return nil if @machine.id.nil?
+
+        connection do |conn|
+          vm = get_vm_by_uuid conn, @machine
+
+          task = vm.CreateSnapshot_Task(
+              name: name,
+              memory: false,
+              quiesce: false)
+
+          @logger.info("Start creating snapshot #{snapshot_name} on vm #{@machine.id}")
+
+          if block_given?
+            task.wait_for_progress do |progress|
+              yield progress unless progress.nil?
+            end
+          else
+            task.wait_for_completion
+          end
+
+          @logger.info("Finished creating snapshot #{snapshot_name} on vm #{@machine.id}")
+        end
+      end
+
+      private
+
+      # Enumerate VM snapshot tree
+      #
+      # This method returns an enumerator that performs a depth-first walk
+      # of the VM snapshot grap and yields each VirtualMachineSnapshotTree
+      # node.
+      #
+      # @param vm [RbVmomi::VIM::VirtualMachine]
+      #
+      # @return [Enumerator<RbVmomi::VIM::VirtualMachineSnapshotTree>]
+      def enumerate_snapshots(vm)
+        snapshot_info = vm.snapshot
+
+        if snapshot_info.nil?
+          snapshot_root = []
+        else
+          snapshot_root = snapshot_info.rootSnapshotList
+        end
+
+        recursor = lambda do |snapshot_list|
+          Enumerator.new do |yielder|
+            snapshot_list.each do |s|
+              # Yield the current VirtualMachineSnapshotTree object
+              yielder.yield s
+
+              # Recurse into child VirtualMachineSnapshotTree objects
+              children = recursor.call(s.childSnapshotList)
+              loop do
+                yielder.yield children.next
+              end
+            end
+          end
+        end
+
+        recursor.call(snapshot_root)
+      end
+
+      def filter_guest_nic(vm, machine)
+        config = machine.provider_config
+
+        if config.management_network_adapter_slot.nil?
+          return vm.guest.ipAddress
+        elsif config.network_adapters[config.management_network_adapter_slot].nil? || config.network_adapters[config.management_network_adapter_slot].ip_address.nil?
+          fail Errors::VSphereError.new, :'specified_mangement_interface_does_not_exist' unless config.management_network_adapter_slot < vm.guest.net.length
+
+          ipAddress = nil
+          case config.management_network_adapter_address_family
+          when 'ipv4'
+            ipAddress = vm.guest.net[config.management_network_adapter_slot].ipConfig.ipAddress.detect { |addr| IPAddr.new(addr.ipAddress).ipv4? && addr.origin != 'linklayer' }
+          when 'ipv6'
+            ipAddress = vm.guest.net[config.management_network_adapter_slot].ipConfig.ipAddress.detect { |addr| IPAddr.new(addr.ipAddress).ipv6? && addr.origin != 'linklayer' }
+          else
+            ipAddress = vm.guest.net[config.management_network_adapter_slot].ipConfig.ipAddress.detect { |addr| addr.origin != 'linklayer' }
+          end
+
+          return nil if ipAddress.nil?
+          return ipAddress.ipAddress
+        else
+          return config.network_adapters[config.management_network_adapter_slot].ip_address.to_s if config.network_adapters[config.management_network_adapter_slot].ip_address.is_a?(IPAddr)
+          return config.network_adapters[config.management_network_adapter_slot].ip_address
+        end
+      end
+
+      def get_datacenter(connection, machine)
+        connection.serviceInstance.find_datacenter(machine.provider_config.data_center_name) || fail(Errors::VSphereError, :missing_datacenter)
+      end
+
+      def get_vm_by_uuid(connection, machine)
+        get_datacenter(connection, machine).vmFolder.findByUuid machine.id
+      end
+
+      def get_resource_pool(datacenter, machine)
+        rp = get_compute_resource(datacenter, machine)
+
+        resource_pool_name = machine.provider_config.resource_pool_name || ''
+
+        entity_array = resource_pool_name.split('/')
+        entity_array.each do |entity_array_item|
+          next if entity_array_item.empty?
+          if rp.is_a? RbVmomi::VIM::Folder
+            rp = rp.childEntity.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
+          elsif rp.is_a? RbVmomi::VIM::ClusterComputeResource
+            rp = rp.resourcePool.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
+          elsif rp.is_a? RbVmomi::VIM::ResourcePool
+            rp = rp.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
+          elsif rp.is_a? RbVmomi::VIM::ComputeResource
+            rp = rp.resourcePool.find(resource_pool_name) || fail(Errors::VSphereError, :missing_resource_pool)
+          else
+            fail Errors::VSphereError, :missing_resource_pool
+          end
+        end
+        rp = rp.resourcePool if !rp.is_a?(RbVmomi::VIM::ResourcePool) && rp.respond_to?(:resourcePool)
+        rp
+      end
+
+      def get_compute_resource(datacenter, machine)
+        cr = find_clustercompute_or_compute_resource(datacenter, machine.provider_config.compute_resource_name)
+        fail Errors::VSphereError, :missing_compute_resource if cr.nil?
+        cr
+      end
+
+      def find_clustercompute_or_compute_resource(datacenter, path)
+        if path.is_a? String
+          es = path.split('/').reject(&:empty?)
+        elsif path.is_a? Enumerable
+          es = path
+        else
+          fail "unexpected path class #{path.class}"
+        end
+        return datacenter.hostFolder if es.empty?
+        final = es.pop
+
+        p = es.inject(datacenter.hostFolder) do |f, e|
+          f.find(e, RbVmomi::VIM::Folder) || return
+        end
+
+        begin
+          if (x = p.find(final, RbVmomi::VIM::ComputeResource))
+            x
+          elsif (x = p.find(final, RbVmomi::VIM::ClusterComputeResource))
+            x
+          end
+        rescue Exception
+          # When looking for the ClusterComputeResource there seems to be some parser error in RbVmomi Folder.find, try this instead
+          x = p.childEntity.find { |x2| x2.name == final }
+          if x.is_a?(RbVmomi::VIM::ClusterComputeResource) || x.is_a?(RbVmomi::VIM::ComputeResource)
+            x
+          else
+            puts 'ex unknown type ' + x.to_json
+            nil
+          end
+        end
+      end
+
+      def get_customization_spec_info_by_name(connection, machine)
+        name = machine.provider_config.customization_spec_name
+        return if name.nil? || name.empty?
+
+        manager = connection.serviceContent.customizationSpecManager
+        fail Errors::VSphereError, :null_configuration_spec_manager if manager.nil?
+
+        spec = manager.GetCustomizationSpec(name: name)
+        fail Errors::VSphereError, :missing_configuration_spec if spec.nil?
+
+        spec
+      end
+
+      def get_datastore(datacenter, machine)
+        name = machine.provider_config.data_store_name
+        return if name.nil? || name.empty?
+
+        # find_datastore uses folder datastore that only lists Datastore and not StoragePod, if not found also try datastoreFolder which contains StoragePod(s)
+        datacenter.find_datastore(name) || datacenter.datastoreFolder.traverse(name) || fail(Errors::VSphereError, :missing_datastore)
+      end
+
+      def get_network_by_name(dc, name)
+        base = dc.networkFolder
+        entity_array = name.split('/').reject(&:empty?)
+        entity_array.each do |item|
+          case base
+          when RbVmomi::VIM::Folder
+            base = base.find(item)
+          when RbVmomi::VIM::VmwareDistributedVirtualSwitch
+            idx = base.summary.portgroupName.find_index(item)
+            base = idx.nil? ? nil : base.portgroup[idx]
+          end
+        end
+
+        puts 'vlan: ' + name
+
+        fail(Errors::VSphereError, :missing_vlan) if base.nil?
+
+        base
+      end
+
+      # Cloning
+      def get_customization_spec(machine, spec_info)
+        customization_spec = spec_info.spec.clone
+
+        # find all the configured private networks
+        private_networks = machine.config.vm.networks.find_all { |n| n[0].eql? :private_network }
+        if !private_networks.nil?
+          # make sure we have enough NIC settings to override with the private network settings
+          fail Errors::VSphereError, :'too_many_private_networks' if private_networks.length > customization_spec.nicSettingMap.length
+
+          # assign the private network IP to the NIC
+          private_networks.each_index do |idx|
+            customization_spec.nicSettingMap[idx].adapter.ip.ipAddress = private_networks[idx][1][:ip]
+          end
+        end
+
+        customization_spec
+      end
+
+      def get_location(datastore, dc, machine, template)
+        if machine.provider_config.linked_clone
+          # The API for linked clones is quite strange. We can't create a linked
+          # straight from any VM. The disks of the VM for which we can create a
+          # linked clone need to be read-only and thus VC demands that the VM we
+          # are cloning from uses delta-disks. Only then it will allow us to
+          # share the base disk.
+          #
+          # Thus, this code first create a delta disk on top of the base disk for
+          # the to-be-cloned VM, if delta disks aren't used already.
+          disks = template.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk)
+          disks.select { |disk| disk.backing.parent.nil? }.each do |disk|
+            spec = {
+              deviceChange: [
+                {
+                  operation: :remove,
+                  device: disk
+                },
+                {
+                  operation: :add,
+                  fileOperation: :create,
+                  device: disk.dup.tap do |new_disk|
+                    new_disk.backing = new_disk.backing.dup
+                    new_disk.backing.fileName = "[#{disk.backing.datastore.name}]"
+                    new_disk.backing.parent = disk.backing
+                  end
+                }
+              ]
+            }
+            template.ReconfigVM_Task(spec: spec).wait_for_completion
+          end
+
+          location = RbVmomi::VIM.VirtualMachineRelocateSpec(diskMoveType: :moveChildMostDiskBacking)
+        elsif datastore.is_a? RbVmomi::VIM::StoragePod
+          location = RbVmomi::VIM.VirtualMachineRelocateSpec
+        else
+          location = RbVmomi::VIM.VirtualMachineRelocateSpec
+
+          location[:datastore] = datastore unless datastore.nil?
+        end
+        location[:pool] = get_resource_pool(dc, machine) unless machine.provider_config.clone_from_vm
+        location
+      end
+
+      def get_name(machine, config, root_path)
+        return config.name unless config.name.nil?
+
+        prefix = "#{root_path.basename}_#{machine.name}"
+        prefix.gsub!(/[^-a-z0-9_\.]/i, '')
+        # milliseconds + random number suffix to allow for simultaneous `vagrant up` of the same box in different dirs
+        prefix + "_#{(Time.now.to_f * 1000.0).to_i}_#{rand(100_000)}"
+      end
+
+      def get_vm_base_folder(dc, template, config)
+        if config.vm_base_path.nil?
+          template.parent
+        else
+          dc.vmFolder.traverse(config.vm_base_path, RbVmomi::VIM::Folder, true)
+        end
+      end
+
+      def configure_serial_ports(spec, dc, template, config)
+        # Enumerate serial ports
+        spec[:config][:deviceChange] ||= []
+
+        current_ports = Hash.new
+
+        template.config.hardware.device.grep(RbVmomi::VIM::VirtualSerialPort).each_with_index do |item, index|
+          current_ports[index] = item
+        end
+
+        puts "config.serial_ports=#{config.serial_ports.inspect}"
+
+        current_ports_length = current_ports.length
+
+        config_serial_ports_length = -1
+        config.serial_ports.each_with_index do |_item, index|
+          if index > config_serial_ports_length
+            config_serial_ports_length = index
+          end
+        end
+        config_serial_ports_length += 1
+
+        # remove unused serial ports
+        if config.destroy_unused_serial_ports
+          if current_ports_length-1 > config_serial_ports_length-1
+            for index in (current_ports_length-1).downto(config_serial_ports_length-1+1)
+              port = current_ports[index]
+
+              remove_port = {
+                :operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('remove'),
+                :device => port
+              }
+
+              spec[:config][:deviceChange].push remove_port
+              spec[:config][:deviceChange].uniq!
+            end
+          end
+        end
+
+        # we have 5 ports but want 8 ports
+        # add 3 ports
+        # edit first 5 ports
+        number_of_existing_ports = current_ports_length
+        if current_ports_length > config_serial_ports_length
+          # we have 5 ports but want 3 ports
+          # remove 2 ports
+          # edit first 3 ports
+          number_of_existing_ports = config_serial_ports_length
+        end
+
+        # edit existing network interfaces
+        if number_of_existing_ports > 0
+          for index in (0).upto(number_of_existing_ports)
+            port_configuration = config.serial_ports[index]
+            puts "port_configuration[#{index}]=#{port_configuration.inspect}"
+
+            # there may be no configuration for this port so dont change it, if this is the case
+            unless port_configuration.nil?
+              port = current_ports[index]
+              port = configure_serial_port(dc, port_configuration, port)
+
+              edit_port = {
+                :operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('edit'),
+                :device => port
+              }
+
+              spec[:config][:deviceChange].push edit_port
+              spec[:config][:deviceChange].uniq!
+            end
+          end
+        end
+
+        # add extra network interfaces
+        for index in (number_of_existing_ports).upto(config_serial_ports_length-1)
+          port_configuration = config.serial_ports[index]
+          adapter = RbVmomi::VIM::VirtualSerialPort(
+            :key => index,
+            :connectable => RbVmomi::VIM::VirtualDeviceConnectInfo()
+          )
+
+          adapter = configure_serial_port(dc, port_configuration, adapter)
+
+          add_port = {
+            :operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('add'),
+            :device => adapter
+          }
+
+          spec[:config][:deviceChange].push add_port
+          spec[:config][:deviceChange].uniq!
+        end
+
+        puts "spec[:config] = #{spec[:config].inspect}"
+
+        spec
+      end
+
+      def configure_serial_port(_dc, port_configuration, port)
+        port.yieldOnPoll = port_configuration.yield_on_poll unless port_configuration.yield_on_poll.nil?
+        port.connectable.connected = port_configuration.connected unless port_configuration.connected.nil?
+        port.connectable.startConnected = port_configuration.start_connected unless port_configuration.start_connected.nil?
+
+        case port_configuration.backing
+        when 'uri'
+          port.backing = RbVmomi::VIM::VirtualSerialPortURIBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortURIBackingInfo)
+          port.backing.direction = port_configuration.direction unless port_configuration.direction.nil?
+          port.backing.proxyURI = port_configuration.proxy_uri unless port_configuration.proxy_uri.nil?
+          port.backing.serviceURI = port_configuration.service_uri unless port_configuration.service_uri.nil?
+        when 'pipe'
+          port.backing = RbVmomi::VIM::VirtualSerialPortPipeBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortPipeBackingInfo)
+          port.backing.endpoint = port_configuration.endpoint unless port_configuration.endpoint.nil?
+          port.backing.noRxLoss = port_configuration.no_rx_loss unless port_configuration.no_rx_loss.nil?
+        when 'file'
+          port.backing = RbVmomi::VIM::VirtualSerialPortFileBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortFileBackingInfo)
+          port.backing.fileName = port_configuration.file_name unless port_configuration.file_name.nil?
+        when 'device'
+          port.backing = RbVmomi::VIM::VirtualSerialPortDeviceBackingInfo() if port.backing.nil? || !port.backing.is_a?(RbVmomi::VIM::VirtualSerialPortDeviceBackingInfo)
+          port.backing.deviceName = port_configuration.device_name unless port_configuration.device_name.nil?
+          port.backing.useAutoDetect = port_configuration.use_auto_detect unless port_configuration.use_auto_detect.nil?
+        end
+
+        port
+      end
+
+      def configure_network_cards(spec, dc, template, config)
+        # Enumerate lan cards
+        spec[:config][:deviceChange] ||= []
+
+        current_adapters = Hash.new
+
+        template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).each_with_index do |item, index|
+          current_adapters[index] = item
+        end
+
+        puts "config.network_adapters=#{config.network_adapters.inspect}"
+
+        current_adapters_length = current_adapters.length
+
+        # configuration may have gaps in it, so configuration may look like this:
+        # vsphere.network_adapter 0, vlan: "vlan0"
+        # vsphere.network_adapter 1, vlan: "vlan1"
+        # vsphere.network_adapter 9, vlan: "vlan9"
+        config_network_adapters_length = -1
+        config.network_adapters.each_with_index do |_item, index|
+          if index > config_network_adapters_length
+            config_network_adapters_length = index
+          end
+        end
+        config_network_adapters_length += 1
+
+        # remove unused network interfaces
+        if config.destroy_unused_network_interfaces
+          if current_adapters_length-1 > config_network_adapters_length-1
+            for index in (current_adapters_length-1).downto(config_network_adapters_length-1+1)
+              adapter = current_adapters[index]
+
+              remove_adaptor = {
+                :operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('remove'),
+                :device => adapter
+              }
+
+              spec[:config][:deviceChange].push remove_adaptor
+              spec[:config][:deviceChange].uniq!
+            end
+          end
+        end
+
+        # we have 5 cards but want 8 cards
+        # add 3 cards
+        # edit first 5 cards
+        number_of_existing_adapters = current_adapters_length
+        if current_adapters_length > config_network_adapters_length
+          # we have 5 cards but want 3 cards
+          # remove 2 cards
+          # edit first 3 cards
+          number_of_existing_adapters = config_network_adapters_length
+        end
+
+        # edit existing network interfaces
+        if number_of_existing_adapters > 0
+          for index in (0).upto(number_of_existing_adapters-1)
+            adapter_configuration = config.network_adapters[index]
+            puts "adapter_configuration[#{index}]=#{adapter_configuration.inspect}"
+
+            # there may be no configuration for this card so dont change it, if this is the case
+            unless adapter_configuration.nil?
+              adapter = current_adapters[index]
+
+              label = "Ethernet #{index+1}"
+              summary = nil
+              summary = adapter_configuration.vlan.split('/').last unless adapter_configuration.vlan.nil?
+
+              adapter = configure_network_card(dc, adapter_configuration, adapter, label, summary)
+
+              edit_adaptor = {
+                :operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('edit'),
+                :device => adapter
+              }
+
+              spec[:config][:deviceChange].push edit_adaptor
+              spec[:config][:deviceChange].uniq!
+            end
+          end
+        end
+
+        # add extra network interfaces
+        for index in (number_of_existing_adapters).upto(config_network_adapters_length-1)
+          adapter_configuration = config.network_adapters[index]
+          adapter = RbVmomi::VIM::VirtualVmxnet3(
+            :key => index,
+            :deviceInfo => RbVmomi::VIM::Description(),
+            :connectable => RbVmomi::VIM::VirtualDeviceConnectInfo()
+          )
+
+          label = "Ethernet #{index+1}"
+          summary = nil
+          summary = adapter_configuration.vlan.split('/').last unless adapter_configuration.vlan.nil?
+
+          adapter = configure_network_card(dc, adapter_configuration, adapter, label, summary)
+
+          add_adaptor = {
+            :operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('add'),
+            :device => adapter
+          }
+
+          spec[:config][:deviceChange].push add_adaptor
+          spec[:config][:deviceChange].uniq!
+        end
+
+        puts "spec[:config] = #{spec[:config].inspect}"
+
+        spec
+      end
+
+      def configure_network_card(dc, adapter_configuration, adapter, label, summary)
+        unless adapter_configuration.vlan.nil?
+          network = get_network_by_name(dc, adapter_configuration.vlan)
+
+          if network.is_a?(RbVmomi::VIM::DistributedVirtualPortgroup)
+            switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(switchUuid: network.config.distributedVirtualSwitch.uuid, portgroupKey: network.key)
+            adapter.backing = RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo(port: switch_port)
+          else
+            # not connected to a distibuted switch?
+            adapter.backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(network: network, deviceName: network.name)
+          end
+        end
+
+        adapter.deviceInfo.label = label unless label.nil?
+        adapter.deviceInfo.summary = summary unless summary.nil?
+
+        adapter.connectable.allowGuestControl = adapter_configuration.allow_guest_control unless adapter_configuration.allow_guest_control.nil?
+        adapter.connectable.connected = adapter_configuration.connected unless adapter_configuration.connected.nil?
+        adapter.connectable.startConnected = adapter_configuration.start_connected unless adapter_configuration.start_connected.nil?
+
+        adapter.addressType = adapter_configuration.address_type unless adapter_configuration.address_type.nil?
+        adapter.macAddress = adapter_configuration.mac_address unless adapter_configuration.mac_address.nil?
+        adapter.wakeOnLanEnabled = adapter_configuration.wake_on_lan_enabled unless adapter_configuration.wake_on_lan_enabled.nil?
+
+        adapter
+      end
+
+      def configure_disks(spec, dc, template, config)
+        # Enumerate lan cards
+        spec[:config][:deviceChange] ||= []
+
+        current_disks = Hash.new
+
+        template.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk).each_with_index do |item, index|
+          current_disks[index] = item
+        end
+
+        current_disks_length = current_disks.length
+
+        # configuration may have gaps in it, so configuration may look like this:
+        # vsphere.disk 0, size: 5000
+        # vsphere.disk 1, size: 10000
+        # vsphere.disk 9, size: 90000
+        config_disks_length = -1
+        config.disks.each_with_index do |_item, index|
+          if index > config_disks_length
+            config_disks_length = index
+          end
+        end
+        config_disks_length += 1
+
+        number_of_existing_disks = current_disks_length
+
+        puts "config.disks=#{config.disks.inspect}"
+        puts "number_of_existing_disks=#{number_of_existing_disks}"
+        # edit existing disks
+        if number_of_existing_disks > 0
+          for index in (0).upto(number_of_existing_disks-1)
+            disk_configuration = config.disks[index]
+            puts "disk_configuration=#{disk_configuration.inspect}"
+            puts "index=#{index}"
+
+
+            # there may be no configuration for this disk so dont change it, if this is the case
+            unless disk_configuration.nil? || disk_configuration.size.nil?
+              puts "start device change added"
+              disk = current_disks[index]
+              disk = configure_disk(disk_configuration, disk)
+
+              edit_disk = {
+                :operation => RbVmomi::VIM::VirtualDeviceConfigSpecOperation('edit'),
+                :device => disk
+              }
+
+              spec[:config][:deviceChange].push edit_disk
+              spec[:config][:deviceChange].uniq!
+
+              puts "finshed device change added"
+            end
+          end
+        end
+
+        puts "we exited!"
+
+        spec
+      end
+
+      def configure_disk(disk_configuration, disk)
+        unless disk_configuration.size.nil?
+          disk.capacityInKB = disk_configuration.size
+        end
+        disk
+      end      
+
+      def add_custom_memory(spec, memory_mb)
+        spec[:config][:memoryMB] = Integer(memory_mb)
+      end
+
+      def add_custom_cpu(spec, cpu_count)
+        spec[:config][:numCPUs] = Integer(cpu_count)
+      end
+
+      def add_custom_cpu_reservation(spec, cpu_reservation)
+        spec[:config][:cpuAllocation] = RbVmomi::VIM.ResourceAllocationInfo(reservation: cpu_reservation)
+      end
+
+      def add_custom_mem_reservation(spec, mem_reservation)
+        spec[:config][:memoryAllocation] = RbVmomi::VIM.ResourceAllocationInfo(reservation: mem_reservation)
+      end
+
+      def add_custom_extra_config(spec, extra_config = {})
+        return if extra_config.empty?
+
+        # extraConfig must be an array of hashes with `key` and `value`
+        # entries.
+        spec[:config][:extraConfig] = extra_config.map { |k, v| { 'key' => k, 'value' => v } }
+      end
+
+      def add_custom_notes(spec, notes)
+        spec[:config][:annotation] = notes
+      end
+    end
+  end
+end

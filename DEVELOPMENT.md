@@ -30,6 +30,19 @@ Changes that eliminate rules from
 [`.rubocop_todo.yml`](https://github.com/nsidc/vagrant-vsphere/blob/master/.rubocop_todo.yml)
 are welcome.
 
+To run RuboCop:
+
+```
+bundle exec rake rubocop
+```
+
+You can run RuboCop with its `--auto-correct` feature to correct simple
+violations. When using this option, you should still double-check your code to
+be certain none of your logic was changed. To run RuboCop with `--auto-correct`:
+
+```
+bundle exec rake rubocop:auto_correct
+```
 ### Travis-CI
 
 [Travis](https://travis-ci.org/nsidc/vagrant-vsphere) will automatically run

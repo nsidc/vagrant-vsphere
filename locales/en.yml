@@ -20,8 +20,8 @@ en:
       The VM has not been created
     vm_not_running: |-
       The VM is not running
-    wait_sysprep: |-
-      Waiting for sysprep
+    wait_for_customization: |-
+      Waiting for customization
 
     errors:
       missing_template: |-
@@ -48,12 +48,10 @@ en:
         Cannot find network card to customize
       invalid_configuration_linked_clone_with_sdrs: |-
         Cannot use Linked Clone with Storage DRS
-      multiple_interface_with_real_nic_ip_set: |-
-        real_nic_ip filtering set with multiple valid VM interfaces available
-      sysprep_timeout: |-
+      specified_mangement_interface_does_not_exist: |-
+        specified management interface does not exist
+      customization_timeout: |-
         Customization of VM not succeeded within timeout.
-      wait_for_ip_address_timeout: |-
-        Timeout while waiting for ip address
 
     config:
       host: |-

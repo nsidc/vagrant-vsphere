@@ -6,8 +6,7 @@ module VagrantPlugins
         #
         # @return [Array<String>] Snapshot Name
         def self.snapshot_list(machine)
-          env = machine.action(:snapshot_list, lock: false)
-          env[:machine_snapshot_list]
+          machine.driver.snapshot_list
         end
       end
     end
