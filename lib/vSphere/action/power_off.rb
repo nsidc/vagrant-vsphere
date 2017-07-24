@@ -16,13 +16,13 @@ module VagrantPlugins
           # that the Power Off task for a VM will fail if the state is not poweredOn
           # see: https://www.vmware.com/support/developer/vc-sdk/visdk41pubs/ApiReference/vim.VirtualMachine.html#powerOff
           if driver.suspended?
-            env[:ui].info I18n.t('vsphere.power_on_vm')
+            env[:machine].ui.info I18n.t('vsphere.power_on_vm')
             driver.power_on_vm
           end
 
           # Powering off is a no-op if we can't find the VM or if it is already off
           unless driver.powered_off?.nil? || driver.powered_off?
-            env[:ui].info I18n.t('vsphere.power_off_vm')
+            env[:machine].ui.info I18n.t('vsphere.power_off_vm')
             driver.power_off_vm
           end
 

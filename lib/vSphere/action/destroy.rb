@@ -19,11 +19,11 @@ module VagrantPlugins
         private
 
         def destroy_vm(env)
-          env[:ui].info I18n.t('vsphere.destroy_vm')
+          env[:machine].ui.info I18n.t('vsphere.destroy_vm')
 
           env[:machine].provider.driver.destroy do |progress|
-            env[:ui].clear_line
-            env[:ui].report_progress(progress, 100, false)
+            env[:machine].ui.clear_line
+            env[:machine].ui.report_progress(progress, 100, false)
           end
         rescue Errors::VSphereError
           raise

@@ -9,7 +9,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:ui].info I18n.t('vsphere.vm_not_created')
+          env[:machine].ui.info I18n.t('vsphere.vm_not_created')
           @app.call(env)
         end
       end

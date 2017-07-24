@@ -838,7 +838,7 @@ module VagrantPlugins
 
         # edit existing network interfaces
         if number_of_existing_adapters > 0
-          for index in (0).upto(number_of_existing_adapters)
+          for index in (0).upto(number_of_existing_adapters-1)
             adapter_configuration = config.network_adapters[index]
             puts "adapter_configuration[#{index}]=#{adapter_configuration.inspect}"
 
@@ -945,14 +945,19 @@ module VagrantPlugins
 
         number_of_existing_disks = current_disks_length
 
+        puts "config.disks=#{config.disks.inspect}"
+        puts "number_of_existing_disks=#{number_of_existing_disks}"
         # edit existing disks
         if number_of_existing_disks > 0
-          for index in (0).upto(number_of_existing_disks)
+          for index in (0).upto(number_of_existing_disks-1)
             disk_configuration = config.disks[index]
-            puts "disk_configuration[#{index}]=#{disk_configuration.inspect}"
+            puts "disk_configuration=#{disk_configuration.inspect}"
+            puts "index=#{index}"
+
 
             # there may be no configuration for this disk so dont change it, if this is the case
-            unless disk_configuration.nil?
+            unless disk_configuration.nil? || disk_configuration.size.nil?
+              puts "start device change added"
               disk = current_disks[index]
               disk = configure_disk(disk_configuration, disk)
 
@@ -963,17 +968,21 @@ module VagrantPlugins
 
               spec[:config][:deviceChange].push edit_disk
               spec[:config][:deviceChange].uniq!
+
+              puts "finshed device change added"
             end
           end
         end
 
-        puts "spec[:config] = #{spec[:config].inspect}"
+        puts "we exited!"
 
         spec
       end
 
       def configure_disk(disk_configuration, disk)
-        disk.capacityInKB = disk_configuration.size
+        unless disk_configuration.size.nil?
+          disk.capacityInKB = disk_configuration.size
+        end
         disk
       end      
 

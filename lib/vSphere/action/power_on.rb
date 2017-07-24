@@ -10,7 +10,7 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:ui].info I18n.t('vsphere.power_on_vm')
+          env[:machine].ui.info I18n.t('vsphere.power_on_vm')
           env[:machine].provider.driver.power_on_vm
 
           @app.call env

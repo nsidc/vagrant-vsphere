@@ -42,6 +42,8 @@ module VagrantPlugins
 
         def initialize(disk_config)
           @size = nil
+
+          @size = disk_config[:size] if disk_config.key?(:size)
         end
       end      
 
