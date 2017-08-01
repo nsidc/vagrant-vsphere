@@ -5,4 +5,4 @@ if [ -n "$(vagrant plugin list |grep vagrant-vsphere)" ]; then
 fi
 rm -f *.gem
 gem build vSphere.gemspec
-vagrant plugin install vagrant-vsphere --plugin-source file://vagrant-vsphere-1.11.0.gem
+vagrant plugin install vagrant-vsphere --plugin-source ./vagrant-vsphere-1.11.0.gem
