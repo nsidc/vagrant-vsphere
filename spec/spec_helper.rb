@@ -136,7 +136,8 @@ RSpec.configure do |config|
                        parent: @data_center,
                        pretty_path: "#{@data_center.pretty_path}/template_vm",
                        CloneVM_Task: double('result',
-                                            wait_for_completion: double('new_vm', config: double('config', uuid: NEW_UUID))),
+                                            wait_for_completion: double('new_vm', config: double('config', uuid: NEW_UUID)),
+                                            wait_for_progress: double('new_vm', config: double('config', uuid: NEW_UUID))),
                        config: @template_config)
 
     @data_center.stub(:find_vm).with(TEMPLATE).and_return(@template)

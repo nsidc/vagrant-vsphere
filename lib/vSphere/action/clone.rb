@@ -90,7 +90,7 @@ module VagrantPlugins
               env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
 
               last_progress = 0
-              new_vm = template.CloneVM_Task(folder: vm_base_folder, name: name, spec: spec) .wait_for_progress do |progress|
+              new_vm = template.CloneVM_Task(folder: vm_base_folder, name: name, spec: spec).wait_for_progress do |progress|
                 if (progress.is_a? Numeric) && (progress/10).floor != (last_progress/10).floor
                   env[:ui].info "Progress: #{progress}%"
                   last_progress = progress
