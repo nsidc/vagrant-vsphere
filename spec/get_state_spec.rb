@@ -38,13 +38,13 @@ describe VagrantPlugins::VSphere::Action::GetState do
     expect(@env[:machine_state_id]).to be :poweroff
   end
 
-  it 'should set state id to powered off if machine is suspended' do
+  it 'should set state id to suspended if machine is suspended' do
     @env[:machine].stub(:id).and_return(EXISTING_UUID)
     @vm.runtime.stub(:powerState).and_return(VagrantPlugins::VSphere::Util::VmState::SUSPENDED)
 
     call
 
-    expect(@env[:machine_state_id]).to be :poweroff
+    expect(@env[:machine_state_id]).to be :suspended
   end
 
   it 'should call the next item in the middleware stack' do
