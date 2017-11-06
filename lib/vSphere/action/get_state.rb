@@ -30,8 +30,9 @@ module VagrantPlugins
 
           if powered_on?(vm)
             :running
+          elsif suspended?(vm)
+            :suspended
           else
-            # If the VM is powered off or suspended, we consider it to be powered off. A power on command will either turn on or resume the VM
             :poweroff
           end
         end

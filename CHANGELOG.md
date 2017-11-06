@@ -1,3 +1,9 @@
+## [1.13.0 (2017-11-06)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.0)
+
+  - Add support for the commands
+    [`suspend`](https://www.vagrantup.com/docs/cli/suspend.html) and
+    [`resume`](https://www.vagrantup.com/docs/cli/resume.html).
+
 ## [1.12.1 (2017-03-07)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.12.1)
 
   - If no valid adapters can be found on a host when using the `real_nic_ip`

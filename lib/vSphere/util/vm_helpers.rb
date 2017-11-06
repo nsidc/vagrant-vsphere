@@ -18,6 +18,15 @@ module VagrantPlugins
           vm.PowerOffVM_Task.wait_for_completion
         end
 
+        # https://www.vmware.com/support/developer/converter-sdk/conv61_apireference/vim.VirtualMachine.html#powerOn
+        def resume_vm(vm)
+          vm.PowerOnVM_Task.wait_for_completion
+        end
+
+        def suspend_vm(vm)
+          vm.SuspendVM_Task.wait_for_completion
+        end
+
         def get_vm_state(vm)
           vm.runtime.powerState
         end

@@ -14,12 +14,18 @@ en:
       Calling vSphere PowerOff
     power_on_vm: |-
       Calling vSphere PowerOn
+    resume_vm: |-
+      Calling vSphere PowerOn
+    suspend_vm: |-
+      Calling vSphere Suspend
     vm_already_created: |-
       The VM is already created
     vm_not_created: |-
       The VM has not been created
     vm_not_running: |-
       The VM is not running
+    vm_not_suspended: |-
+      The VM is not suspended
     wait_sysprep: |-
       Waiting for sysprep
 

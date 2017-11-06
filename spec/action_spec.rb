@@ -164,4 +164,66 @@ describe VagrantPlugins::VSphere::Action do
       VagrantPlugins::VSphere::Action::MessageAlreadyCreated.any_instance.should_receive(:call)
     end
   end
+
+  describe 'suspend' do
+    it 'should connect to vSphere' do
+      VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+      run :suspend
+    end
+
+    it 'should check if the VM exits' do
+      @machine.state.stub(:id).and_return(:running)
+      VagrantPlugins::VSphere::Action::IsCreated.any_instance.should_receive(:call)
+      run :suspend
+    end
+
+    it 'should suspend the VM when the VM is running' do
+      @machine.state.stub(:id).and_return(:running)
+      VagrantPlugins::VSphere::Action::Suspend.any_instance.should_receive(:call)
+      run :suspend
+    end
+
+    it 'should not suspend the VM when the VM is suspended' do
+      @machine.state.stub(:id).and_return(:suspended)
+      VagrantPlugins::VSphere::Action::Suspend.any_instance.should_not_receive(:call)
+      run :suspend
+    end
+
+    it 'should not suspend the VM when the VM is off' do
+      @machine.state.stub(:id).and_return(:poweroff)
+      VagrantPlugins::VSphere::Action::Suspend.any_instance.should_not_receive(:call)
+      run :suspend
+    end
+  end
+
+  describe 'resume' do
+    it 'should connect to vSphere' do
+      VagrantPlugins::VSphere::Action::ConnectVSphere.any_instance.should_receive(:call)
+      run :resume
+    end
+
+    it 'should check if the VM exits' do
+      @machine.state.stub(:id).and_return(:suspended)
+      VagrantPlugins::VSphere::Action::IsCreated.any_instance.should_receive(:call)
+      run :resume
+    end
+
+    it 'should not resume the VM when the VM is running' do
+      @machine.state.stub(:id).and_return(:running)
+      VagrantPlugins::VSphere::Action::Resume.any_instance.should_not_receive(:call)
+      run :resume
+    end
+
+    it 'should resume the VM when the VM is suspended' do
+      @machine.state.stub(:id).and_return(:suspended)
+      VagrantPlugins::VSphere::Action::Resume.any_instance.should_receive(:call)
+      run :resume
+    end
+
+    it 'should not resume the VM when the VM is off' do
+      @machine.state.stub(:id).and_return(:poweroff)
+      VagrantPlugins::VSphere::Action::Resume.any_instance.should_not_receive(:call)
+      run :resume
+    end
+  end
 end
