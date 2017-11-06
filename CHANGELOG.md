@@ -1,4 +1,4 @@
-## [1.13.0 (2017-11-03)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.0)
+## [1.13.0 (2017-11-06)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.0)
 
   - Add support for the commands
     [`suspend`](https://www.vagrantup.com/docs/cli/suspend.html) and
