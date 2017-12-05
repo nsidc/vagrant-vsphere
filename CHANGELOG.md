@@ -1,3 +1,10 @@
+## [1.13.1 (2017-12-05)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.0)
+
+  - Update rbvmomi dependency to avoid v1.11.4; something in
+    [2725089](https://github.com/vmware/rbvmomi/commit/2725089a08312315c4eb85f13296fc159f50b4d1)
+    broke cloning VMs on NSIDC's vSphere instance.
+
+
 ## [1.13.0 (2017-11-06)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.0)
 
   - Add support for the commands
