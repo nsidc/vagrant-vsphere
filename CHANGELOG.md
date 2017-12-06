@@ -1,4 +1,9 @@
-## [1.13.1 (2017-12-05)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.0)
+## [1.13.2 (2017-12-06)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.2)
+
+  - Update rbvmomi dependency to v1.11.5 and greater (but still less than
+    2.0). v1.11.5 fixes the issue introduced in v1.11.4.
+
+## [1.13.1 (2017-12-05)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.1)
 
   - Update rbvmomi dependency to avoid v1.11.4; something in
     [2725089](https://github.com/vmware/rbvmomi/commit/2725089a08312315c4eb85f13296fc159f50b4d1)

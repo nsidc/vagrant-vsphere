@@ -14,12 +14,7 @@ Gem::Specification.new do |s|
   # force the use of Nokogiri 1.5.x to prevent conflicts with older versions of zlib
   s.add_dependency 'nokogiri', '~>1.5'
 
-  # force the use of at least rbvmomi 1.8.2 to work around concurrency errors:
-  # https://github.com/nsidc/vagrant-vsphere/issues/139
-  #
-  # rbvmomi v1.11.4 broke cloning VMs at NSIDC, see
-  # https://github.com/vmware/rbvmomi/issues/127
-  s.add_dependency 'rbvmomi', '>=1.8.2', '<1.11.4'
+  s.add_dependency 'rbvmomi', '>=1.11.5', '<2.0.0'
 
   s.add_dependency 'i18n', '>=0.6.4', '<=0.8.0'
 
