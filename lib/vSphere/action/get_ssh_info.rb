@@ -22,7 +22,13 @@ module VagrantPlugins
           return vm.guest.ipAddress unless machine.provider_config.real_nic_ip
 
           interfaces = vm.guest.net.select { |g| g.deviceConfigId > 0 }
-          ip_addresses = interfaces.map { |i| i.ipConfig.ipAddress.select { |a| a.state == 'preferred' } }.flatten
+          ip_addresses = interfaces.map do |i|
+            begin
+              i.ipConfig.ipAddress.select { |a| a.state == 'preferred' }
+            rescue NoMethodError
+              nil
+            end
+          end.flatten.compact
 
           return (vm.guest.ipAddress || nil) if ip_addresses.empty?
 
