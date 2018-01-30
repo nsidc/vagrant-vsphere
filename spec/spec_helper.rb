@@ -43,6 +43,7 @@ RSpec.configure do |config|
         password: 'testpassword',
         data_center_name: nil,
         compute_resource_name: 'testcomputeresource',
+        host_system: nil,
         resource_pool_name: 'testresourcepool',
         vm_base_path: nil,
         template_name: TEMPLATE,
@@ -122,6 +123,7 @@ RSpec.configure do |config|
                           vmFolder: vm_folder,
                           pretty_path: "data_center/#{vm_folder}",
                           find_compute_resource: @compute_resource,
+                          find_host_system: @host_system,
                           hostFolder: @host_folder)
 
     @device = RbVmomi::VIM::VirtualEthernetCard.new
