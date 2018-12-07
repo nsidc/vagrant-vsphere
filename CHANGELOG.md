@@ -1,3 +1,9 @@
+## [1.13.3 (2018-12-06)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.3)
+
+  - Update i18n dependency to allow v1.1.1. This fixes an issue with
+    installation with Vagrant 2.2.x
+    ([jarretlavallee:fix/master/il8n_deps](https://github.com/nsidc/vagrant-vsphere/pull/273)).
+
 ## [1.13.2 (2017-12-06)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.2)
 
   - Update rbvmomi dependency to v1.11.5 and greater (but still less than
