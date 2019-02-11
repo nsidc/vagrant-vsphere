@@ -152,6 +152,7 @@ This provider has the following settings, all are required unless noted:
 * `ip_address_timeout` - _Optional_ Maximum number of seconds to wait while an
   IP address is obtained
 * `wait_for_sysprep` - _Optional_ Boolean. Enable waiting for Windows machines to reboot
+* `disk_size` - _Optional_ size of vm disk in GB
   during the sysprep process
   ([#199](https://github.com/nsidc/vagrant-vsphere/pull/199)). Defaults to `false`.
 
