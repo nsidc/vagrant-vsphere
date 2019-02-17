@@ -244,7 +244,7 @@ easily break networking.
 
 ### Setting disk size
 
-To set a specific disk size (in GB) add `disk_size` to you `Vagrantfile`:
+To set a specific disk size (in GB) add `disk_size` to your `Vagrantfile`:
 ```ruby
 vsphere.disk_size = 25
 ```
