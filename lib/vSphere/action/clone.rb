@@ -154,7 +154,7 @@ module VagrantPlugins
         def resize_disk(machine, size)
           # get current vm disk
           virtual_disk = machine.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk)[0]
-          virtual_disk.capacityInKB = size * 1024 * 1024;
+          virtual_disk.capacityInKB = size * 1024 * 1024
 
           # execute reconfigure task
           new_vm_spec = RbVmomi::VIM.VirtualMachineConfigSpec(
