@@ -91,6 +91,7 @@ RSpec.configure do |config|
                       :data_dir => Pathname.new(''),
                       :id => nil,
                       :id= => nil,
+                      :name => nil,
                       :guest => double('guest', capability: nil)
 
     @env = {
