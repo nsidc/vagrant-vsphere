@@ -1,3 +1,11 @@
+## [1.13.4 (2020-03-31)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.4)
+
+  - Allow newer versions of i18n.
+    ([jmartin-r7:release-i18n](https://github.com/nsidc/vagrant-vsphere/pull/286))
+  - Updated .ruby-version to 2.6.5
+  - Fix broken tests.
+    ([wwestenbrink:master](https://github.com/nsidc/vagrant-vsphere/pull/283))
+
 ## [1.13.3 (2018-12-06)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.3)
 
   - Update i18n dependency to allow v1.1.1. This fixes an issue with
