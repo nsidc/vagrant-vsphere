@@ -1,9 +1,4 @@
 language: ruby
 cache: bundler
-rvm:
-  - 2.6.5
-
-before_install:
-  - gem install bundler --version '1.17.2'
 
 sudo: false
