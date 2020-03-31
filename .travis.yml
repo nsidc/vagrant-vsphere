@@ -1,7 +1,5 @@
 language: ruby
 cache: bundler
-rvm:
-  - 2.3.5
 
 before_install:
   - rvm @global do gem uninstall bundler --all --executables
