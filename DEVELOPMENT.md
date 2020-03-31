@@ -65,3 +65,25 @@ prefers to be run from the official installer rather than through the gem.
 Despite those warning messages, this is the
 [officially recommended](https://docs.vagrantup.com/v2/plugins/development-basics.html)
 method for Vagrant plugin development.
+
+### Releasing
+
+1) Ensure [travis-ci](https://travis-ci.org/github/nsidc/vagrant-vsphere/) build is passing
+2) Ensure `CHANGELOG.md` is up-to-date with the changes to release
+3) Update version in the code, according to [semver](https://semver.org/)
+    * [bumpversion](https://github.com/peritus/bumpversion) can be used; if not,
+      the version needs to be manually updated in `.bumpversion.cfg`,
+      `README.md`, and `lib/vSphere/version.rb` (e.g., as in
+      [`11eced2`](https://github.com/nsidc/vagrant-vsphere/commit/11eced2))
+4) `bundle exec rake build`
+    * builds the plugin to `pkg/vagrant-vsphere-$VERSION.gem`
+    * install to your system vagrant for further testing with `vagrant plugin
+      install ./pkg/vagrant-vsphere-$VERSION.gem`
+5) `bundle exec rake release`
+    * creates the version tag and pushes it to GitHub
+    * pushes the built gem to
+      [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere/)
+6) Update the [Releases page](https://github.com/nsidc/vagrant-vsphere/releases)
+    * the release name should match the version tag (e.g., `v1.2.3`)
+    * the release description can be the same as the `CHANGELOG.md` entry
+    * upload the `.gem` from RubyGems.org as an attached binary for the release
