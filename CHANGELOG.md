@@ -1,3 +1,8 @@
+## [1.13.5 (2021-01-05)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.5)
+  - Pin nokogiri to 1.10.10. This fixes an issue where vagrant-vsphere failed to install due to 
+    nokogiri requiring Ruby >=2.5.  This is a workaround until the vagrant-nsidc plugin is updated
+    to work with newer versions of vagrant that are bundled with newer versions of Ruby
+
 ## [1.13.4 (2020-03-31)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.13.4)
 
   - Allow newer versions of i18n.
