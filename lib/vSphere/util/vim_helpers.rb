@@ -42,6 +42,12 @@ module VagrantPlugins
           cr
         end
 
+        def get_host_system(datacenter, machine)
+          cr = find_clustercompute_or_compute_resource(datacenter, machine.provider_config.compute_resource_name)
+          hs = cr.host.find { |host| host.name == machine.provider_config.host_system }
+          hs
+        end
+
         def find_clustercompute_or_compute_resource(datacenter, path)
           if path.is_a? String
             es = path.split('/').reject(&:empty?)
