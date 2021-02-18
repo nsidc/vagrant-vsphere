@@ -205,6 +205,7 @@ module VagrantPlugins
             location[:datastore] = datastore unless datastore.nil?
           end
           location[:pool] = get_resource_pool(dc, machine) unless machine.provider_config.clone_from_vm
+          location[:host] = get_target_host(dc, machine) unless machine.provider_config.target_host.nil?
           location
         end
 
