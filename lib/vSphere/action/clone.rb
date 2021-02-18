@@ -99,7 +99,7 @@ module VagrantPlugins
           rescue Errors::VSphereError
             raise
           rescue StandardError => e
-            raise Errors::VSphereError.new, e.message
+            raise Errors::VSphereError.new, e.message, e.backtrace
           end
 
           # TODO: handle interrupted status in the environment, should the vm be destroyed?
