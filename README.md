@@ -118,8 +118,7 @@ This provider has the following settings, all are required unless noted:
 * `template_name` - the VM or VM template to clone (including the full folder path)
 * `vm_base_path` - _Optional_ path to folder where new VM should be created, if
   not specified template's parent folder will be used
-* `name` - _Optional_ name of the new VM, if missing the name will be auto
-  generated
+* `name` - _Optional_ name of the new VM. If missing, the name will be auto-generated
 * `customization_spec_name` - _Optional_ customization spec for the new VM
 * `data_store_name` - _Optional_ the datastore where the VM will be located
 * `linked_clone` - _Optional_ link the cloned VM to the parent to share virtual
