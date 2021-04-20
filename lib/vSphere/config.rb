@@ -31,6 +31,7 @@ module VagrantPlugins
       attr_accessor :real_nic_ip
       attr_accessor :notes
       attr_accessor :wait_for_sysprep
+      attr_accessor :disk_size
 
       attr_reader :custom_attributes
 

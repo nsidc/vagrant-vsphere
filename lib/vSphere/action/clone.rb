@@ -19,6 +19,7 @@ module VagrantPlugins
           name = get_name machine, config, env[:root_path]
           dc = get_datacenter connection, machine
           template = dc.find_vm config.template_name
+          disk_size_in_gb = config.disk_size.to_i
           fail Errors::VSphereError, :'missing_template' if template.nil?
           vm_base_folder = get_vm_base_folder dc, template, config
           fail Errors::VSphereError, :'invalid_base_path' if vm_base_folder.nil?
@@ -29,7 +30,7 @@ module VagrantPlugins
             fail Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && ds.is_a?(RbVmomi::VIM::StoragePod)
 
             location = get_location ds, dc, machine, template
-            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: true, template: false
+            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: false, template: false
             spec[:config] = RbVmomi::VIM.VirtualMachineConfigSpec
             customization_info = get_customization_spec_info_by_name connection, machine
 
@@ -57,6 +58,8 @@ module VagrantPlugins
             add_custom_mem_reservation(spec, config.mem_reservation) unless config.mem_reservation.nil?
             add_custom_extra_config(spec, config.extra_config) unless config.extra_config.empty?
             add_custom_notes(spec, config.notes) unless config.notes.nil?
+
+            env[:ui].info "Setting custom disk size: #{disk_size_in_gb}" if disk_size_in_gb.to_i > 0
 
             if !config.clone_from_vm && ds.is_a?(RbVmomi::VIM::StoragePod)
 
@@ -90,6 +93,8 @@ module VagrantPlugins
               env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
 
               new_vm = template.CloneVM_Task(folder: vm_base_folder, name: name, spec: spec).wait_for_completion
+              resize_disk(new_vm, disk_size_in_gb) if disk_size_in_gb.to_i > 0
+              new_vm.PowerOnVM_Task.wait_for_completion
 
               config.custom_attributes.each do |k, v|
                 env[:ui].info "Setting custom attribute: #{k}=#{v}"
@@ -144,6 +149,23 @@ module VagrantPlugins
               RbVmomi::VIM::EventFilterSpec(entity:
               RbVmomi::VIM::EventFilterSpecByEntity(entity: vm, recursion:
               RbVmomi::VIM::EventFilterSpecRecursionOption(:self)), eventTypeId: ['CustomizationSucceeded']))
+        end
+
+        def resize_disk(machine, size)
+          # get current vm disk
+          virtual_disk = machine.config.hardware.device.grep(RbVmomi::VIM::VirtualDisk)[0]
+          virtual_disk.capacityInKB = size * 1024 * 1024
+
+          # execute reconfigure task
+          new_vm_spec = RbVmomi::VIM.VirtualMachineConfigSpec(
+            :deviceChange => [RbVmomi::VIM.VirtualDeviceConfigSpec(
+              :device => virtual_disk,
+              :operation => RbVmomi::VIM.VirtualDeviceConfigSpecOperation(:edit)
+            )]
+          )
+          task = machine.ReconfigVM_Task(:spec => new_vm_spec)
+          task.wait_for_completion
+          { 'task_state' => task.info.state }
         end
 
         def get_customization_spec(machine, spec_info)
