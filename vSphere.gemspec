@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.description = 'Enables Vagrant to manage machines with VMWare vSphere.'
 
   # pin nokogiri to 1.10.10 to get around 1.11.0 requiring ruby >=2.5
-  s.add_dependency 'nokogiri', '1.31.1'
+  s.add_dependency 'nokogiri', '1.13.1'
 
   s.add_dependency 'rbvmomi', '3.0.0'
 
