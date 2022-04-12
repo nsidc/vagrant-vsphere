@@ -1,36 +1,11 @@
+# frozen_string_literal: true
+
 require 'vagrant'
 
 module VagrantPlugins
   module VSphere
     class Config < Vagrant.plugin('2', :config)
-      attr_accessor :ip_address_timeout # Time to wait for an IP address when booting, in seconds @return [Integer]
-      attr_accessor :host
-      attr_accessor :insecure
-      attr_accessor :user
-      attr_accessor :password
-      attr_accessor :data_center_name
-      attr_accessor :compute_resource_name
-      attr_accessor :resource_pool_name
-      attr_accessor :clone_from_vm
-      attr_accessor :template_name
-      attr_accessor :name
-      attr_accessor :vm_base_path
-      attr_accessor :customization_spec_name
-      attr_accessor :data_store_name
-      attr_accessor :linked_clone
-      attr_accessor :proxy_host
-      attr_accessor :proxy_port
-      attr_accessor :vlan
-      attr_accessor :addressType
-      attr_accessor :mac
-      attr_accessor :memory_mb
-      attr_accessor :cpu_count
-      attr_accessor :cpu_reservation
-      attr_accessor :mem_reservation
-      attr_accessor :extra_config
-      attr_accessor :real_nic_ip
-      attr_accessor :notes
-      attr_accessor :wait_for_sysprep
+      attr_accessor :ip_address_timeout, :host, :insecure, :user, :password, :data_center_name, :compute_resource_name, :resource_pool_name, :clone_from_vm, :template_name, :name, :vm_base_path, :customization_spec_name, :data_store_name, :linked_clone, :proxy_host, :proxy_port, :vlan, :addressType, :mac, :memory_mb, :cpu_count, :cpu_reservation, :mem_reservation, :extra_config, :real_nic_ip, :notes, :wait_for_sysprep # Time to wait for an IP address when booting, in seconds @return [Integer]
 
       attr_reader :custom_attributes
 
@@ -53,9 +28,7 @@ module VagrantPlugins
       def validate(machine)
         errors = _detected_errors
 
-        if password == :ask || password.nil?
-          self.password = machine.ui.ask('vSphere Password (will be hidden): ', echo: false)
-        end
+        self.password = machine.ui.ask('vSphere Password (will be hidden): ', echo: false) if password == :ask || password.nil?
 
         # TODO: add blank?
         errors << I18n.t('vsphere.config.host') if host.nil?

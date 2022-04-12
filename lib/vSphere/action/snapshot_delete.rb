@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'vSphere/util/vim_helpers'
 require 'vSphere/util/vm_helpers'
 
@@ -16,8 +18,9 @@ module VagrantPlugins
           vm = get_vm_by_uuid(env[:vSphere_connection], env[:machine])
 
           env[:ui].info(I18n.t(
-            "vagrant.actions.vm.snapshot.deleting",
-            name: env[:snapshot_name]))
+                          "vagrant.actions.vm.snapshot.deleting",
+                          name: env[:snapshot_name]
+                        ))
 
           delete_snapshot(vm, env[:snapshot_name]) do |progress|
             env[:ui].clear_line
@@ -27,8 +30,9 @@ module VagrantPlugins
           env[:ui].clear_line
 
           env[:ui].info(I18n.t(
-            "vagrant.actions.vm.snapshot.deleted",
-            name: env[:snapshot_name]))
+                          "vagrant.actions.vm.snapshot.deleted",
+                          name: env[:snapshot_name]
+                        ))
 
           @app.call env
         end

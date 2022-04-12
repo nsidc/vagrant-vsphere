@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rbvmomi'
 
 module VagrantPlugins
@@ -55,11 +57,11 @@ module VagrantPlugins
         def enumerate_snapshots(vm)
           snapshot_info = vm.snapshot
 
-          if snapshot_info.nil?
-            snapshot_root = []
-          else
-            snapshot_root = snapshot_info.rootSnapshotList
-          end
+          snapshot_root = if snapshot_info.nil?
+                            []
+                          else
+                            snapshot_info.rootSnapshotList
+                          end
 
           recursor = lambda do |snapshot_list|
             Enumerator.new do |yielder|
@@ -95,7 +97,8 @@ module VagrantPlugins
           task = vm.CreateSnapshot_Task(
             name: name,
             memory: false,
-            quiesce: false)
+            quiesce: false
+          )
 
           if block_given?
             task.wait_for_progress do |progress|

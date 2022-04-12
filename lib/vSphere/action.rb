@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'vagrant'
 require 'vagrant/action/builder'
 
@@ -224,7 +226,7 @@ module VagrantPlugins
       end
 
       # TODO: Remove the if guard when Vagrant 1.8.0 is the minimum version.
-      # rubocop:disable IndentationWidth
+      # rubocop:disable Layout/IndentationWidth
       if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
       def self.action_snapshot_delete
         Vagrant::Action::Builder.new.tap do |b|
@@ -292,11 +294,11 @@ module VagrantPlugins
           b.use CloseVSphere
         end
       end
-      end # Vagrant > 1.8.0 guard
-      # rubocop:enable IndentationWidth
+      end
+      # rubocop:enable Layout/IndentationWidth
 
       # autoload
-      action_root = Pathname.new(File.expand_path('../action', __FILE__))
+      action_root = Pathname.new(File.expand_path('action', __dir__))
       autoload :Clone, action_root.join('clone')
       autoload :CloseVSphere, action_root.join('close_vsphere')
       autoload :ConnectVSphere, action_root.join('connect_vsphere')
@@ -317,14 +319,14 @@ module VagrantPlugins
       autoload :WaitForIPAddress, action_root.join('wait_for_ip_address')
 
       # TODO: Remove the if guard when Vagrant 1.8.0 is the minimum version.
-      # rubocop:disable IndentationWidth
+      # rubocop:disable Layout/IndentationWidth
       if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
       autoload :SnapshotDelete, action_root.join('snapshot_delete')
       autoload :SnapshotList, action_root.join('snapshot_list')
       autoload :SnapshotRestore, action_root.join('snapshot_restore')
       autoload :SnapshotSave, action_root.join('snapshot_save')
       end
-      # rubocop:enable IndentationWidth
+      # rubocop:enable Layout/IndentationWidth
     end
   end
 end
