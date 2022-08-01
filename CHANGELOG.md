@@ -1,4 +1,4 @@
-## [1.14.0 (2022-04-12)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.14.0.pre1)
+## [1.14.0 (2022-08-01)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.14.0.pre1)
 
   - Update gem to ruby 3.0.2
   - Support for vagrant >=2.2.17
