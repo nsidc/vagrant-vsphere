@@ -21,7 +21,7 @@ This provider is built on top of the
 ## Current Version
 **version: 1.14.0.pre1**
 
-vagrant-vsphere (**version: 1.14.0.pre1**) is available from
+vagrant-vsphere (**version: 1.14.0**) is available from
 [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 ## Installation
