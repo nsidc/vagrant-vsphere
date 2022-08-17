@@ -27,7 +27,7 @@ module VagrantPlugins
             elsif rp.is_a? RbVmomi::VIM::ResourcePool
               rp = rp.resourcePool.find { |f| f.name == entity_array_item } || fail(Errors::VSphereError, :missing_resource_pool)
             elsif rp.is_a? RbVmomi::VIM::ComputeResource
-              rp = rp.resourcePool.find(resource_pool_name) || fail(Errors::VSphereError, :missing_resource_pool)
+              rp = rp.resourcePool.find(entity_array_item) || fail(Errors::VSphereError, :missing_resource_pool)
             else
               fail Errors::VSphereError, :missing_resource_pool
             end
