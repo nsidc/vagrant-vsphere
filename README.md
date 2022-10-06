@@ -151,6 +151,7 @@ This provider has the following settings, all are required unless noted:
 * `ip_address_timeout` - _Optional_ Maximum number of seconds to wait while an
   IP address is obtained
 * `wait_for_sysprep` - _Optional_ Boolean. Enable waiting for Windows machines to reboot
+* `disk_size` - _Optional_ size of vm disk in GB
   during the sysprep process
   ([#199](https://github.com/nsidc/vagrant-vsphere/pull/199)). Defaults to `false`.
 
@@ -239,6 +240,140 @@ vsphere.mac = '00:50:56:XX:YY:ZZ'
 
 Take care to avoid using invalid or duplicate VMware MAC addresses, as this can
 easily break networking.
+
+### Setting disk size
+
+To set a specific disk size (in GB) add `disk_size` to your `Vagrantfile`:
+```ruby
+vsphere.disk_size = 25
+```
+
+This option calls disk resizing task right after `vagrant up`.
+It changes only disk size, you have to care youself about partitioning, volumes and filesystem using provisioning script.
+
+#### Example ####
+
+Let's asume we have Ubuntu Xenial installed on a 16G disk in 'LVM, entire disk' mode, here is initial disk state:
+
+
+`fdisk -l`:
+
+```shell
+Disk /dev/sda: 16 GiB, 17179869184 bytes, 33554432 sectors
+...
+
+Device     Boot   Start      End  Sectors  Size Id Type
+/dev/sda1  *       2048  1499135  1497088  731M 83 Linux
+/dev/sda2       1501182 33552383 32051202 15.3G  5 Extended
+/dev/sda5       1501184 33552383 32051200 15.3G 8e Linux LVM
+
+...
+```
+
+`pvs`:
+```shell
+  PV         VG        Fmt  Attr PSize  PFree
+  /dev/sda5  ubuntu-vg lvm2 a--  15.28g 12.00m
+```
+
+`vgs`:
+```shell
+  VG        #PV #LV #SN Attr   VSize  VFree
+  ubuntu-vg   1   2   0 wz--n- 15.28g 12.00m
+```
+
+`lvs`:
+```shell
+  LV     VG        Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root   ubuntu-vg -wi-ao----  14.32g
+
+  swap_1 ubuntu-vg -wi-ao---- 976.00m
+```
+
+`df -h`:
+```shell
+...
+/dev/mapper/ubuntu--vg-root   14G  1.5G   12G  11% /
+...
+```
+
+To change disk size to 25G and apply partitioning, lvm and filesystem parameters add following code to `Vagrantfile`:
+
+```ruby
+...
+$script = <<-SCRIPT
+apt update -y \
+    && apt install -y parted \
+    && parted /dev/sda resizepart 2 100% \
+    && parted /dev/sda resizepart 5 100% \
+    && pvresize /dev/sda5 \
+    && lvextend -l100%VG /dev/ubuntu-vg/root \
+    && resize2fs /dev/ubuntu-vg/root
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  ...
+  config.vm.box_check_update = true
+  config.vm.provider :vsphere do |vsphere|
+    ...
+    vsphere.disk_size = 25
+    ...
+  end
+  config.vm.provision "shell", inline: $script
+  ...
+end
+...
+
+```
+
+After `vagrant up` altered disk state is:
+
+`fdisk -l`:
+
+```shell
+Disk /dev/sda: 25 GiB, 26843545600 bytes, 52428800 sectors
+...
+
+Device     Boot   Start      End  Sectors  Size Id Type
+/dev/sda1  *       2048  1499135  1497088  731M 83 Linux
+/dev/sda2       1501182 52428799 50927618 24.3G  5 Extended
+/dev/sda5       1501184 52428799 50927616 24.3G 8e Linux LVM
+
+
+Disk /dev/mapper/ubuntu--vg-root: 23.3 GiB, 25048383488 bytes, 48922624 sectors
+...
+
+
+Disk /dev/mapper/ubuntu--vg-swap_1: 976 MiB, 1023410176 bytes, 1998848 sectors
+...
+```
+
+`pvs`:
+```shell
+  PV         VG        Fmt  Attr PSize  PFree
+  /dev/sda5  ubuntu-vg lvm2 a--  24.28g    0
+```
+
+`vgs`:
+```shell
+  VG        #PV #LV #SN Attr   VSize  VFree
+  ubuntu-vg   1   2   0 wz--n- 24.28g    0
+```
+
+`lvs`:
+```shell
+  LV     VG        Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root   ubuntu-vg -wi-ao----  23.33g
+
+  swap_1 ubuntu-vg -wi-ao---- 976.00m
+```
+
+`df -h`:
+```shell
+...
+/dev/mapper/ubuntu--vg-root   23G  1.5G   21G   7% /
+...
+```
 
 ## Troubleshooting
 
