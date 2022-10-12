@@ -11,6 +11,16 @@ be configured prior to using this provider.
 This provider is built on top of the
 [RbVmomi](https://github.com/vmware/rbvmomi) Ruby interface to the vSphere API.
 
+
+## Level of Support
+
+This repository is not actively supported by NSIDC but we welcome issue submissions and
+pull requests in order to foster community contribution.
+
+See the [LICENSE][license] for details on permissions and warranties. Please contact
+nsidc@nsidc.org for more information.
+
+
 ## Requirements
 
 * Vagrant 1.6.4+
@@ -18,11 +28,13 @@ This provider is built on top of the
 * Ruby 1.9+
 * libxml2, libxml2-dev, libxslt, libxslt-dev
 
+
 ## Current Version
 **version: 1.13.5**
 
 vagrant-vsphere (**version: 1.13.5**) is available from
 [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
+
 
 ## Installation
 
@@ -38,6 +50,7 @@ Alternatively, you can clone this repository and build the source with `gem
 build vSphere.gemspec`. After the gem is built, run the plugin install command
 from the build directory.
 
+
 ### Potential Installation Problems
 
 The requirements for [Nokogiri](http://nokogiri.org/) must be installed before
@@ -47,6 +60,7 @@ detailed instructions.
 
 The plugin forces use of Nokogiri ~> 1.5 to prevent conflicts with older
 versions of system libraries, specifically zlib.
+
 
 ## Usage
 
@@ -82,6 +96,7 @@ end
 
 And then run `vagrant up --provider=vsphere`.
 
+
 ### Custom Box
 
 The bulk of this configuration can be included as part of a custom box. See the
@@ -89,12 +104,14 @@ The bulk of this configuration can be included as part of a custom box. See the
 [AWS provider](https://github.com/mitchellh/vagrant-aws/tree/master/example_box)
 for more information and an example.
 
+
 ### Supported Commands
 
 Currently the only implemented actions are `up`, `halt`, `reload`, `destroy`,
 and `ssh`.
 
 `up` supports provisioning of the new VM with the standard Vagrant provisioners.
+
 
 ## Configuration
 
@@ -154,11 +171,13 @@ This provider has the following settings, all are required unless noted:
   during the sysprep process
   ([#199](https://github.com/nsidc/vagrant-vsphere/pull/199)). Defaults to `false`.
 
+
 ### Cloning from a VM rather than a template
 
 To clone from an existing VM rather than a template, set `clone_from_vm` to
 true. If this value is set, `compute_resource_name` and `resource_pool_name` are
 not required.
+
 
 ### Template_Name
 
@@ -174,6 +193,7 @@ vsphere.template_name = "vagrant-templates/ubuntu-lucid-template"
 
 ![Vagrant Vsphere Screenshot](https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png)
 
+
 ### VM_Base_Path
 
 * The new vagrant VM will be created in the same directory as the template it
@@ -188,6 +208,7 @@ vsphere.vm_base_path = "vagrant-machines"
 ```
 
 ![Vagrant Vsphere Screenshot](https://raw.githubusercontent.com/nsidc/vagrant-vsphere/master/vsphere_screenshot.png)
+
 
 ### Setting a static IP address
 
@@ -205,6 +226,7 @@ For each private network specified, there needs to be a corresponding network ad
 the customization spec. An error will be thrown if there are more networks than
 adapters.
 
+
 ### Auto name generation
 
 The name for the new VM will be automagically generated from the Vagrant machine
@@ -213,6 +235,7 @@ executions.
 
 This is useful if running Vagrant from multiple directories or if multiple
 machines are defined in the Vagrantfile.
+
 
 ### Setting addressType for network adapter
 
@@ -227,6 +250,7 @@ documentation of vSphere.
 vsphere.addressType = 'Manual'
 ```
 
+
 ### Setting the MAC address
 
 To set a static MAC address, add a `vsphere.mac` to your `Vagrantfile`.
@@ -240,16 +264,19 @@ vsphere.mac = '00:50:56:XX:YY:ZZ'
 Take care to avoid using invalid or duplicate VMware MAC addresses, as this can
 easily break networking.
 
+
 ## Troubleshooting
 
 ### vCenter
 ESXi is not supported. Make sure to connect to a vCenter server and not directly to an ESXi host. [ESXi vs vCenter](http://www.mustbegeek.com/difference-between-vsphere-esxi-and-vcenter/)
+
 
 ### Permissions
 If you have permission issues:
 
 1. give the connecting user read only access to everything, and full permission to a specific data center.  Narrow the permissions down after a VM is created.
 2. Be sure the path to the VM is correct. see  the "Template_Name" screenshots above for more information.
+
 
 ## Example Usage
 
@@ -283,16 +310,20 @@ Vagrant.configure("2") do |config|
 end
 ```
 
+
 ### Vagrant Up
 
 ```bash
 vagrant up --provider=vsphere
 ```
+
+
 ### Vagrant SSH
 
 ```bash
 vagrant ssh
 ```
+
 
 ### Vagrant Destroy
 
@@ -300,24 +331,36 @@ vagrant ssh
 vagrant destroy
 ```
 
+
 ## Version History
 
 See
 [`CHANGELOG.md`](https://github.com/nsidc/vagrant-vsphere/blob/master/CHANGELOG.md).
+
 
 ## Contributing
 
 See
 [`DEVELOPMENT.md`](https://github.com/nsidc/vagrant-vsphere/blob/master/DEVELOPMENT.md).
 
+
 ## License
 
 The Vagrant vSphere Provider is licensed under the MIT license. See
-[LICENSE.txt][license].
+[LICENSE][license].
 
-[license]: https://raw.github.com/nsidc/vagrant-vsphere/master/LICENSE.txt
+
+
+## Code of Conduct
+
+See [Code of Conduct][code-of-conduct].
+
 
 ## Credit
 
 This software was developed by the National Snow and Ice Data Center with
 funding from multiple sources.
+
+
+[license]: LICENSE
+[code-of-conduct]: CODE_OF_CONDUCT.md
