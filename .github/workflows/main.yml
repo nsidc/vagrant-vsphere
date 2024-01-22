@@ -1,0 +1,30 @@
+// Create JIRA issue when GitHub issue is created
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Jira issue
+    steps:
+    - name: Login
+      uses: atlassian/gajira-login@v3
+      env:
+        JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+    - name: Create
+      id: create
+      uses: atlassian/gajira-create@v3
+      with:
+        project: VGTVSPHERE
+        issuetype: 
+        summary: GitHub Issue: github.event_name
+        description: Created by github.action
+
+    - name: Log created issue
+      run: echo "Issue ${{ steps.create.outputs.issue }} was created"
