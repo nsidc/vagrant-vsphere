@@ -22,8 +22,8 @@ jobs:
       with:
         project: VGTVSPHERE
         issuetype: Story
-        summary: "GitHub Issue: $ {{ github.event_name }}"
-        description: Created by ${{ github.action }}
+        summary: "GitHub Issue: ${{ github.event_name }}"
+        description: "Created by ${{ github.actor }}"
 
     - name: Log created issue
       run: echo "Issue ${{ steps.create.outputs.issue }} was created"
