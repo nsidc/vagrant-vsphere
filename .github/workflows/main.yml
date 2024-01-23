@@ -20,7 +20,7 @@ jobs:
       uses: atlassian/gajira-create@v3
       with:
         project: VGTVSPHERE
-        issuetype: issue
+        issuetype: story
         summary: "GitHub Issue: $ {{github.event_name }}"
         description: Created by github.action
 
