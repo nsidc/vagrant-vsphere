@@ -1,5 +1,3 @@
-// Create JIRA issue when GitHub issue is created
-
 on:
   issues:
     types:
@@ -22,8 +20,8 @@ jobs:
       uses: atlassian/gajira-create@v3
       with:
         project: VGTVSPHERE
-        issuetype: 
-        summary: GitHub Issue: github.event_name
+        issuetype: issue
+        summary: "GitHub Issue: $ {{github.event_name }}"
         description: Created by github.action
 
     - name: Log created issue
