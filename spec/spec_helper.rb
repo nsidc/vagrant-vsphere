@@ -133,11 +133,15 @@ RSpec.configure do |config|
     @template_config = double('template_config',
                               hardware: @virtual_hardware)
 
+    @new_vm = double('new_vm',
+                     config: double('config', uuid: NEW_UUID),
+                     PowerOnVM_Task: double('result', wait_for_completion: nil))
+
     @template = double('template_vm',
                        parent: @data_center,
                        pretty_path: "#{@data_center.pretty_path}/template_vm",
                        CloneVM_Task: double('result',
-                                            wait_for_completion: double('new_vm', config: double('config', uuid: NEW_UUID))),
+                                            wait_for_completion: @new_vm),
                        config: @template_config)
 
     @data_center.stub(:find_vm).with(TEMPLATE).and_return(@template)
