@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'vagrant'
 
 module VagrantPlugins
@@ -10,6 +12,7 @@ module VagrantPlugins
       def action(name)
         action_method = "action_#{name}"
         return Action.send(action_method) if Action.respond_to?(action_method)
+
         nil
       end
 

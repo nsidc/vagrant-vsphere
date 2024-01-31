@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rbvmomi'
 require 'pathname'
 require 'vSphere/errors'
@@ -29,7 +31,7 @@ RSpec.configure do |config|
   # removes deprecation warnings.
   # http://stackoverflow.com/questions/20275510/how-to-avoid-deprecation-warning-for-stub-chain-in-rspec-3-0/20296359#20296359
   config.mock_with :rspec do |c|
-    c.syntax = [:should, :expect]
+    c.syntax = %i[should expect]
   end
 
   config.before(:each) do
@@ -38,36 +40,37 @@ RSpec.configure do |config|
     end
 
     provider_config = double(
-        host: 'testhost.com',
-        user: 'testuser',
-        password: 'testpassword',
-        data_center_name: nil,
-        compute_resource_name: 'testcomputeresource',
-        resource_pool_name: 'testresourcepool',
-        vm_base_path: nil,
-        template_name: TEMPLATE,
-        name: NAME,
-        insecure: true,
-        validate: [],
-        customization_spec_name: nil,
-        data_store_name: nil,
-        clone_from_vm: nil,
-        linked_clone: nil,
-        proxy_host: nil,
-        proxy_port: nil,
-        vlan: nil,
-        memory_mb: nil,
-        cpu_count: nil,
-        mac: nil,
-        addressType: nil,
-        cpu_reservation: nil,
-        mem_reservation: nil,
-        custom_attributes: {},
-        notes: nil,
-        extra_config: {},
-        ip_address_timeout: 1,
-        real_nic_ip: false,
-        wait_for_sysprep: false)
+      host: 'testhost.com',
+      user: 'testuser',
+      password: 'testpassword',
+      data_center_name: nil,
+      compute_resource_name: 'testcomputeresource',
+      resource_pool_name: 'testresourcepool',
+      vm_base_path: nil,
+      template_name: TEMPLATE,
+      name: NAME,
+      insecure: true,
+      validate: [],
+      customization_spec_name: nil,
+      data_store_name: nil,
+      clone_from_vm: nil,
+      linked_clone: nil,
+      proxy_host: nil,
+      proxy_port: nil,
+      vlan: nil,
+      memory_mb: nil,
+      cpu_count: nil,
+      mac: nil,
+      addressType: nil,
+      cpu_reservation: nil,
+      mem_reservation: nil,
+      custom_attributes: {},
+      notes: nil,
+      extra_config: {},
+      ip_address_timeout: 1,
+      real_nic_ip: false,
+      wait_for_sysprep: false
+    )
     vm_config = double(
       vm: double('config_vm',
                  box: nil,

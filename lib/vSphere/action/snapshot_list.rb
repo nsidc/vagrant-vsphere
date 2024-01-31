@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'vSphere/util/vim_helpers'
 require 'vSphere/util/vm_helpers'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module VagrantPlugins
   module VSphere
     module Cap
@@ -7,6 +9,7 @@ module VagrantPlugins
 
           ssh_info = machine.ssh_info
           return nil unless ssh_info
+
           ssh_info[:host]
         end
       end

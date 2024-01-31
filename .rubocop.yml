@@ -32,3 +32,18 @@ Metrics/ModuleLength:
 
 Metrics/PerceivedComplexity:
   Enabled: false
+
+# Disabled these cops upgrading rubocop to 1.25.0
+# TODO:Correct the issues found by these cops someday
+Lint/MissingSuper:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Naming:
+  Enabled: false
+
+# TODO: Add required ruby version to gemspec
+Gemspec/RequiredRubyVersion:
+  Enabled: false

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rbvmomi'
 require 'vSphere/util/vim_helpers'
 require 'vSphere/util/vm_helpers'
@@ -22,7 +24,7 @@ module VagrantPlugins
         private
 
         def get_state(connection, machine)
-          return :not_created  if machine.id.nil?
+          return :not_created if machine.id.nil?
 
           vm = get_vm_by_uuid connection, machine
 

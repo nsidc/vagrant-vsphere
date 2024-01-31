@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rbvmomi'
 require 'i18n'
 require 'vSphere/util/vim_helpers'
@@ -19,14 +21,15 @@ module VagrantPlugins
           name = get_name machine, config, env[:root_path]
           dc = get_datacenter connection, machine
           template = dc.find_vm config.template_name
-          fail Errors::VSphereError, :'missing_template' if template.nil?
+          raise Errors::VSphereError, :'missing_template' if template.nil?
+
           vm_base_folder = get_vm_base_folder dc, template, config
-          fail Errors::VSphereError, :'invalid_base_path' if vm_base_folder.nil?
+          raise Errors::VSphereError, :'invalid_base_path' if vm_base_folder.nil?
 
           begin
             # Storage DRS does not support vSphere linked clones. http://www.vmware.com/files/pdf/techpaper/vsphere-storage-drs-interoperability.pdf
             ds = get_datastore dc, machine
-            fail Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && ds.is_a?(RbVmomi::VIM::StoragePod)
+            raise Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && ds.is_a?(RbVmomi::VIM::StoragePod)
 
             location = get_location ds, dc, machine, template
             spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: true, template: false
@@ -74,9 +77,7 @@ module VagrantPlugins
 
               recommendation = result.recommendations[0]
               key = recommendation.key ||= ''
-              if key == ''
-                fail Errors::VSphereError, :missing_datastore_recommendation
-              end
+              raise Errors::VSphereError, :missing_datastore_recommendation if key == ''
 
               env[:ui].info I18n.t('vsphere.creating_cloned_vm_sdrs')
               env[:ui].info " -- Storage DRS recommendation: #{recommendation.target.name} #{recommendation.reasonText}"
@@ -125,13 +126,13 @@ module VagrantPlugins
           while wait
             events = query_customization_succeeded(vm, vem)
 
-            if events.size > 0
+            if events.size.positive?
               events.each do |e|
                 env[:ui].info e.fullFormattedMessage
               end
               wait = false
             elsif waited_seconds >= timeout
-              fail Errors::VSphereError, :'sysprep_timeout'
+              raise Errors::VSphereError, :'sysprep_timeout'
             else
               sleep(sleep_time)
               waited_seconds += sleep_time
@@ -154,7 +155,7 @@ module VagrantPlugins
           return customization_spec if private_networks.nil?
 
           # make sure we have enough NIC settings to override with the private network settings
-          fail Errors::VSphereError, :'too_many_private_networks' if private_networks.length > customization_spec.nicSettingMap.length
+          raise Errors::VSphereError, :'too_many_private_networks' if private_networks.length > customization_spec.nicSettingMap.length
 
           # assign the private network IP to the NIC
           private_networks.each_index do |idx|
@@ -212,7 +213,7 @@ module VagrantPlugins
           return config.name unless config.name.nil?
 
           prefix = "#{root_path.basename}_#{machine.name}"
-          prefix.gsub!(/[^-a-z0-9_\.]/i, '')
+          prefix.gsub!(/[^-a-z0-9_.]/i, '')
           # milliseconds + random number suffix to allow for simultaneous `vagrant up` of the same box in different dirs
           prefix + "_#{(Time.now.to_f * 1000.0).to_i}_#{rand(100_000)}"
         end
@@ -229,7 +230,7 @@ module VagrantPlugins
           spec[:config][:deviceChange] ||= []
           @card ||= template.config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first
 
-          fail Errors::VSphereError, :missing_network_card if @card.nil?
+          raise Errors::VSphereError, :missing_network_card if @card.nil?
 
           yield(@card)
 
@@ -241,7 +242,7 @@ module VagrantPlugins
         def add_custom_address_type(template, spec, addressType)
           spec[:config][:deviceChange] = []
           config = template.config
-          card = config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first || fail(Errors::VSphereError, :missing_network_card)
+          card = config.hardware.device.grep(RbVmomi::VIM::VirtualEthernetCard).first || raise(Errors::VSphereError, :missing_network_card)
           card.addressType = addressType
           card_spec = { :deviceChange => [{ :operation => :edit, :device => card }] }
           template.ReconfigVM_Task(:spec => card_spec).wait_for_completion
@@ -257,13 +258,13 @@ module VagrantPlugins
           network = get_network_by_name(dc, vlan)
 
           modify_network_card(template, spec) do |card|
-            begin
-              switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(switchUuid: network.config.distributedVirtualSwitch.uuid, portgroupKey: network.key)
-              card.backing = RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo(port: switch_port)
-            rescue
-              # not connected to a distibuted switch?
-              card.backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(network: network, deviceName: network.name)
-            end
+
+            switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(switchUuid: network.config.distributedVirtualSwitch.uuid, portgroupKey: network.key)
+            card.backing = RbVmomi::VIM::VirtualEthernetCardDistributedVirtualPortBackingInfo(port: switch_port)
+          rescue StandardError
+            # not connected to a distibuted switch?
+            card.backing = RbVmomi::VIM::VirtualEthernetCardNetworkBackingInfo(network: network, deviceName: network.name)
+
           end
         end
 
