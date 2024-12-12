@@ -9,6 +9,8 @@ describe VagrantPlugins::VSphere::Action do
   end
 
   before :each do
+    allow(@machine).to receive(:triggers)
+    allow(@machine.guest.stub(:capability)).to receive(:halt)
     @machine.stub(:id).and_return(EXISTING_UUID)
     # Vagrant has some pretty buggy multi threading and their conditions
     # check can fail if the wait_for_ready method returns right away

@@ -81,7 +81,8 @@ RSpec.configure do |config|
                  networks: [[:private_network, { ip: '0.0.0.0' }]],
                  boot_timeout: 1,
                  graceful_halt_timeout: 0.1,
-                 guest: nil),
+                 guest: nil,
+                 allow_hosts_modification: nil),
       validate: []
     )
     @app = double 'app', call: true
@@ -95,7 +96,7 @@ RSpec.configure do |config|
                       :id => nil,
                       :id= => nil,
                       :name => nil,
-                      :guest => double('guest', capability: nil)
+                      :guest => double('guest', :capability? => nil)
 
     @env = {
       machine: @machine,
