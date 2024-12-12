@@ -26,7 +26,7 @@ module VagrantPlugins
           interfaces = vm.guest.net.select { |g| g.deviceConfigId.positive? }
           ip_addresses = interfaces.map { |i| i.ipConfig.ipAddress.select { |a| a.state == 'preferred' } }.flatten
 
-          return (vm.guest.ipAddress || nil) if ip_addresses.empty?
+          return vm.guest.ipAddress || nil if ip_addresses.empty?
 
           raise Errors::VSphereError.new, :'multiple_interface_with_real_nic_ip_set' if ip_addresses.size > 1
 
