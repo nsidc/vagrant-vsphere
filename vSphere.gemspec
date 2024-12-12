@@ -13,17 +13,17 @@ Gem::Specification.new do |s|
   s.summary = 'VMWare vSphere provider'
   s.description = 'Enables Vagrant to manage machines with VMWare vSphere.'
 
-  s.add_dependency 'nokogiri', '1.13.4'
+  s.add_dependency 'nokogiri', '~> 1.17'
 
   s.add_dependency 'rbvmomi', '3.0.0'
 
   s.add_dependency 'i18n', '>=0.6.4'
 
-  s.add_development_dependency 'rake', '13.0.6'
+  s.add_development_dependency 'rake', '13.2.1'
   s.add_development_dependency 'rspec-core'
   s.add_development_dependency 'rspec-expectations'
   s.add_development_dependency 'rspec-mocks'
-  s.add_development_dependency 'rubocop', '1.25.0'
+  s.add_development_dependency 'rubocop', '1.69.2'
 
   s.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
   s.executables = s.files.grep(/^bin\//) { |f| File.basename(f) }
