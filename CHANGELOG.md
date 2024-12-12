@@ -1,3 +1,9 @@
+## [1.15.0 (2024-12-12)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.15.0)
+
+ - Update gem to require Ruby 3.3.6
+ - Support for vagrant 2.4.3
+ - Update dependencies
+
 ## [1.14.0 (2022-08-01)](https://github.com/nsidc/vagrant-vsphere/releases/tag/v1.14.0.pre1)
 
   - Update gem to ruby 3.0.2
