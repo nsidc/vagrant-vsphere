@@ -29,7 +29,7 @@ module VagrantPlugins
             fail Errors::VSphereError, :'invalid_configuration_linked_clone_with_sdrs' if config.linked_clone && ds.is_a?(RbVmomi::VIM::StoragePod)
 
             location = get_location ds, dc, machine, template
-            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: true, template: false
+            spec = RbVmomi::VIM.VirtualMachineCloneSpec location: location, powerOn: false, template: false
             spec[:config] = RbVmomi::VIM.VirtualMachineConfigSpec
             customization_info = get_customization_spec_info_by_name connection, machine
 
@@ -83,6 +83,7 @@ module VagrantPlugins
 
               apply_sr_result = storage_mgr.ApplyStorageDrsRecommendation_Task(key: [key]).wait_for_completion
               new_vm = apply_sr_result.vm
+              new_vm.PowerOnVM_Task().wait_for_completion
 
             else
               env[:ui].info I18n.t('vsphere.creating_cloned_vm')
@@ -90,6 +91,7 @@ module VagrantPlugins
               env[:ui].info " -- Target VM: #{vm_base_folder.pretty_path}/#{name}"
 
               new_vm = template.CloneVM_Task(folder: vm_base_folder, name: name, spec: spec).wait_for_completion
+              new_vm.PowerOnVM_Task().wait_for_completion
 
               config.custom_attributes.each do |k, v|
                 env[:ui].info "Setting custom attribute: #{k}=#{v}"
