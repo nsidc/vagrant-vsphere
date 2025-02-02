@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe VagrantPlugins::VSphere::Action::GetSshInfo do
@@ -51,9 +53,7 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
                                  ipAddress: [double('NetIpConfigInfoIpAddress',
                                                     ipAddress: 'bad address', state: 'unknown'),
                                              double('NetIpConfigInfoIpAddress',
-                                                    ipAddress: '127.0.0.1', state: 'preferred')]
-                                )
-               ),
+                                                    ipAddress: '127.0.0.1', state: 'preferred')])),
          double('GuestNicInfo',
                 ipAddress: ['bad address', '255.255.255.255'],
                 deviceConfigId: -1,
@@ -61,10 +61,7 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
                                  ipAddress: [double('NetIpConfigInfoIpAddress',
                                                     ipAddress: 'bad address', state: 'unknown'),
                                              double('NetIpConfigInfoIpAddress',
-                                                    ipAddress: '255.255.255.255', state: 'preferred')]
-                                )
-               )
-        ]
+                                                    ipAddress: '255.255.255.255', state: 'preferred')]))]
       }
     end
 
@@ -89,9 +86,7 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
                                      ipAddress: [double('NetIpConfigInfoIpAddress',
                                                         ipAddress: 'bad address', state: 'unknown'),
                                                  double('NetIpConfigInfoIpAddress',
-                                                        ipAddress: '127.0.0.2', state: 'preferred')]
-                                    )
-                   ),
+                                                        ipAddress: '127.0.0.2', state: 'preferred')])),
              double('GuestNicInfo',
                     ipAddress: ['bad address', '255.255.255.255'],
                     deviceConfigId: 2000,
@@ -99,10 +94,7 @@ describe VagrantPlugins::VSphere::Action::GetSshInfo do
                                      ipAddress: [double('NetIpConfigInfoIpAddress',
                                                         ipAddress: 'bad address', state: 'unknown'),
                                                  double('NetIpConfigInfoIpAddress',
-                                                        ipAddress: '255.255.255.255', state: 'preferred')]
-                                    )
-                   )
-            ]
+                                                        ipAddress: '255.255.255.255', state: 'preferred')]))]
           }
 
         end

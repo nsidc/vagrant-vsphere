@@ -30,9 +30,9 @@ nsidc@nsidc.org for more information.
 
 
 ## Current Version
-**version: 1.13.5**
+**version: 1.14.0.pre1**
 
-vagrant-vsphere (**version: 1.13.5**) is available from
+vagrant-vsphere (**version: 1.14.0**) is available from
 [RubyGems.org](https://rubygems.org/gems/vagrant-vsphere)
 
 

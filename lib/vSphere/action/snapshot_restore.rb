@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'vSphere/util/vim_helpers'
 require 'vSphere/util/vm_helpers'
 
@@ -16,8 +18,9 @@ module VagrantPlugins
           vm = get_vm_by_uuid(env[:vSphere_connection], env[:machine])
 
           env[:ui].info(I18n.t(
-            "vagrant.actions.vm.snapshot.restoring",
-            name: env[:snapshot_name]))
+                          "vagrant.actions.vm.snapshot.restoring",
+                          name: env[:snapshot_name]
+                        ))
 
           restore_snapshot(vm, env[:snapshot_name]) do |progress|
             env[:ui].clear_line

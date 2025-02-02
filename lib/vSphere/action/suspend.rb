@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rbvmomi'
 require 'i18n'
 require 'vSphere/util/vim_helpers'
