@@ -10,6 +10,7 @@ module VagrantPlugins
       attr_accessor :password
       attr_accessor :data_center_name
       attr_accessor :compute_resource_name
+      attr_accessor :host_system
       attr_accessor :resource_pool_name
       attr_accessor :clone_from_vm
       attr_accessor :template_name
