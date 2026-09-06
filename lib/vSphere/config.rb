@@ -11,6 +11,7 @@ module VagrantPlugins
       attr_accessor :data_center_name
       attr_accessor :compute_resource_name
       attr_accessor :resource_pool_name
+      attr_accessor :target_host
       attr_accessor :clone_from_vm
       attr_accessor :template_name
       attr_accessor :name
