@@ -32,7 +32,7 @@ module VagrantPlugins
           rescue Errors::VSphereError
             raise
           rescue StandardError => e
-            raise Errors::VSphereError.new, e.message
+            raise Errors::VSphereError.new, e.message, e.backtrace
           end
         end
       end
