@@ -15,6 +15,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
       spec: { location: { pool: @child_resource_pool },
               config: RbVmomi::VIM.VirtualMachineConfigSpec }
     )
+    expect(@new_vm).to have_received :PowerOnVM_Task
   end
 
   it 'should create a CloneVM task with custom folder when given vm base path' do
@@ -29,6 +30,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
       spec: { location: { pool: @child_resource_pool },
               config: RbVmomi::VIM.VirtualMachineConfigSpec }
     )
+    expect(@new_vm).to have_received :PowerOnVM_Task
   end
 
   it 'should set the machine id to be the new UUID' do
@@ -59,6 +61,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
               config: expected_config
       }
     )
+    expect(@new_vm).to have_received :PowerOnVM_Task
   end
 
   it 'should create a CloneVM spec with configured memory_mb' do
@@ -70,6 +73,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
       spec: { location: { pool: @child_resource_pool },
               config: RbVmomi::VIM.VirtualMachineConfigSpec(memoryMB: 2048) }
     )
+    expect(@new_vm).to have_received :PowerOnVM_Task
   end
 
   it 'should create a CloneVM spec with configured number of cpus' do
@@ -81,6 +85,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
       spec: { location: { pool: @child_resource_pool },
               config: RbVmomi::VIM.VirtualMachineConfigSpec(numCPUs: 4) }
     )
+    expect(@new_vm).to have_received :PowerOnVM_Task
   end
 
   it 'should set static IP when given config spec' do
@@ -98,6 +103,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
       spec: { location: { pool: @root_resource_pool },
               config: RbVmomi::VIM.VirtualMachineConfigSpec }
     )
+    expect(@new_vm).to have_received :PowerOnVM_Task
   end
 
   it 'should set extraConfig if specified' do
@@ -114,6 +120,7 @@ describe VagrantPlugins::VSphere::Action::Clone do
       spec: { location: { pool: @child_resource_pool },
               config: expected_config }
     )
+    expect(@new_vm).to have_received :PowerOnVM_Task
   end
 
   it 'should set custom notes when they are specified' do
@@ -125,5 +132,6 @@ describe VagrantPlugins::VSphere::Action::Clone do
       spec: { location: { pool: @child_resource_pool },
               config: RbVmomi::VIM.VirtualMachineConfigSpec(annotation: 'custom_notes') }
     )
+    expect(@new_vm).to have_received :PowerOnVM_Task
   end
 end
