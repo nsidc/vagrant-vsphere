@@ -30,6 +30,11 @@ module VagrantPlugins
         Provider
       end
 
+      command('ip-status') do
+        require_relative 'command/ip_status'
+        Command::IpStatus
+      end
+
       provider_capability('vsphere', 'public_address') do
         require_relative 'cap/public_address'
         Cap::PublicAddress
